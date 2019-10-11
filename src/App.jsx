@@ -4,18 +4,24 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import * as Actions from './actions/index';
+import PrivateRoute from './components/core/PrivateRoute';
 import LoginPage from './components/authentication/LoginPage';
+import CandidatePage from './components/candidate/AddAvailability';
+import DirectoryPage from './components/directory/DirectoryPage';
 
 const App = props => (
   <BrowserRouter>
     <Switch>
       <Route exact path="/login" render={() => <LoginPage {...props} />} />
+      <Route exact path="/candidate" render={() => <CandidatePage {...props} />} />
+      <PrivateRoute exact path="/directory" pageProps={props} render={() => <DirectoryPage {...props} />} />
     </Switch>
   </BrowserRouter>
 );
 
 const mapStateToProps = state => ({
   user: state.user,
+  nav: state.nav,
 });
 
 const mapDispatchToProps = dispatch => ({
