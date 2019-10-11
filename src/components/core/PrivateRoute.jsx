@@ -75,10 +75,6 @@ class PrivateRoute extends React.Component {
     const { nav } = pageProps;
     const { currentPage } = nav;
 
-    // Handles redirection from other pages without click on the side bar,
-    // i.e. where onClickNavigate will not be triggered
-    const selectedTab = path === currentPage ? path : currentPage;
-
     return (
       <Drawer
         variant="permanent"
@@ -89,7 +85,7 @@ class PrivateRoute extends React.Component {
         {
           NAVIGATION_OPTIONS.map(option => {
             const { key, icon } = option;
-            const isSelected = key === selectedTab;
+            const isSelected = key === currentPage;
             return (
               <IconButton
                 key={key}
