@@ -8,6 +8,8 @@ import {
   IconButton,
 } from '@material-ui/core';
 
+import logo from '../../images/logo.png';
+
 // Component constants
 const NAVIGATION_OPTIONS = [
   {
@@ -36,6 +38,9 @@ const styles = {
   pageContent: {
     width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
     marginLeft: `${SIDEBAR_WIDTH}px`,
+  },
+  logo: {
+    width: '48px',
   },
   selectedIconButton: {
     color: '#765ea8',
@@ -82,6 +87,7 @@ class PrivateRoute extends React.Component {
           paper: classes.sideBar,
         }}
       >
+        <img src={logo} className={classes.logo} alt="logo" />
         {
           NAVIGATION_OPTIONS.map(option => {
             const { key, icon } = option;
