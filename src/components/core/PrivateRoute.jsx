@@ -14,7 +14,7 @@ const NAVIGATION_OPTIONS = [
     key: 'user', title: 'User Account', path: '/user', icon: 'account_circle',
   },
   {
-    key: 'home', title: 'Home', path: '/', icon: 'home',
+    key: 'overview', title: 'Overview', path: '/', icon: 'home',
   },
   {
     key: 'calendar', title: 'Calendar', path: '/calendar', icon: 'calendar_today',
@@ -42,7 +42,7 @@ class PrivateRoute extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentTab: 'home',
+
     };
   }
 

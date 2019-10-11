@@ -1,5 +1,5 @@
 const initialState = {
-  currentPage: 'home',
+  currentPage: 'overview',
 };
 
 const NavReducer = (state = initialState, action) => {
