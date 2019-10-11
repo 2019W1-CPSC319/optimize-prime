@@ -31,10 +31,17 @@ const styles = {
   sideBar: {
     position: 'fixed',
     padding: '5px',
+    backgroundColor: '#f0a017',
   },
   pageContent: {
     width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
     marginLeft: `${SIDEBAR_WIDTH}px`,
+  },
+  selectedIconButton: {
+    color: '#765ea8',
+  },
+  iconButton: {
+    color: '#ffffff',
   },
 };
 
@@ -75,7 +82,6 @@ class PrivateRoute extends React.Component {
     return (
       <Drawer
         variant="permanent"
-        color="primary"
         classes={{
           paper: classes.sideBar,
         }}
@@ -88,7 +94,7 @@ class PrivateRoute extends React.Component {
               <IconButton
                 key={key}
                 onClick={(e) => this.onClickNavigate(e, option)}
-                color={isSelected ? 'secondary' : 'primary'}
+                className={isSelected ? classes.selectedIconButton : classes.iconButton}
               >
                 <Icon>{icon}</Icon>
               </IconButton>
