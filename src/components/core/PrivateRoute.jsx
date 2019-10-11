@@ -13,9 +13,6 @@ import logo from '../../images/logo.png';
 // Component constants
 const NAVIGATION_OPTIONS = [
   {
-    key: 'user', title: 'User Account', path: '/user', icon: 'account_circle',
-  },
-  {
     key: 'overview', title: 'Overview', path: '/', icon: 'home',
   },
   {
@@ -23,6 +20,9 @@ const NAVIGATION_OPTIONS = [
   },
   {
     key: 'directory', title: 'Manage Accounts', path: '/directory', icon: 'people',
+  },
+  {
+    key: 'settings', title: 'Settings', path: '/settings', icon: 'build',
   },
 ];
 

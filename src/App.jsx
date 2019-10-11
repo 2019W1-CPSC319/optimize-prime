@@ -10,6 +10,7 @@ import CandidatePage from './components/candidate/AddAvailability';
 import OverviewPage from './components/dashboard/OverviewPage';
 import CalendarPage from './components/calendar/CalendarPage';
 import DirectoryPage from './components/directory/DirectoryPage';
+import SettingsPage from './components/settings/SettingsPage';
 
 const App = props => (
   <BrowserRouter>
@@ -19,6 +20,7 @@ const App = props => (
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
       <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
       <PrivateRoute exact path="/directory" pageProps={props} render={() => <DirectoryPage {...props} />} />
+      <PrivateRoute exact path="/settings" pageProps={props} render={() => <SettingsPage {...props} />} />
     </Switch>
   </BrowserRouter>
 );
