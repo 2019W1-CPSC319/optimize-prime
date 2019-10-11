@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class AddAvailability extends Component {
+class DirectoryPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -9,8 +9,8 @@ class AddAvailability extends Component {
   }
 
   render() {
-    return <div>CANDIDATE AVAILABILITY PAGE</div>;
+    return <div>DIRECTORY PAGE</div>;
   }
 }
 
-export default AddAvailability;
+export default DirectoryPage;
