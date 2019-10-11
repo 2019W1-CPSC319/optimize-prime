@@ -8,6 +8,7 @@ import PrivateRoute from './components/core/PrivateRoute';
 import LoginPage from './components/authentication/LoginPage';
 import CandidatePage from './components/candidate/AddAvailability';
 import OverviewPage from './components/dashboard/OverviewPage';
+import CalendarPage from './components/calendar/CalendarPage';
 import DirectoryPage from './components/directory/DirectoryPage';
 
 const App = props => (
@@ -16,6 +17,7 @@ const App = props => (
       <Route exact path="/login" render={() => <LoginPage {...props} />} />
       <Route exact path="/candidate" render={() => <CandidatePage {...props} />} />
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
+      <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
       <PrivateRoute exact path="/directory" pageProps={props} render={() => <DirectoryPage {...props} />} />
     </Switch>
   </BrowserRouter>
