@@ -27,7 +27,6 @@ const App = props => (
 
 const mapStateToProps = state => ({
   user: state.user,
-  nav: state.nav,
 });
 
 const mapDispatchToProps = dispatch => ({

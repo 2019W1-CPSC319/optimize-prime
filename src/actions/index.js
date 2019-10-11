@@ -22,10 +22,3 @@ export function loginUser(user) {
     // }
   };
 }
-
-export function updateNavigator(page) {
-  return {
-    type: 'NAVIGATE_PAGE',
-    page,
-  };
-}

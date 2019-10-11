@@ -66,19 +66,14 @@ class PrivateRoute extends React.Component {
   }
 
   onClickNavigate = (event, option) => {
-    const { pageProps, history } = this.props;
-    const { actions } = pageProps;
-    const { key, path } = option;
-
-    actions.updateNavigator(key);
+    const { history } = this.props;
+    const { path } = option;
 
     history.push(path);
   }
 
   renderSideBar = () => {
-    const { path, classes, pageProps } = this.props;
-    const { nav } = pageProps;
-    const { currentPage } = nav;
+    const { path, classes } = this.props;
 
     return (
       <Drawer
@@ -91,7 +86,8 @@ class PrivateRoute extends React.Component {
         {
           NAVIGATION_OPTIONS.map(option => {
             const { key, icon } = option;
-            const isSelected = key === currentPage;
+            const isSelected = option.path === path;
+
             return (
               <IconButton
                 key={key}
