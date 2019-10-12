@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import EventIcon from '@material-ui/icons/Event';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import PeopleIcon from '@material-ui/icons/People';
@@ -17,22 +18,33 @@ import {
   TextField,
 } from '@material-ui/core';
 
-const styles = {
+const styles = theme => ({
   title: {
     fontWeight: 'normal',
     marginLeft: '30px',
   },
-  calendar: {
+  flex: {
     display: 'flex',
+    [theme.breakpoints.down('sm')]: {
+      display: 'block',
+    },
+  },
+  calendar: {
+    // display: 'flex',
     margin: '0 10px',
     height: '700px',
+    // [theme.breakpoints.down('sm')]: {
+    //   display: 'block',
+    // },
   },
   component: {
     width: 'calc(100% / 7)',
-    textAlign: 'center',
-
     color: '#fff',
     height: 'fit-content',
+    textAlign: 'center',
+    [theme.breakpoints.down('sm')]: {
+      width: 'inherit',
+    },
   },
   label: {
     padding: '7.5px 0',
@@ -55,7 +67,7 @@ const styles = {
     display: 'flex',
   },
   header: {
-    display: 'flex',
+    // display: 'flex',
     justifyContent: 'space-between',
   },
   button: {
@@ -64,6 +76,9 @@ const styles = {
     display: 'flex',
     fontSize: '16px',
     outline: 'none',
+    [theme.breakpoints.down('sm')]: {
+      margin: 'auto',
+    },
   },
   icon: {
     margin: 'auto',
@@ -72,13 +87,13 @@ const styles = {
     marginLeft: '10px',
     marginRight: '30px',
   }
-};
+});
 
 class CalendarPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      open: false
     };
   }
 
@@ -98,14 +113,14 @@ class CalendarPage extends Component {
     const { classes } = this.props;
 
     return <div>
-      <div className={classes.header}>
+      <div className={`${classes.header} ${classes.flex}`}>
         <h1 className={classes.title}>Calendar</h1>
         <Button className={classes.button} onClick={this.handleOpen.bind(this)}>
           <EventIcon className={classes.icon}></EventIcon>
           <p>Schedule Interview</p>
         </Button>
       </div>
-      <div className={classes.calendar}>
+      <div className={`${classes.calendar} ${classes.flex}`}>
         {/* Mock data for scheduled interview blocks */}
         <div className={classes.component}>
           <p className={classes.label}>Sunday</p>
