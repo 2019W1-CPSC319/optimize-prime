@@ -11,11 +11,11 @@ const styles = {
     color: '#ffffff',
     display: 'flex',
     padding: '5px 10px',
-    margin: 'auto',
+    margin: '10px auto',
   },
   company: {
     display: 'block',
-    margin: 'auto',
+    margin: '50px auto',
     width: '300px',
   },
   divider: {
@@ -36,6 +36,14 @@ const styles = {
   },
   text: {
     margin: 'auto 50px',
+  },
+  help: {
+    textAlign: 'center',
+    fontSize: '12px'
+  },
+  highlight: {
+    color: '#483d8b',
+    marginLeft: '10px',
   },
 };
 
@@ -62,6 +70,7 @@ class LoginPage extends Component {
           <div className={classes.divider}></div>
           <p className={classes.text}>Sign in with Microsoft Account</p>
         </button>
+        {/* <p className={classes.help}>Trouble signing in?<span className={classes.highlight}>Recover account</span></p> */}
       </div>
     </div>;
   }
