@@ -15,7 +15,7 @@ const styles = {
   },
   company: {
     display: 'block',
-    margin: '50px auto',
+    margin: '200px auto 50px',
     width: '300px',
   },
   divider: {
@@ -45,6 +45,17 @@ const styles = {
     color: '#483d8b',
     marginLeft: '10px',
   },
+  footer: {
+    color: '#ffffff',
+    backgroundColor: '#333',
+    position: 'absolute',
+    bottom: '0',
+    width: '100%',
+    padding: '10px 0',
+  },
+  license: {
+    padding: '0 25px',
+  }
 };
 
 class LoginPage extends Component {
@@ -71,6 +82,7 @@ class LoginPage extends Component {
           <p className={classes.text}>Sign in with Microsoft Account</p>
         </button>
         {/* <p className={classes.help}>Trouble signing in?<span className={classes.highlight}>Recover account</span></p> */}
+        <div className={classes.footer}><p className={classes.license}>© 2019 ACL Services Ltd. dba Galvanize. All Rights Reserved.</p></div>
       </div>
     </div>;
   }
