@@ -8,7 +8,7 @@ import {
   IconButton,
 } from '@material-ui/core';
 
-import logo from '../../images/logo.png';
+import logo from '../../images/galvanize.png';
 
 // Component constants
 const NAVIGATION_OPTIONS = [
@@ -27,13 +27,13 @@ const NAVIGATION_OPTIONS = [
 ];
 
 // Styles
-const SIDEBAR_WIDTH = 60;
+const SIDEBAR_WIDTH = 88;
 
 const styles = {
   sideBar: {
     position: 'fixed',
-    padding: '5px',
-    backgroundColor: '#f0a017',
+    padding: '20px',
+    backgroundColor: '#280e3a',
   },
   pageContent: {
     width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
@@ -41,12 +41,19 @@ const styles = {
   },
   logo: {
     width: '48px',
+    margin: '0 0 15px',
   },
   selectedIconButton: {
-    color: '#765ea8',
+    color: '#280e3a',
+    backgroundColor: '#fff',
+    margin: '15px 0',
+    '&:hover': {
+      backgroundColor: "#fff",
+    },
   },
   iconButton: {
     color: '#ffffff',
+    margin: '15px 0',
   },
 };
 
