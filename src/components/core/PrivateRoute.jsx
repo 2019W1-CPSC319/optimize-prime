@@ -3,6 +3,7 @@ import { Route } from 'react-router-dom';
 import { Redirect, withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import {
+  Badge,
   Drawer,
   Icon,
   IconButton,
@@ -101,7 +102,9 @@ class PrivateRoute extends React.Component {
                 onClick={(e) => this.onClickNavigate(e, option)}
                 className={isSelected ? classes.selectedIconButton : classes.iconButton}
               >
-                <Icon>{icon}</Icon>
+                <Badge className={classes.margin} variant="dot" color="secondary">
+                  <Icon>{icon}</Icon>
+                </Badge>
               </IconButton>
             );
           })

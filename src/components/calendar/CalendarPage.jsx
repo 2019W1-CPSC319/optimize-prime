@@ -1,22 +1,21 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import EventIcon from '@material-ui/icons/Event';
+import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
+import PeopleIcon from '@material-ui/icons/People';
+import PersonIcon from '@material-ui/icons/Person';
 import {
+  Avatar,
   Button,
-  TextField,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
+  InputAdornment,
+  TextField,
 } from '@material-ui/core';
-// import Button from '@material-ui/core/Button';
-// import TextField from '@material-ui/core/TextField';
-// import Dialog from '@material-ui/core/Dialog';
-// import DialogActions from '@material-ui/core/DialogActions';
-// import DialogContent from '@material-ui/core/DialogContent';
-// import DialogContentText from '@material-ui/core/DialogContentText';
-// import DialogTitle from '@material-ui/core/DialogTitle';
 
 const styles = {
   title: {
@@ -73,9 +72,6 @@ const styles = {
     marginLeft: '10px',
     marginRight: '30px',
   }
-  // galvanize: {
-  //   backgroundColor: '#280e3a',
-  // },
 };
 
 class CalendarPage extends Component {
@@ -94,6 +90,10 @@ class CalendarPage extends Component {
     this.setState({ open: false });
   }
 
+  handleDelete() {
+
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -102,10 +102,11 @@ class CalendarPage extends Component {
         <h1 className={classes.title}>Calendar</h1>
         <Button className={classes.button} onClick={this.handleOpen.bind(this)}>
           <EventIcon className={classes.icon}></EventIcon>
-          <p className={classes.iconLabel}>Schedule Interview</p>
+          <p>Schedule Interview</p>
         </Button>
       </div>
       <div className={classes.calendar}>
+        {/* Mock data for scheduled interview blocks */}
         <div className={classes.component}>
           <p className={classes.label}>Sunday</p>
           <div className={classes.event}>
@@ -124,20 +125,79 @@ class CalendarPage extends Component {
         <div className={classes.component}><p className={classes.label}>Friday</p></div>
         <div className={classes.component}><p className={classes.label}>Saturday</p></div>
       </div>
+      {/* Mock data for scheduling an interview */}
       <Dialog open={this.state.open} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+        <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
+            To schedule a new interview, provide a candidate and a list of interviewers to request a list of options.
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
-            id="name"
-            label="Email Address"
+            id="candidate"
+            label="Candidate"
             type="email"
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonIcon />
+                </InputAdornment>
+              ),
+            }}
             fullWidth
+          />
+          <TextField
+            // autoFocus
+            margin="dense"
+            id="interviewers"
+            label="Interviewer(s)"
+            type="text"
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PeopleIcon />
+                </InputAdornment>
+              ),
+            }}
+            fullWidth
+          />
+          <span style={{ color: 'rgba(0, 0, 0, 0.54)', margin: 'auto 10px', fontSize: 'small' }}>CC to:</span>
+          <Chip
+            avatar={<Avatar style={{ backgroundColor: '#fc036f', color: '#fff' }}>AW</Avatar>}
+            label="Alice Wang"
+            onDelete={this.handleDelete}
+            deleteIcon={<HighlightOffRoundedIcon />}
+            style={{ backgroundColor: '#fff' }}
+          />
+          <Chip
+            avatar={<Avatar style={{ backgroundColor: '#033dfc', color: '#fff' }}>DK</Avatar>}
+            label="David Kennedy"
+            onDelete={this.handleDelete}
+            deleteIcon={<HighlightOffRoundedIcon />}
+            style={{ backgroundColor: '#fff' }}
+          />
+          <Chip
+            avatar={<Avatar style={{ backgroundColor: '#fcba03', color: '#fff' }}>JS</Avatar>}
+            label="Jason Song"
+            onDelete={this.handleDelete}
+            deleteIcon={<HighlightOffRoundedIcon />}
+            style={{ backgroundColor: '#fff' }}
+          />
+          <TextField
+            id="filled-full-width"
+            label="Additional comments"
+            // style={{ margin: 8 }}
+            placeholder="Enter additional comments"
+            // helperText="Full width!"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         </DialogContent>
         <DialogActions>
