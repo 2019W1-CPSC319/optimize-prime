@@ -70,14 +70,14 @@ class LoginPage extends Component {
     const { classes } = this.props;
     return <div>
       <div>
-        <img className={classes.company} src={company}></img>
+        <img className={classes.company} src={company} alt={'Galvanize Logo'}></img>
         <button className={`${classes.button} ${classes.galvanize}`}>
-          <img src={galvanize} className={classes.logo}></img>
+          <img src={galvanize} className={classes.logo} alt={'Galvanize Logo'}></img>
           <div className={classes.divider}></div>
           <p className={classes.text}>Sign in with Galvanize Account</p>
         </button>
         <button className={`${classes.button} ${classes.microsoft}`}>
-          <img src={microsoft} className={classes.logo}></img>
+          <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
           <div className={classes.divider}></div>
           <p className={classes.text}>Sign in with Microsoft Account</p>
         </button>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import EventIcon from '@material-ui/icons/Event';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import PeopleIcon from '@material-ui/icons/People';
@@ -15,6 +14,7 @@ import {
   DialogContentText,
   DialogTitle,
   InputAdornment,
+  Paper,
   TextField,
 } from '@material-ui/core';
 
@@ -30,12 +30,8 @@ const styles = theme => ({
     },
   },
   calendar: {
-    // display: 'flex',
-    margin: '0 10px',
+    // margin: '0 10px',
     height: '700px',
-    // [theme.breakpoints.down('sm')]: {
-    //   display: 'block',
-    // },
   },
   component: {
     width: 'calc(100% / 7)',
@@ -49,6 +45,7 @@ const styles = theme => ({
   label: {
     padding: '7.5px 0',
     backgroundColor: '#280e3a',
+    margin: '0',
   },
   bar: {
     width: '5px',
@@ -67,7 +64,6 @@ const styles = theme => ({
     display: 'flex',
   },
   header: {
-    // display: 'flex',
     justifyContent: 'space-between',
   },
   button: {
@@ -111,7 +107,6 @@ class CalendarPage extends Component {
 
   render() {
     const { classes } = this.props;
-
     return <div>
       <div className={`${classes.header} ${classes.flex}`}>
         <h1 className={classes.title}>Calendar</h1>
@@ -120,26 +115,28 @@ class CalendarPage extends Component {
           <p>Schedule Interview</p>
         </Button>
       </div>
-      <div className={`${classes.calendar} ${classes.flex}`}>
-        {/* Mock data for scheduled interview blocks */}
-        <div className={classes.component}>
-          <p className={classes.label}>Sunday</p>
-          <div className={classes.event}>
-            <div className={classes.bar}></div>
-            <div className={classes.detail}>
-              <p>2:00 PM - 2:45 PM</p>
-              <p>John Doe</p>
-              <p>UI/UX Team</p>
+      <Paper style={{ margin: '17px 10px auto' }} square>
+        <div className={`${classes.calendar} ${classes.flex}`}>
+          {/* Mock data for scheduled interview blocks */}
+          <div className={classes.component}>
+            <p className={classes.label}>Sunday</p>
+            <div className={classes.event}>
+              <div className={classes.bar}></div>
+              <div className={classes.detail}>
+                <p>2:00 PM - 2:45 PM</p>
+                <p>John Doe</p>
+                <p>UI/UX Team</p>
+              </div>
             </div>
           </div>
+          <div className={classes.component}><p className={classes.label}>Monday</p></div>
+          <div className={classes.component}><p className={classes.label}>Tuesday</p></div>
+          <div className={classes.component}><p className={classes.label}>Wednesday</p></div>
+          <div className={classes.component}><p className={classes.label}>Thursday</p></div>
+          <div className={classes.component}><p className={classes.label}>Friday</p></div>
+          <div className={classes.component}><p className={classes.label}>Saturday</p></div>
         </div>
-        <div className={classes.component}><p className={classes.label}>Monday</p></div>
-        <div className={classes.component}><p className={classes.label}>Tuesday</p></div>
-        <div className={classes.component}><p className={classes.label}>Wednesday</p></div>
-        <div className={classes.component}><p className={classes.label}>Thursday</p></div>
-        <div className={classes.component}><p className={classes.label}>Friday</p></div>
-        <div className={classes.component}><p className={classes.label}>Saturday</p></div>
-      </div>
+      </Paper>
       {/* Mock data for scheduling an interview */}
       <Dialog open={this.state.open} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>

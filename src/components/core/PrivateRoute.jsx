@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { Redirect, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Badge,
@@ -13,6 +13,9 @@ import logo from '../../images/galvanize.png';
 
 // Component constants
 const NAVIGATION_OPTIONS = [
+  {
+    key: 'notifications', title: 'Notifications', path: '/', icon: 'notifications',
+  },
   {
     key: 'overview', title: 'Overview', path: '/', icon: 'home',
   },
@@ -94,7 +97,7 @@ class PrivateRoute extends React.Component {
         {
           NAVIGATION_OPTIONS.map(option => {
             const { key, icon } = option;
-            const isSelected = option.path === path;
+            const isSelected = option.path === path && key !== 'notifications';
 
             return (
               <IconButton
@@ -102,7 +105,7 @@ class PrivateRoute extends React.Component {
                 onClick={(e) => this.onClickNavigate(e, option)}
                 className={isSelected ? classes.selectedIconButton : classes.iconButton}
               >
-                <Badge className={classes.margin} variant="dot" color="secondary">
+                <Badge className={classes.margin} variant="dot" badgeContent={key === 'notifications' ? 1 : 0} color="secondary">
                   <Icon>{icon}</Icon>
                 </Badge>
               </IconButton>
