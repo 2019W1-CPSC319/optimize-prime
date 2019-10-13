@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import EventIcon from '@material-ui/icons/Event';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
@@ -7,20 +8,28 @@ import PersonIcon from '@material-ui/icons/Person';
 import {
   Avatar,
   Button,
+  ButtonGroup,
   Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControl,
+  Grid,
+  Input,
   InputAdornment,
+  InputLabel,
   Paper,
+  Select,
+  Tab,
+  Tabs,
   TextField,
 } from '@material-ui/core';
 
 const styles = theme => ({
   title: {
-    fontWeight: 'normal',
+    fontDuration: 'normal',
     marginLeft: '30px',
   },
   flex: {
@@ -82,6 +91,10 @@ const styles = theme => ({
   iconLabel: {
     marginLeft: '10px',
     marginRight: '30px',
+  },
+  duration: {
+    padding: '5px 30px',
+    borderColor: '#765ea8',
   }
 });
 
@@ -89,7 +102,9 @@ class CalendarPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false
+      open: false,
+      background: ['#280e3a', '#fff', '#fff', '#fff'],
+      color: ['#fff', '#000', '#000', '#000']
     };
   }
 
@@ -105,10 +120,31 @@ class CalendarPage extends Component {
 
   }
 
+  handleChange() {
+
+  }
+
+  handleSelect(selected) {
+    let background = this.state.background;
+    let color = this.state.color;
+
+    for (let i = 0; i < 4; i++)
+      if (i === selected) {
+        background[i] = '#280e3a';
+        color[i] = '#fff';
+      }
+      else {
+        background[i] = '#fff';
+        color[i] = '#280e3a';
+      }
+
+    this.setState({ background: background });
+  }
+
   render() {
     const { classes } = this.props;
     return <div>
-      <div className={`${classes.header} ${classes.flex}`}>
+      <div className={clsx(classes.header, classes.flex)}>
         <h1 className={classes.title}>Calendar</h1>
         <Button className={classes.button} onClick={this.handleOpen.bind(this)}>
           <EventIcon className={classes.icon}></EventIcon>
@@ -116,7 +152,7 @@ class CalendarPage extends Component {
         </Button>
       </div>
       <Paper style={{ margin: '17px 10px auto' }} square>
-        <div className={`${classes.calendar} ${classes.flex}`}>
+        <div className={clsx(classes.calendar, classes.flex)}>
           {/* Mock data for scheduled interview blocks */}
           <div className={classes.component}>
             <p className={classes.label}>Sunday</p>
@@ -138,7 +174,7 @@ class CalendarPage extends Component {
         </div>
       </Paper>
       {/* Mock data for scheduling an interview */}
-      <Dialog open={this.state.open} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
+      <Dialog open={true} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -161,10 +197,9 @@ class CalendarPage extends Component {
             fullWidth
           />
           <TextField
-            // autoFocus
             margin="dense"
-            id="interviewers"
-            label="Interviewer(s)"
+            id="required-interviewers"
+            label="Required Interviewer(s)"
             type="text"
             variant="outlined"
             InputProps={{
@@ -176,28 +211,85 @@ class CalendarPage extends Component {
             }}
             fullWidth
           />
-          <span style={{ color: 'rgba(0, 0, 0, 0.54)', margin: 'auto 10px', fontSize: 'small' }}>CC to:</span>
-          <Chip
-            avatar={<Avatar style={{ backgroundColor: '#fc036f', color: '#fff' }}>AW</Avatar>}
-            label="Alice Wang"
-            onDelete={this.handleDelete}
-            deleteIcon={<HighlightOffRoundedIcon />}
-            style={{ backgroundColor: '#fff' }}
+          <TextField
+            margin="dense"
+            id="optional-interviewers"
+            label="Optional Interviewer(s)"
+            type="text"
+            variant="outlined"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PeopleIcon />
+                </InputAdornment>
+              ),
+            }}
+            fullWidth
           />
-          <Chip
-            avatar={<Avatar style={{ backgroundColor: '#033dfc', color: '#fff' }}>DK</Avatar>}
-            label="David Kennedy"
-            onDelete={this.handleDelete}
-            deleteIcon={<HighlightOffRoundedIcon />}
-            style={{ backgroundColor: '#fff' }}
-          />
-          <Chip
-            avatar={<Avatar style={{ backgroundColor: '#fcba03', color: '#fff' }}>JS</Avatar>}
-            label="Jason Song"
-            onDelete={this.handleDelete}
-            deleteIcon={<HighlightOffRoundedIcon />}
-            style={{ backgroundColor: '#fff' }}
-          />
+          <div style={{ margin: '5px 5px 10px' }}>
+            <span style={{ color: 'rgba(0, 0, 0, 0.54)', margin: 'auto 10px', fontSize: 'small' }}>CC to:</span>
+            <Chip
+              avatar={<Avatar style={{ backgroundColor: '#fc036f', color: '#fff' }}>AW</Avatar>}
+              label="Alice Wang"
+              onDelete={this.handleDelete}
+              deleteIcon={<HighlightOffRoundedIcon />}
+              style={{ backgroundColor: '#fff' }}
+            />
+            <Chip
+              avatar={<Avatar style={{ backgroundColor: '#033dfc', color: '#fff' }}>DK</Avatar>}
+              label="David Kennedy"
+              onDelete={this.handleDelete}
+              deleteIcon={<HighlightOffRoundedIcon />}
+              style={{ backgroundColor: '#fff' }}
+            />
+            <Chip
+              avatar={<Avatar style={{ backgroundColor: '#fcba03', color: '#fff' }}>JS</Avatar>}
+              label="Jason Song"
+              onDelete={this.handleDelete}
+              deleteIcon={<HighlightOffRoundedIcon />}
+              style={{ backgroundColor: '#fff' }}
+            />
+          </div>
+          <Grid item>
+            <ButtonGroup fullWidth size="small" aria-label="small outlined button group">
+              <Button
+                className={classes.duration}
+                style={{
+                  background: this.state.background[0],
+                  color: this.state.color[0]
+                }}
+                onClick={this.handleSelect.bind(this, 0)}>
+                30 min
+              </Button>
+              <Button
+                className={classes.duration}
+                style={{
+                  background: this.state.background[1],
+                  color: this.state.color[1]
+                }}
+                onClick={this.handleSelect.bind(this, 1)}>
+                45 min
+              </Button>
+              <Button
+                className={classes.duration}
+                style={{
+                  background: this.state.background[2],
+                  color: this.state.color[2]
+                }}
+                onClick={this.handleSelect.bind(this, 2)}>
+                60 min
+              </Button>
+              <Button
+                className={classes.duration}
+                style={{
+                  background: this.state.background[3],
+                  color: this.state.color[3]
+                }}
+                onClick={this.handleSelect.bind(this, 3)}>
+                90 min
+              </Button>
+            </ButtonGroup>
+          </Grid>
           <TextField
             id="filled-full-width"
             label="Additional comments"
