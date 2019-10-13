@@ -15,15 +15,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControl,
   Grid,
-  Input,
   InputAdornment,
-  InputLabel,
   Paper,
-  Select,
-  Tab,
-  Tabs,
   TextField,
 } from '@material-ui/core';
 
@@ -125,8 +119,7 @@ class CalendarPage extends Component {
   }
 
   handleSelect(selected) {
-    let background = this.state.background;
-    let color = this.state.color;
+    const { background, color } = this.state;
 
     for (let i = 0; i < 4; i++)
       if (i === selected) {
@@ -293,9 +286,7 @@ class CalendarPage extends Component {
           <TextField
             id="filled-full-width"
             label="Additional comments"
-            // style={{ margin: 8 }}
             placeholder="Enter additional comments"
-            // helperText="Full width!"
             fullWidth
             margin="normal"
             variant="outlined"
