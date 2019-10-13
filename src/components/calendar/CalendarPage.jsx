@@ -174,7 +174,7 @@ class CalendarPage extends Component {
         </div>
       </Paper>
       {/* Mock data for scheduling an interview */}
-      <Dialog open={true} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
+      <Dialog open={this.state.open} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
         <DialogContent>
           <DialogContentText>
