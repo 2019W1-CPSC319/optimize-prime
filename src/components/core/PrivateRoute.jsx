@@ -1,17 +1,21 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { Redirect, withRouter } from 'react-router';
+import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import {
+  Badge,
   Drawer,
   Icon,
   IconButton,
 } from '@material-ui/core';
 
-import logo from '../../images/logo.png';
+import logo from '../../images/galvanize.png';
 
 // Component constants
 const NAVIGATION_OPTIONS = [
+  {
+    key: 'notifications', title: 'Notifications', path: '/', icon: 'notifications',
+  },
   {
     key: 'overview', title: 'Overview', path: '/', icon: 'home',
   },
@@ -27,13 +31,13 @@ const NAVIGATION_OPTIONS = [
 ];
 
 // Styles
-const SIDEBAR_WIDTH = 60;
+const SIDEBAR_WIDTH = 88;
 
 const styles = {
   sideBar: {
     position: 'fixed',
-    padding: '5px',
-    backgroundColor: '#f0a017',
+    padding: '20px',
+    backgroundColor: '#280e3a',
   },
   pageContent: {
     width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
@@ -41,12 +45,19 @@ const styles = {
   },
   logo: {
     width: '48px',
+    margin: '0 0 15px',
   },
   selectedIconButton: {
-    color: '#765ea8',
+    color: '#280e3a',
+    backgroundColor: '#fff',
+    margin: '15px 0',
+    '&:hover': {
+      backgroundColor: "#fff",
+    },
   },
   iconButton: {
     color: '#ffffff',
+    margin: '15px 0',
   },
 };
 
@@ -86,7 +97,7 @@ class PrivateRoute extends React.Component {
         {
           NAVIGATION_OPTIONS.map(option => {
             const { key, icon } = option;
-            const isSelected = option.path === path;
+            const isSelected = option.path === path && key !== 'notifications';
 
             return (
               <IconButton
@@ -94,7 +105,9 @@ class PrivateRoute extends React.Component {
                 onClick={(e) => this.onClickNavigate(e, option)}
                 className={isSelected ? classes.selectedIconButton : classes.iconButton}
               >
-                <Icon>{icon}</Icon>
+                <Badge className={classes.margin} variant="dot" badgeContent={key === 'notifications' ? 1 : 0} color="secondary">
+                  <Icon>{icon}</Icon>
+                </Badge>
               </IconButton>
             );
           })
