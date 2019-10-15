@@ -85,7 +85,7 @@ class DirectoryPage extends Component {
     const candidates = [
       createData('Chris Evans', 'University of British Columbia', 'c.evans@gmail.com', '********'),
       createData('Robert Downey Jr.', 'Simon Fraser University', 'r.downey@gmail.com', '********'),
-      createData('Scarlet Johansen', 'British Columbia Institue of Technology', 's.johansen@gmail.com', '********'),
+      createData('Scarlet Johansson', 'British Columbia Institue of Technology', 's.johansen@gmail.com', '********'),
       createData('Tom Holland', 'University of Waterloo', 't.holland@gmail.com', '********'),
       createData('Benedict Cumberbatch', 'University of Victoria', 'b.cumberbatch@gmail.com', '********'),
     ];

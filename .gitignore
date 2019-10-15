@@ -21,3 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+.cache
+dist
+log
+server/src/config/tokens.js
+.env
