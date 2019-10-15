@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
-import company from '../../images/galvanize_long.jpg';
+import company from '../../images/galvanize_long.png';
 import galvanize from '../../images/galvanize.png';
 import microsoft from '../../images/microsoft.png';
 
