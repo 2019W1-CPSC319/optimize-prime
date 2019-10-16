@@ -12,3 +12,11 @@
 .submit-btn-container {
     margin: 30px 30px;
 }
+
+.date-picker {
+    min-width: 120px !important;
+}
+
+.selector {
+    min-width: 120px;
+}

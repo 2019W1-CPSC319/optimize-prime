@@ -105,6 +105,13 @@ class AvailabilityTable extends Component {
   createRow(id, date, from, to) {
       return {id, date, from, to};
   }
+  
+  handleSelectorChange = event => {
+    alert(event.target.value);
+    alert(event.target.name);
+    console.log(event.target);
+    event.target.name = "1pm";
+  }
 
   render() {
       return (
@@ -122,8 +129,8 @@ class AvailabilityTable extends Component {
                       {this.state.rows.map(row => (
                         <TableRow>
                           <TableCell>
-                          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                           <Grid container justify="space-around">
+                          <MuiPickersUtilsProvider utils={DateFnsUtils} className="date-picker">
+                           {/* <Grid container > */}
                                <KeyboardDatePicker
                                    disableToolbar
                                    variant="inline"
@@ -138,21 +145,21 @@ class AvailabilityTable extends Component {
                                        'aria-label': 'change date',
                                    }}
                                />
-                           </Grid>
+                           {/* </Grid> */}
                        </MuiPickersUtilsProvider>
                           </TableCell>
                           <TableCell>
-                            <Select>
+                            <Select className="selector" onChange={this.handleSelectorChange}inputProps={{id: 'start', name: "Start"}}>
                               {times}
                             </Select>
                           </TableCell>
                           <TableCell>
-                            <Select>
+                            <Select className="selector" onChange={this.handleSelectorChange} inputProps={{id: 'end', name: "End"}}>
                               {times}
                             </Select>
                           </TableCell>
                           <TableCell>
-                              <Button onClick={() => {this.handleRemoveRow(row.id)}}>
+                              <Button variant="outlined" color="primary" onClick={() => {this.handleRemoveRow(row.id)}}>
                                   Remove
                               </Button>
                           </TableCell>
