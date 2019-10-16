@@ -17,21 +17,20 @@ class AvailabilityTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      rows: [this.createRow(1, 2, 3)]
     };
+  }
+
+  handleAddRow = () => {
+    this.setState((prevState, props) => {
+      const row = this.createRow(0, 0, 0);
+      return {rows: [...prevState.rows, row]};
+    })
   }
 
   createRow(date, from, to) {
       return {date, from, to};
   }
-
-  addRow() {
-      
-  }
-
-  rows = [
-    this.createRow(1, 2, 3)
-  ]
 
   render() {
       return (
@@ -46,7 +45,7 @@ class AvailabilityTable extends Component {
                       </TableRow>
                   </TableHead>
                   <TableBody>
-                      {this.rows.map(row => (
+                      {this.state.rows.map(row => (
                         <TableRow>
                           <TableCell>{row.date}</TableCell>
                           <TableCell>{row.from}</TableCell>
@@ -60,7 +59,7 @@ class AvailabilityTable extends Component {
                       ))}
                   </TableBody>
               </Table>
-              <Fab aria-label="add" size="small" className="fab-add">
+              <Fab aria-label="add" size="small" onClick={this.handleAddRow} className="fab-add">
                   <AddIcon />
               </Fab>
             </div>
