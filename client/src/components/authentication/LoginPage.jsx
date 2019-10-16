@@ -60,15 +60,16 @@ class LoginPage extends Component {
     return <div>
       <div>
         <img className={classes.company} src={company} alt={'Galvanize Logo'}></img>
+        <button className={`${classes.button} ${classes.microsoft}`}>
+          <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
+          <div className={classes.divider}></div>
+          <p className={classes.text}>Sign in with Microsoft Account</p>
+        </button>
+        <Typography align="center">or</Typography>
         <button className={`${classes.button} ${classes.galvanize}`}>
           <img src={galvanize} className={classes.logo} alt={'Galvanize Logo'}></img>
           <div className={classes.divider}></div>
           <p className={classes.text}>Sign in with Galvanize Account</p>
-        </button>
-        <button onClick={() => window.location.assign('/auth/signin')} className={`${classes.button} ${classes.microsoft}`}>
-          <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
-          <div className={classes.divider}></div>
-          <p className={classes.text}>Sign in with Microsoft Account</p>
         </button>
       </div>
     </div>;
