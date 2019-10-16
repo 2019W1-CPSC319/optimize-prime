@@ -1,10 +1,10 @@
-import axios from "axios"
+import axios from 'axios';
 
 // helper functions to keep the data types in the components consistent
 export const getState = (globalState) => globalState.user;
-export const getUserProfile = state => {
-  console.log("hfhfh")
-  return getState(state).profile || null
+export const getUserProfile = (state) => {
+  console.log('hfhfh');
+  return getState(state).profile || null;
 };
 
 export const isLoading = (state) => !!getState(state).loading;
@@ -38,40 +38,40 @@ export function loginUser(user) {
 function initRequest() {
   return {
     type: 'INIT_REQUEST',
-    payload: true
-  }
+    payload: true,
+  };
 }
 
 function fetchUserSuccess(userProfile) {
   return {
     type: 'FETCH_USER_SUCCESS',
-    payload: userProfile
-  }
+    payload: userProfile,
+  };
 }
 
 function fetchUserFailure(error) {
   return {
-    type: "FETCH_USER_FAILURE",
-    payload: error
+    type: 'FETCH_USER_FAILURE',
+    payload: error,
   };
-};
+}
 
 
-export const fetchUser = () => async dispatch => {
-  try{
-    dispatch(initRequest())
+export const fetchUser = () => async (dispatch) => {
+  try {
+    dispatch(initRequest());
     const response = await axios.get('/user/profile');
     const profile = response.data;
 
     return dispatch({
       type: 'FETCH_USER_SUCCESS',
-      payload: profile
+      payload: profile,
     });
-  } catch(error) {
-    console.log(error)
+  } catch (error) {
+    console.log(error);
     return dispatch({
       type: 'FETCH_USER_FAILURE',
-      payload: error
+      payload: error,
     });
-  };
+  }
 };

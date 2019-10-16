@@ -22,6 +22,7 @@ const App = props => (
       <PrivateRoute exact path="/settings" pageProps={props} render={() => <SettingsPage {...props} />} />
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
     </Switch>
+    
   </BrowserRouter>
 );
 

@@ -150,7 +150,7 @@ class PrivateRoute extends React.Component {
     //     <Redirect to="/login" />
     //   );
     // }
-    if(pageProps.user.loadig || !pageProps.user.hasTriedLogin) {
+    if(pageProps.user.loading || !pageProps.user.hasTriedLogin) {
       return <div>Loading</div>;
     };
     if(!pageProps.user.profile) {

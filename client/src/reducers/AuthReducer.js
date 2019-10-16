@@ -4,26 +4,26 @@ const AuthReducer = (state = {}, action) => {
     case 'INIT_REQUEST':
       return {
         ...state,
-        loading: action.payload
-      }
+        loading: action.payload,
+      };
     case 'FETCH_USER_PROFILE':
       return {
         ...state,
-        profile: action.payload
-      }
+        profile: action.payload,
+      };
     case 'FETCH_USER_SUCCESS':
       return {
         ...state,
         profile: action.payload,
         loading: false,
-        hasTriedLogin: true
-      }
+        hasTriedLogin: true,
+      };
     case 'FETCH_USER_FAILURE':
       return {
         ...state,
         loading: false,
-        hasTriedLogin: true
-      }
+        hasTriedLogin: true,
+      };
     default:
       return state;
   }

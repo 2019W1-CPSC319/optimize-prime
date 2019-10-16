@@ -4,9 +4,10 @@ const parseError = require('./utils/parseError');
 const setupAuthentication = require('./init/setupAuthentication');
 const setupRoutes = require('./init/setupRoutes');
 const setupServer = require('./init/setupServer');
+const setupLogger = require('./init/setupLogger');
+//const setupMySql = require('./init/setupMySql')
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
-const setupLogger = require('./init/setupLogger');
 
 
 const start = async () => {
@@ -26,6 +27,7 @@ const start = async () => {
     app.set('etag', true);
 
     await setupAuthentication(app, config.auth, log);
+
     app.use('/auth', authRouter);
     app.use('/user', userRouter);
     log.info('Setting up user API');
