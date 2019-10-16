@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
-import * as user from "../../actions/userActions";
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import * as user from "../../actions/userActions";
+
+const styles = {
+  title: {
+    fontWeight: 'normal',
+    marginLeft: '30px',
+  },
+}
 
 class OverviewPage extends Component {
   constructor(props) {
@@ -12,19 +20,19 @@ class OverviewPage extends Component {
   }
 
   render() {
-    const {userProfile} = this.props
+    const { classes, ...userProfile } = this.props
     return (
       <div>
-        {userProfile && <h2>Welcome, {userProfile.givenName}</h2>}
+        {userProfile && <h1 className={classes.title}>Welcome, {userProfile.givenName}</h1>}
       </div>
     );
   };
 };
 
-export default connect((state) => ({
+export default withStyles(styles)(connect((state) => ({
   userProfile: user.getUserProfile(state),
   loading: user.isLoading(state),
   hasTriedLogin: user.hasTriedLogin(state)
 }), (dispatch) => ({
   fetchUserProfile: () => dispatch(user.fetchUser())
-}))(OverviewPage);
+}))(OverviewPage));

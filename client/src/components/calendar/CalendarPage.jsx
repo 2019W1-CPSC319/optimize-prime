@@ -19,11 +19,12 @@ import {
   InputAdornment,
   Paper,
   TextField,
+  Typography,
 } from '@material-ui/core';
 
 const styles = theme => ({
   title: {
-    fontDuration: 'normal',
+    fontWeight: 'normal',
     marginLeft: '30px',
   },
   flex: {
