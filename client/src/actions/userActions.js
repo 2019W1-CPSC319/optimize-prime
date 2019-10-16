@@ -3,7 +3,6 @@ import axios from 'axios';
 // helper functions to keep the data types in the components consistent
 export const getState = (globalState) => globalState.user;
 export const getUserProfile = (state) => {
-  console.log('hfhfh');
   return getState(state).profile || null;
 };
 
