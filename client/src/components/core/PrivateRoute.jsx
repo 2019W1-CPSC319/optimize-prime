@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import {
@@ -67,6 +67,14 @@ class PrivateRoute extends React.Component {
     this.state = {
 
     };
+  }
+
+  componentDidMount() {
+    const { pageProps } = this.props
+
+    if(!pageProps.user.profile) {
+      pageProps.actions.fetchUser();
+    }
   }
 
   onClickSignout = () => {
@@ -137,11 +145,19 @@ class PrivateRoute extends React.Component {
     const { classes, render, pageProps, ...routeProps } = this.props;
 
     // TODO: Uncomment when login is properly set up
-    // if (!pageProps.user) {
+    // if (!pageProps.user.profile && !pageProps.user.loading) {
     //   return (
     //     <Redirect to="/login" />
     //   );
     // }
+    if(pageProps.user.loadig || !pageProps.user.hasTriedLogin) {
+      return <div>Loading</div>;
+    };
+    if(!pageProps.user.profile) {
+      return(
+        <Redirect to='/login' />
+      );
+    };
 
     return (
       <Route

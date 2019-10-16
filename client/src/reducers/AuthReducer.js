@@ -16,6 +16,13 @@ const AuthReducer = (state = {}, action) => {
         ...state,
         profile: action.payload,
         loading: false,
+        hasTriedLogin: true
+      }
+    case 'FETCH_USER_FAILURE':
+      return {
+        ...state,
+        loading: false,
+        hasTriedLogin: true
       }
     default:
       return state;

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import * as user from "../../actions/userActions";
 
 class OverviewPage extends Component {
@@ -10,31 +11,20 @@ class OverviewPage extends Component {
     };
   }
 
-  componentDidMount() {
-    if(!this.props.user) {
-      console.log("heh")
-      this.props.fetchUserProfile();
-    }
-  }
-
   render() {
-
-    const {user, loading } = this.props
-
-    if(this.props.loading) {
-      return <div>Loading profile</div>;
-    }
+    const {userProfile} = this.props
     return (
       <div>
-        {this.props.user && <h2>Welcome, {user.givenName}</h2>}
+        {userProfile && <h2>Welcome, {userProfile.givenName}</h2>}
       </div>
     );
   };
 };
 
 export default connect((state) => ({
-  user: user.getUserProfile(state),
-  loading: user.isLoading(state)
+  userProfile: user.getUserProfile(state),
+  loading: user.isLoading(state),
+  hasTriedLogin: user.hasTriedLogin(state)
 }), (dispatch) => ({
   fetchUserProfile: () => dispatch(user.fetchUser())
 }))(OverviewPage);

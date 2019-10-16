@@ -1,14 +1,14 @@
 import axios from "axios"
 
 // helper functions to keep the data types in the components consistent
-export const getState = (globalState) => globalState.user
+export const getState = (globalState) => globalState.user;
 export const getUserProfile = state => {
-  console.log(getState(state).profile)
+  console.log("hfhfh")
   return getState(state).profile || null
-}
+};
 
-export const isLoading = (state) => !!getState(state).loading
-
+export const isLoading = (state) => !!getState(state).loading;
+export const hasTriedLogin = (state) => !!getState(state).hasTriedLogin;
 
 function loginUserSuccess(user) {
   return {
@@ -68,6 +68,7 @@ export const fetchUser = () => async dispatch => {
       payload: profile
     });
   } catch(error) {
+    console.log(error)
     return dispatch({
       type: 'FETCH_USER_FAILURE',
       payload: error

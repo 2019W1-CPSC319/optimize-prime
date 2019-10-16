@@ -76,7 +76,7 @@ class LoginPage extends Component {
           <div className={classes.divider}></div>
           <p className={classes.text}>Sign in with Galvanize Account</p>
         </button>
-        <button className={`${classes.button} ${classes.microsoft}`}>
+        <button onClick={() => window.location.assign('/auth/signin')} className={`${classes.button} ${classes.microsoft}`}>
           <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
           <div className={classes.divider}></div>
           <p className={classes.text}>Sign in with Microsoft Account</p>

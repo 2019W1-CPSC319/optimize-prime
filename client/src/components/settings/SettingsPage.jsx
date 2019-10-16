@@ -22,26 +22,26 @@ class SettingsPage extends Component {
           <img id="logo" src={logo}>
           </img>
           <form>
-            <TextField classname="input-box"
+            <TextField className="input-box"
               id="standard-name"
               label="First Name"
               margin="normal"
             />
 
-            <TextField classname="input-box"
+            <TextField className="input-box"
               id="standard-name"
               label="Last Name"
               margin="normal"
             />
 
 
-            <TextField classname="input-box"
+            <TextField className="input-box"
               id="standard-name"
               label="Email"
               margin="normal"
             />
 
-            <TextField classname="input-box"
+            <TextField className="input-box"
               id="standard-name"
               label="Role"
               margin="normal"
