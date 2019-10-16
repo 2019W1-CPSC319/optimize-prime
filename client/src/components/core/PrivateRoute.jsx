@@ -95,6 +95,10 @@ class PrivateRoute extends React.Component {
     history.push(path);
   }
 
+  onClickLogout = () => {
+    window.location.assign('/auth/signout');
+  }
+
   renderSideBar = () => {
     const { path, classes } = this.props;
 
@@ -124,6 +128,9 @@ class PrivateRoute extends React.Component {
             );
           })
         }
+        <IconButton className={classes.iconButton} onClick={() => this.onClickLogout()}>
+          <Icon>exit_to_app</Icon>
+        </IconButton>
       </Drawer>
     );
   }
@@ -157,6 +164,7 @@ class PrivateRoute extends React.Component {
     if(pageProps.user.loading || !pageProps.user.hasTriedLogin) {
       return <div>Loading</div>;
     };
+
     if(!pageProps.user.profile) {
       return(
         <Redirect to='/login' />
