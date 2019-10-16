@@ -12,7 +12,7 @@ class SettingsPage extends Component {
 
     };
   }
-  
+
   render() {
     return (
       <div>

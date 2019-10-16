@@ -49,15 +49,19 @@ const styles = {
   },
   selectedIconButton: {
     color: '#280e3a',
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     margin: '15px 0',
     '&:hover': {
-      backgroundColor: "#fff",
+      backgroundColor: "#ffffff",
     },
   },
   iconButton: {
     color: '#ffffff',
     margin: '15px 0',
+    '&:hover': {
+      color: '#280e3a',
+      backgroundColor: "#ffffff",
+    },
   },
 };
 
