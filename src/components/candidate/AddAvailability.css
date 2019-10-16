@@ -21,11 +21,11 @@
 }
 
 .availability-container {
+    display: inline-block;
     border: 4px solid grey ;
     margin: auto auto;
     max-width: 70%;
     max-height: 100%;
     border-radius: 20px;
     text-align: center;
-    display: inline-block;
 }

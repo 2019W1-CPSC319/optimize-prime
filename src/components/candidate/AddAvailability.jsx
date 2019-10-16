@@ -6,8 +6,6 @@ import AvailabilityTable from "./AvailabilityTable.jsx"
 import './AddAvailability.css';
 import logo_long from '../../images/galvanize_long.png';
 
-var rows = []
-
 class AddAvailability extends Component {
   constructor(props) {
     super(props);
