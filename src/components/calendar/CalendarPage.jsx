@@ -5,6 +5,8 @@ import EventIcon from '@material-ui/icons/Event';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import PeopleIcon from '@material-ui/icons/People';
 import PersonIcon from '@material-ui/icons/Person';
+import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
+import GroupIcon from '@material-ui/icons/Group';
 import {
   Avatar,
   Button,
@@ -13,11 +15,6 @@ import {
   CardActions,
   CardContent,
   Typography,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   Chip,
   Dialog,
   DialogActions,
@@ -40,6 +37,13 @@ const styles = theme => ({
     [theme.breakpoints.down('sm')]: {
       display: 'block',
     },
+  },
+  card: {
+    display: 'flex',
+    margin: '5px auto',
+    '&:hover': {
+      backgroundColor: '#f9f9f9',
+    }
   },
   calendar: {
     // margin: '0 10px',
@@ -98,6 +102,15 @@ const styles = theme => ({
   duration: {
     padding: '5px 30px',
     borderColor: '#765ea8',
+  },
+  avatar: {
+    width: '25px',
+    height: '25px',
+    fontSize: 'small',
+    marginRight: '2px',
+    '&:nth-of-type(1)': {
+      marginLeft: '2px'
+    },
   }
 });
 
@@ -330,17 +343,69 @@ class CalendarPage extends Component {
         <DialogTitle id="form-options">Select Interview Slot</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Select an interview slot to schedule an interview. Upon submission, emails will be sent out to the candidate and interviewers.
+            Select an interview slot to schedule an interview.
+            <br></br>
+            Upon submission, emails will be sent out to the
+            <br></br>
+            candidate and interviewers.
           </DialogContentText>
-          <FormControl component="fieldset" className={classes.formControl}>
-            <RadioGroup aria-label="gender" name="gender1" value={this.state.value} onChange={this.handleChange.bind(this, event)}>
-              <FormControlLabel value="20191015-1415-202" control={<Radio />} label="Tuesday, October 15 2 PM - 3 PM at Room 202 with Jacob " />
-              <FormControlLabel value="20191016-1415-203" control={<Radio />} label="Wednesday, October 16 2 PM - 3 PM at Room 203 with Jacob " />
-              <FormControlLabel value="20191017-1415-204" control={<Radio />} label="Thursday, October 17 2 PM - 3 PM at Room 204 with Jacob " />
-              <FormControlLabel value="20191018-1415-205" control={<Radio />} label="Friday, October 18 2 PM - 3 PM at Room 205 with Jacob " />
-              <FormControlLabel value="20191021-1415-206" control={<Radio />} label="Monday, October 21 2 PM - 3 PM at Room 206 with Jacob " />
-            </RadioGroup>
-          </FormControl>
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography align="center" style={{ fontWeight: 'bold' }}>
+                SEPTEMBER 20, 2019
+              </Typography>
+              <Typography align="right">2:00 PM - 3:00 PM</Typography>
+            </CardContent>
+            <CardContent style={{ padding: '0' }}>
+              <CardContent style={{ display: 'flex', paddingBottom: '0' }}>
+                <MeetingRoomIcon></MeetingRoomIcon><Typography>Room 2307</Typography>
+              </CardContent>
+              <CardContent style={{ display: 'flex', paddingTop: '0' }}>
+                <GroupIcon></GroupIcon>
+                <Avatar className={classes.avatar} style={{ backgroundColor: 'darkslateblue' }}>H</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#fcba03' }}>N</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#fc036f' }}>OP</Avatar>
+              </CardContent>
+            </CardContent>
+          </Card>
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography align="center" style={{ fontWeight: 'bold' }}>
+                SEPTEMBER 20, 2019
+              </Typography>
+              <Typography align="right">3:00 PM - 3:30 PM</Typography>
+            </CardContent>
+            <CardContent style={{ padding: '0' }}>
+              <CardContent style={{ display: 'flex', paddingBottom: '0' }}>
+                <MeetingRoomIcon></MeetingRoomIcon><Typography>Room 120</Typography>
+              </CardContent>
+              <CardContent style={{ display: 'flex', paddingTop: '0' }}>
+                <GroupIcon></GroupIcon>
+                <Avatar className={classes.avatar} style={{ backgroundColor: 'darkslateblue' }}>H</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#fcba03' }}>N</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#fc036f' }}>OP</Avatar>
+              </CardContent>
+            </CardContent>
+          </Card>
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography align="center" style={{ fontWeight: 'bold' }}>
+                SEPTEMBER 21, 2019
+              </Typography>
+              <Typography align="right">12:00 PM - 1:00 PM</Typography>
+            </CardContent>
+            <CardContent style={{ padding: '0' }}>
+              <CardContent style={{ display: 'flex', paddingBottom: '0' }}>
+                <MeetingRoomIcon></MeetingRoomIcon><Typography>Room 2307</Typography>
+              </CardContent>
+              <CardContent style={{ display: 'flex', paddingTop: '0' }}>
+                <GroupIcon></GroupIcon>
+                <Avatar className={classes.avatar} style={{ backgroundColor: 'darkslateblue' }}>H</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#fcba03' }}>N</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#fc036f' }}>OP</Avatar>
+              </CardContent>
+            </CardContent>
+          </Card>
         </DialogContent>
         <DialogActions>
           <Button onClick={this.handleBack.bind(this)} color="primary">
