@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
+import Swal from 'sweetalert2'
+
 import EventIcon from '@material-ui/icons/Event';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import PeopleIcon from '@material-ui/icons/People';
@@ -27,6 +29,14 @@ import {
   Paper,
   TextField,
 } from '@material-ui/core';
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: true
+})
 
 const styles = theme => ({
   heading: {
@@ -142,6 +152,30 @@ class CalendarPage extends Component {
   }
 
   handleClose() {
+    swalWithBootstrapButtons.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'PROCEED',
+      cancelButtonText: 'CANCEL',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {
+        swalWithBootstrapButtons.fire(
+          'Cancelled',
+          'Your progress has not been saved!',
+          'error'
+        )
+        this.setState({ reqOpen: false });
+        this.setState({ optOpen: false });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        this.setState({ reqOpen: true });
+        this.setState({ optOpen: false });
+      }
+    })
     this.setState({ reqOpen: false });
     this.setState({ optOpen: false });
   }
