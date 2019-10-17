@@ -7,6 +7,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import PersonIcon from '@material-ui/icons/Person';
 import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
 import GroupIcon from '@material-ui/icons/Group';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import {
   Avatar,
   Button,
@@ -28,6 +29,13 @@ import {
 } from '@material-ui/core';
 
 const styles = theme => ({
+  heading: {
+    padding: '5px',
+    textAlign: 'center',
+  },
+  paper: {
+    height: 140,
+  },
   title: {
     fontWeight: 'normal',
     marginLeft: '30px',
@@ -39,7 +47,6 @@ const styles = theme => ({
     },
   },
   card: {
-    display: 'flex',
     margin: '5px auto',
     '&:hover': {
       backgroundColor: '#f9f9f9',
@@ -179,7 +186,7 @@ class CalendarPage extends Component {
           <p>Schedule Interview</p>
         </Button>
       </div>
-      <Paper style={{ margin: '17px 10px auto' }} square>
+      {/* <Paper style={{ margin: '17px 10px auto' }} square>
         <div className={clsx(classes.calendar, classes.flex)}>
           <div className={classes.component}>
             <p className={classes.label}>Sunday</p>
@@ -199,8 +206,16 @@ class CalendarPage extends Component {
           <div className={classes.component}><p className={classes.label}>Friday</p></div>
           <div className={classes.component}><p className={classes.label}>Saturday</p></div>
         </div>
-      </Paper>
-      {/* Mock data for scheduling an interview */}
+      </Paper> */}
+      <Grid container justify="center" spacing={2}>
+        {['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].map(value => (
+          <Grid key={value} item style={{ width: 'calc(100% / 7)', }}>
+            <Paper className={classes.heading}>
+              {value}
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
       <Dialog open={this.state.reqOpen} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
         <DialogContent>
@@ -348,9 +363,9 @@ class CalendarPage extends Component {
             <br></br>
             candidate and interviewers.
           </DialogContentText>
-          <Card className={classes.card}>
+          <Card className={clsx(classes.card, classes.flex)}>
             <CardContent>
-              <Typography align="center" style={{ fontWeight: 'bold' }}>
+              <Typography align="center" style={{ fontWeight: 'bold', }}>
                 SEPTEMBER 20, 2019
               </Typography>
               <Typography align="right">2:00 PM - 3:00 PM</Typography>
@@ -367,7 +382,7 @@ class CalendarPage extends Component {
               </CardContent>
             </CardContent>
           </Card>
-          <Card className={classes.card}>
+          <Card className={clsx(classes.card, classes.flex)}>
             <CardContent>
               <Typography align="center" style={{ fontWeight: 'bold' }}>
                 SEPTEMBER 20, 2019
@@ -383,10 +398,12 @@ class CalendarPage extends Component {
                 <Avatar className={classes.avatar} style={{ backgroundColor: 'darkslateblue' }}>H</Avatar>
                 <Avatar className={classes.avatar} style={{ backgroundColor: '#fcba03' }}>N</Avatar>
                 <Avatar className={classes.avatar} style={{ backgroundColor: '#fc036f' }}>OP</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#120abc' }}>WT</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#2938da' }}>VS</Avatar>
               </CardContent>
             </CardContent>
           </Card>
-          <Card className={classes.card}>
+          <Card className={clsx(classes.card, classes.flex)}>
             <CardContent>
               <Typography align="center" style={{ fontWeight: 'bold' }}>
                 SEPTEMBER 21, 2019
@@ -402,6 +419,11 @@ class CalendarPage extends Component {
                 <Avatar className={classes.avatar} style={{ backgroundColor: 'darkslateblue' }}>H</Avatar>
                 <Avatar className={classes.avatar} style={{ backgroundColor: '#fcba03' }}>N</Avatar>
                 <Avatar className={classes.avatar} style={{ backgroundColor: '#fc036f' }}>OP</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#f12039' }}>DK</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#fdc0df' }}>J</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: '#123456' }}>QZ</Avatar>
+                <Avatar className={classes.avatar} style={{ backgroundColor: 'mediumseagreen' }}>SP</Avatar>
+                <MoreHorizIcon></MoreHorizIcon>
               </CardContent>
             </CardContent>
           </Card>
