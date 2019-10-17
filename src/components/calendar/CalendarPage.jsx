@@ -92,7 +92,7 @@ const styles = theme => ({
     justifyContent: 'space-between',
   },
   button: {
-    border: 'none',
+    // border: 'none',
     cursor: 'pointer',
     display: 'flex',
     fontSize: '16px',
@@ -362,10 +362,7 @@ class CalendarPage extends Component {
         <DialogContent>
           <DialogContentText>
             Select an interview slot to schedule an interview.
-            <br></br>
-            Upon submission, emails will be sent out to the
-            <br></br>
-            candidate and interviewers.
+            Upon submission, emails will be sent out to the candidate and interviewers.
           </DialogContentText>
           <Card className={clsx(classes.card, classes.flex)}>
             <CardContent>
