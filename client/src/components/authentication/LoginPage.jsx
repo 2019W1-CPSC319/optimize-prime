@@ -4,6 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 import company from '../../images/galvanize_long.png';
 import galvanize from '../../images/galvanize.png';
 import microsoft from '../../images/microsoft.png';
+import {
+  Typography,
+} from '@material-ui/core';
 
 const styles = {
   button: {
