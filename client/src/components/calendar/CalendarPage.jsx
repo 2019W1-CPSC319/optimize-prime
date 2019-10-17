@@ -118,7 +118,7 @@ class CalendarPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      optOpen: true,
+      optOpen: false,
       reqOpen: false,
       value: 'female',
       background: ['#280e3a', '#fff', '#fff', '#fff'],
