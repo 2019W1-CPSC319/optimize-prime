@@ -72,7 +72,7 @@ class DirectoryPage extends Component {
               <TableCell>{label} Name</TableCell>
               <TableCell>{label === 'Candidate' ? 'University Name' : 'Job Title'}</TableCell>
               <TableCell>User Name</TableCell>
-              <TableCell>Password</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
