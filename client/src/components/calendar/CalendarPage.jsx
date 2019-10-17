@@ -32,6 +32,8 @@ const styles = theme => ({
   heading: {
     padding: '5px',
     textAlign: 'center',
+    borderRadius: '0',
+    fontSize: 'small'
   },
   paper: {
     height: 140,
@@ -95,6 +97,8 @@ const styles = theme => ({
     display: 'flex',
     fontSize: '16px',
     outline: 'none',
+    marginTop: '10px',
+    marginRight: '25px',
     [theme.breakpoints.down('sm')]: {
       margin: 'auto',
     },
@@ -181,40 +185,40 @@ class CalendarPage extends Component {
     return <div>
       <div className={clsx(classes.header, classes.flex)}>
         <h1 className={classes.title}>Calendar</h1>
-        <Button className={classes.button} onClick={this.handleOpen.bind(this)}>
+        <Button className={classes.button} onClick={this.handleOpen.bind(this)} variant="outlined">
           <EventIcon className={classes.icon}></EventIcon>
-          <p>Schedule Interview</p>
+          <Typography>Schedule Interview</Typography>
         </Button>
       </div>
-      {/* <Paper style={{ margin: '17px 10px auto' }} square>
-        <div className={clsx(classes.calendar, classes.flex)}>
-          <div className={classes.component}>
-            <p className={classes.label}>Sunday</p>
-            <div className={classes.event}>
-              <div className={classes.bar}></div>
-              <div className={classes.detail}>
-                <p>2:00 PM - 2:45 PM</p>
-                <p>John Doe</p>
-                <p>UI/UX Team</p>
-              </div>
-            </div>
-          </div>
-          <div className={classes.component}><p className={classes.label}>Monday</p></div>
-          <div className={classes.component}><p className={classes.label}>Tuesday</p></div>
-          <div className={classes.component}><p className={classes.label}>Wednesday</p></div>
-          <div className={classes.component}><p className={classes.label}>Thursday</p></div>
-          <div className={classes.component}><p className={classes.label}>Friday</p></div>
-          <div className={classes.component}><p className={classes.label}>Saturday</p></div>
-        </div>
-      </Paper> */}
-      <Grid container justify="center" spacing={2}>
-        {['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'].map(value => (
-          <Grid key={value} item style={{ width: 'calc(100% / 7)', }}>
-            <Paper className={classes.heading}>
-              {value}
-            </Paper>
-          </Grid>
-        ))}
+      <Grid container justify="center" style={{ margin: '20px 10px auto', width: 'calc(100% - 20px)' }}>
+        {[
+          { value: 'MON', date: 14 },
+          { value: 'TUE', date: 15 },
+          { value: 'WED', date: 16 },
+          { value: 'THU', date: 17 },
+          { value: 'FRI', date: 18 },
+          { value: 'SAT', date: 19 },
+          { value: 'SUN', date: 20 }].map(value => (
+            <Grid key={value.value} item style={{ width: 'calc((100% - 0px) / 7)', }}>
+              <Paper className={classes.heading}>
+                {value.value}
+                <Typography>{value.date}</Typography>
+              </Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+              <Paper style={{ width: '100%', height: '50px', borderRadius: '0' }}></Paper>
+            </Grid>
+          ))}
       </Grid>
       <Dialog open={this.state.reqOpen} onClose={this.handleClose.bind(this)} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
