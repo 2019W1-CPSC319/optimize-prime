@@ -29,7 +29,7 @@ import {
 
 const styles = theme => ({
   title: {
-    fontDuration: 'normal',
+    fontWeight: 'normal',
     marginLeft: '30px',
   },
   flex: {
@@ -181,7 +181,6 @@ class CalendarPage extends Component {
       </div>
       <Paper style={{ margin: '17px 10px auto' }} square>
         <div className={clsx(classes.calendar, classes.flex)}>
-          {/* Mock data for scheduled interview blocks */}
           <div className={classes.component}>
             <p className={classes.label}>Sunday</p>
             <div className={classes.event}>
