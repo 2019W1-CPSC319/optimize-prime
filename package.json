@@ -34,7 +34,7 @@
   "scripts": {
     "start": "react-scripts start",
     "start:client": "rimraf ./cache && rimraf ./dist/client && parcel ./client/public/index.html --port 3010 --hmr-port 3011 --out-dir ./dist/client",
-    "build": "react-scripts build",
+    "build": "rimraf ./dist/client && parcel build .client/public/index.html --out-dir ./dist/client",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
