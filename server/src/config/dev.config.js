@@ -1,5 +1,5 @@
 const path = require('path');
-const tokens = require('./tokens.js');
+// const tokens = require('./tokens.js');
 
 module.exports = {
 
@@ -20,7 +20,7 @@ module.exports = {
     staticRoot: path.resolve(__dirname, '../../../dist/client'),
   },
   auth: {
-    ...tokens,
+    // ...tokens,
     sessionSecret: 'URJFhFZcg4E8tOhYjhJw6W7W6pEEboS2',
     redirectUrl: 'https://localhost:3000/auth',
     policyName: 'B2C_1A_SignInWithADFSIdp',
