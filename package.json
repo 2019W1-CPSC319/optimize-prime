@@ -32,7 +32,7 @@
     "winston": "^3.2.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cd ./server/src && node ./start.js",
     "start:client": "rimraf ./cache && rimraf ./dist/client && parcel ./client/public/index.html --port 3010 --hmr-port 3011 --out-dir ./dist/client",
     "build": "rimraf ./dist/client && parcel build ./client/public/index.html --out-dir ./dist/client",
     "test": "react-scripts test",
