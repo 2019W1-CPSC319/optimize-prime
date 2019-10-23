@@ -6,11 +6,9 @@ import TableBody from "@material-ui/core/TableBody"
 import TableCell from "@material-ui/core/TableCell"
 import TableRow from "@material-ui/core/TableRow"
 
-import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
@@ -98,7 +96,7 @@ class AvailabilityTable extends Component {
         rows.splice(rows.indexOf(row), 1);
       }
     }
-    this.setState({rows: rows})
+    this.setState({rows: rows});
     return {rows: rows};
   }
 
@@ -106,11 +104,7 @@ class AvailabilityTable extends Component {
       return {id, date, from, to};
   }
   
-  handleSelectorChange = event => {
-    alert(event.target.value);
-    alert(event.target.name);
-    console.log(event.target);
-    event.target.name = "1pm";
+  handleSelectorChange = (event) => {
   }
 
   render() {
@@ -149,12 +143,13 @@ class AvailabilityTable extends Component {
                        </MuiPickersUtilsProvider>
                           </TableCell>
                           <TableCell>
-                            <Select className="selector" onChange={this.handleSelectorChange}inputProps={{id: 'start', name: "Start"}}>
+                            {/* <Select className="selector" onChange={this.handleSelectorChange}inputProps={{id: 'start', name: "Start"}}> */}
+                            <Select className="selector" onChange={this.handleSelectorChange()}>
                               {times}
                             </Select>
                           </TableCell>
                           <TableCell>
-                            <Select className="selector" onChange={this.handleSelectorChange} inputProps={{id: 'end', name: "End"}}>
+                            <Select className="selector" onChange={this.handleSelectorChange()}>
                               {times}
                             </Select>
                           </TableCell>
