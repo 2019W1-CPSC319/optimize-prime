@@ -65,7 +65,6 @@ const styles = theme => ({
     }
   },
   calendar: {
-    // margin: '0 10px',
     height: '700px',
   },
   component: {
@@ -102,7 +101,6 @@ const styles = theme => ({
     justifyContent: 'space-between',
   },
   button: {
-    // border: 'none',
     cursor: 'pointer',
     display: 'flex',
     fontSize: '16px',
