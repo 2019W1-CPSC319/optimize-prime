@@ -194,7 +194,7 @@ class CalendarPage extends Component {
 
   }
 
-  handleChange() {
+  handleChange(event) {
     this.setState({ value: event.target.value });
   }
 
