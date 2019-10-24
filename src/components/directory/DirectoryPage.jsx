@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 // import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import {
+  Button,
   Tab,
   Tabs,
   Table,
@@ -33,6 +34,14 @@ const styles = theme => ({
   table: {
     minWidth: 650,
   },
+  delete: {
+    color: '#ff454e',
+    borderColor: '#ff454e',
+    '&:hover': {
+      backgroundColor:
+        'rgba(255, 69, 78, 0.2)'
+    }
+  }
 });
 
 class DirectoryPage extends Component {
@@ -63,7 +72,7 @@ class DirectoryPage extends Component {
               <TableCell>{label} Name</TableCell>
               <TableCell>{label === 'Candidate' ? 'University Name' : 'Job Title'}</TableCell>
               <TableCell>User Name</TableCell>
-              <TableCell>Password</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -74,7 +83,7 @@ class DirectoryPage extends Component {
                 </TableCell>
                 <TableCell>{row.job}</TableCell>
                 <TableCell>{row.username}</TableCell>
-                <TableCell>&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</TableCell>
+                <TableCell><Button variant="outlined" className={classes.delete}>Delete</Button></TableCell>
               </TableRow>
             ))}
           </TableBody>

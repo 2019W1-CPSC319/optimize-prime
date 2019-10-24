@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
+
 import company from '../../images/galvanize_long.png';
 import galvanize from '../../images/galvanize.png';
 import microsoft from '../../images/microsoft.png';
+import {
+  Typography,
+} from '@material-ui/core';
 
 const styles = {
   button: {
@@ -71,18 +76,17 @@ class LoginPage extends Component {
     return <div>
       <div>
         <img className={classes.company} src={company} alt={'Galvanize Logo'}></img>
-        <button className={`${classes.button} ${classes.galvanize}`}>
-          <img src={galvanize} className={classes.logo} alt={'Galvanize Logo'}></img>
-          <div className={classes.divider}></div>
-          <p className={classes.text}>Sign in with Galvanize Account</p>
-        </button>
         <button className={`${classes.button} ${classes.microsoft}`}>
           <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
           <div className={classes.divider}></div>
           <p className={classes.text}>Sign in with Microsoft Account</p>
         </button>
-        {/* <p className={classes.help}>Trouble signing in?<span className={classes.highlight}>Recover account</span></p> */}
-        <div className={classes.footer}><p className={classes.license}>© 2019 ACL Services Ltd. dba Galvanize. All Rights Reserved.</p></div>
+        <Typography align="center">or</Typography>
+        <button className={clsx(classes.button, classes.galvanize)}>
+          <img src={galvanize} className={classes.logo} alt={'Galvanize Logo'}></img>
+          <div className={classes.divider}></div>
+          <p className={classes.text}>Sign in with Galvanize Account</p>
+        </button>
       </div>
     </div>;
   }
