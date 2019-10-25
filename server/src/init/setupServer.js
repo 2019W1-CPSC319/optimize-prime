@@ -3,9 +3,7 @@ const https = require('https');
 const generateCertificate = require('../utils/generateCertificate');
 
 module.exports = (app, log, serverConfig) => new Promise((resolve, reject) => {
-  const server = serverConfig.developerSSL
-    ? https.createServer(generateCertificate(), app)
-    : http.createServer(app);
+  const server = http.createServer(app);
 
   server.on('error', (error) => {
     if (error.syscall !== 'listen') {
