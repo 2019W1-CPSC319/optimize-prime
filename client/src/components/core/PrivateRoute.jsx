@@ -73,13 +73,13 @@ class PrivateRoute extends React.Component {
     };
   }
 
-  componentDidMount() {
+  /*componentDidMount() {
     const { pageProps } = this.props
 
     if(!pageProps.user.profile) {
       pageProps.actions.fetchUser();
     }
-  }
+  }*/
 
   onClickSignout = () => {
     const { pageProps, history } = this.props;
@@ -161,7 +161,7 @@ class PrivateRoute extends React.Component {
     //     <Redirect to="/login" />
     //   );
     // }
-    if(pageProps.user.loading || !pageProps.user.hasTriedLogin) {
+    /*if(pageProps.user.loading || !pageProps.user.hasTriedLogin) {
       return <div>Loading</div>;
     };
 
@@ -169,8 +169,9 @@ class PrivateRoute extends React.Component {
       return(
         <Redirect to='/login' />
       );
-    };
+    };*/
 
+    
     return (
       <Route
         {...routeProps}

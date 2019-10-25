@@ -1,6 +1,5 @@
 const path = require('path');
 
-
 module.exports = {
 
   server: {
@@ -20,7 +19,6 @@ module.exports = {
     staticRoot: path.resolve(__dirname, '../../../dist/client'),
   },
   auth: {
-
     sessionSecret: 'URJFhFZcg4E8tOhYjhJw6W7W6pEEboS2',
     redirectUrl: 'https://localhost:3000/auth',
     policyName: 'B2C_1A_SignInWithADFSIdp',
