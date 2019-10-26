@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
+  Button,
+  Icon,
+  Paper,
   Tab,
   Tabs,
-  Paper
 } from '@material-ui/core';
 
 import DirectoryTable from './subComponents/DirectoryTable';
@@ -64,6 +66,10 @@ class DirectoryPage extends Component {
     };
   }
 
+  onClickAddUser = () => {
+
+  }
+
   handleChange = (e, tab) => {
     this.setState({ value: tab });
   }
@@ -76,6 +82,14 @@ class DirectoryPage extends Component {
       <div>
         <div className={classes.header}>
           <h1 className={classes.title}>Directory</h1>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={() => this.onClickAddUser()}
+          >
+            <Icon className={classes.icon}>person_add</Icon>
+            ADD NEW USER
+          </Button>
         </div>
         <Paper className={classes.tableContainer}>
           <Tabs
