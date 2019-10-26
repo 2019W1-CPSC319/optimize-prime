@@ -21,7 +21,6 @@ const App = props => (
       <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
       <PrivateRoute exact path="/directory" pageProps={props} render={() => <DirectoryPage {...props} />} />
       <PrivateRoute exact path="/settings" pageProps={props} render={() => <SettingsPage {...props} />} />
-
     </Switch>
   </BrowserRouter>
 );
