@@ -71,11 +71,7 @@ class LoginPage extends Component {
           <p className={classes.text}>Sign in with Microsoft Account</p>
         </button>
         <Typography align="center">or</Typography>
-<<<<<<< HEAD:client/src/components/authentication/LoginPage.jsx
-        <button className={`${classes.button} ${classes.galvanize}`}>
-=======
         <button className={clsx(classes.button, classes.galvanize)}>
->>>>>>> master:src/components/authentication/LoginPage.jsx
           <img src={galvanize} className={classes.logo} alt={'Galvanize Logo'}></img>
           <div className={classes.divider}></div>
           <p className={classes.text}>Sign in with Galvanize Account</p>
