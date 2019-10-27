@@ -18,14 +18,16 @@ const theme = createMuiTheme(customMuiStyles);
 const getInitState = () => {
   const initialStateElement = document.getElementById('initState');
 	let initState = {};
-	if(initialStateElement) {
+	if (initialStateElement) {
 		initState = JSON.parse(initialStateElement.innerHTML || '{}');
   }
   return initState;
 };
 
+const store = createStore(RootReducer, getInitState(), compose(applyMiddleware(thunk)));
+
 ReactDOM.render(
-  <Provider store={createStore(RootReducer, getInitState(), compose(applyMiddleware(thunk)))}>
+  <Provider store={store}>
     <MuiThemeProvider theme={theme}>
       <App />
     </MuiThemeProvider>
