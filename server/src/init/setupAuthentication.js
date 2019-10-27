@@ -13,10 +13,10 @@ module.exports = (app) => {
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true,
-      httpOnly: true,
+      secure: false,
     },
   }));
+
   app.use(bodyParser.urlencoded({ extended: true }));
 
   passport.serializeUser((user, done) => {

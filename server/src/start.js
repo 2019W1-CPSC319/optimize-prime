@@ -8,6 +8,7 @@ const setupLogger = require('./init/setupLogger');
 // const setupMySql = require('./init/setupMySql')
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
+const scheduleRouter = require('./routes/schedule');
 
 
 const start = async () => {
@@ -30,6 +31,7 @@ const start = async () => {
 
     // app.use('/auth', authRouter);
     app.use('/user', userRouter);
+    app.use('/schedule', scheduleRouter);
     log.info('Setting up user API');
 
     app.get('/hello', (req, res) => {
