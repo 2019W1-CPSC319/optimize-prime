@@ -16,13 +16,13 @@ const compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || reduxCompose
 const theme = createMuiTheme(customMuiStyles);
 
 const getInitState = () => {
-  const initialStateElement = document.getElementById("initState")
-	let initState = {}
+  const initialStateElement = document.getElementById('initState');
+	let initState = {};
 	if(initialStateElement) {
-		initState = JSON.parse(initialStateElement.innerHTML || "{}")
+		initState = JSON.parse(initialStateElement.innerHTML || '{}');
   }
-  return initState
-}
+  return initState;
+};
 
 ReactDOM.render(
   <Provider store={createStore(RootReducer, getInitState(), compose(applyMiddleware(thunk)))}>
