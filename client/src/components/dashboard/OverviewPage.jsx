@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
-import * as user from "../../actions/userActions";
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+
+import * as user from '../../selectors/AuthSelector';
 
 const styles = {
   title: {
@@ -32,10 +32,10 @@ class OverviewPage extends Component {
   };
 };
 
-export default withStyles(styles)(connect((state) => ({
+const mapStateToProps = (state) => ({
   userProfile: user.getUserProfile(state),
   loading: user.isLoading(state),
-  hasTriedLogin: user.hasTriedLogin(state)
-}), (dispatch) => ({
-  fetchUserProfile: () => dispatch(user.fetchUser())
-}))(OverviewPage));
+  hasTriedLogin: user.hasTriedLogin(state),
+});
+
+export default withStyles(styles)(connect(mapStateToProps)(OverviewPage));

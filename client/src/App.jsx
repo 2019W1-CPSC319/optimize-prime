@@ -17,12 +17,11 @@ const App = props => (
     <Switch>
       <Route exact path="/login" render={() => <LoginPage {...props} />} />
       <Route exact path="/candidate" render={() => <CandidatePage {...props} />} />
+      <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
       <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
       <PrivateRoute exact path="/directory" pageProps={props} render={() => <DirectoryPage {...props} />} />
       <PrivateRoute exact path="/settings" pageProps={props} render={() => <SettingsPage {...props} />} />
-      <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
     </Switch>
-    
   </BrowserRouter>
 );
 

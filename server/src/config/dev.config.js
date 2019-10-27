@@ -1,7 +1,6 @@
 const path = require('path');
 
 module.exports = {
-
   server: {
     // Configure the port or named pipe the server should listen for connections on.
     // process.env.PORT tries to resolve the port or pipe from the environment.
@@ -24,6 +23,5 @@ module.exports = {
     policyName: 'B2C_1A_SignInWithADFSIdp',
 
     scope: 'user.read',
-
   },
 };
