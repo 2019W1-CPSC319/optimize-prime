@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 
 import DirectoryTable from './subComponents/DirectoryTable';
+import UserDialog from './UserDialog';
 
 const styles = {
   title: {
@@ -62,12 +63,17 @@ class DirectoryPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0
+      value: 0,
+      openUserDialog: false,
     };
   }
 
   onClickAddUser = () => {
+    this.setState({ openUserDialog: true });
+  }
 
+  onClickCloseDialog = () => {
+    this.setState({ openUserDialog: false });
   }
 
   handleChange = (e, tab) => {
@@ -76,7 +82,7 @@ class DirectoryPage extends Component {
 
   render() {
     const { classes } = this.props;
-    const { value } = this.state;
+    const { value, openUserDialog } = this.state;
 
     return (
       <div>
@@ -108,6 +114,11 @@ class DirectoryPage extends Component {
             <DirectoryTable headers={EMPLOYEE_TABLE_HEADER} rows={employees} />
           </div>
         </Paper>
+        <UserDialog
+          open={openUserDialog}
+          mode="add"
+          onClickCloseDialog={() => this.onClickCloseDialog()}
+        />
       </div>
     );
   }
