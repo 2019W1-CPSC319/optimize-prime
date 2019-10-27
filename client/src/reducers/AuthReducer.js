@@ -1,4 +1,3 @@
-
 const AuthReducer = (state = {}, action) => {
   switch (action.type) {
     case 'INIT_REQUEST':
