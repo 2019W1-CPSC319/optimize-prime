@@ -26,7 +26,7 @@ const styles = {
 };
 
 function createData(id, lastName, firstName, email, job, password) {
-  return { key: id, lastName, firstName, email, job, password };
+  return { id, lastName, firstName, email, job, password };
 }
 
 const candidates = [
@@ -59,30 +59,46 @@ const EMPLOYEE_TABLE_HEADER = [
   { key: 'title', title: 'Job Title' },
 ];
 
+const ALLOWED_USER_ACTIONS = [
+  'add',
+  'edit',
+  'delete',
+];
+
 class DirectoryPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: 0,
+      mode: '',
       openUserDialog: false,
+      selectedUser: '',
     };
   }
 
-  onClickAddUser = () => {
-    this.setState({ openUserDialog: true });
+  onClickOpenUserDialog = (mode, userId) => {
+    if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
+    this.setState({
+      mode,
+      selectedUser: userId || '',
+      openUserDialog: true,
+    });
   }
 
   onClickCloseDialog = () => {
-    this.setState({ openUserDialog: false });
+    this.setState({
+      mode: '',
+      openUserDialog: false
+    });
   }
 
-  handleChange = (e, tab) => {
+  onChangeTab = (e, tab) => {
     this.setState({ value: tab });
   }
 
   render() {
     const { classes } = this.props;
-    const { value, openUserDialog } = this.state;
+    const { value, mode, openUserDialog, selectedUser } = this.state;
 
     return (
       <div>
@@ -91,7 +107,7 @@ class DirectoryPage extends Component {
           <Button
             variant="outlined"
             className={classes.button}
-            onClick={() => this.onClickAddUser()}
+            onClick={() => this.onClickOpenUserDialog('add')}
           >
             <Icon className={classes.icon}>person_add</Icon>
             ADD NEW USER
@@ -102,22 +118,31 @@ class DirectoryPage extends Component {
             value={value}
             indicatorColor="primary"
             textColor="primary"
-            onChange={(e, tab) => this.handleChange(e, tab)}
+            onChange={(e, tab) => this.onChangeTab(e, tab)}
           >
             <Tab label="Candidate" />
             <Tab label="Employee" />
           </Tabs>
           <div hidden={value !== 0}>
-            <DirectoryTable headers={CANDIDATE_TABLE_HEADER} rows={candidates} />
+            <DirectoryTable
+              headers={CANDIDATE_TABLE_HEADER}
+              rows={candidates}
+              onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
+            />
           </div>
           <div hidden={value !== 1}>
-            <DirectoryTable headers={EMPLOYEE_TABLE_HEADER} rows={employees} />
+            <DirectoryTable
+              headers={EMPLOYEE_TABLE_HEADER}
+              rows={employees}
+              onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
+            />
           </div>
         </Paper>
         <UserDialog
+          mode={mode}
           open={openUserDialog}
-          mode="add"
           onClickCloseDialog={() => this.onClickCloseDialog()}
+          selectedUser={selectedUser}
         />
       </div>
     );
