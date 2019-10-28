@@ -123,9 +123,9 @@ export default class CalendarPage extends React.Component {
   }
 
   handleNext = () => {
-    axios.get('http://localhost:8080/blocks/' + this.state.candidate)
-      // .then(res => res.text())
-      .then(res => this.setState({ candidates: res.data }));
+    // axios.get('http://localhost:8080/blocks/' + this.state.candidate)
+    //   // .then(res => res.text())
+    //   .then(res => this.setState({ candidates: res.data }));
     this.setState({ reqOpen: false });
     this.setState({ optOpen: true });
   }
