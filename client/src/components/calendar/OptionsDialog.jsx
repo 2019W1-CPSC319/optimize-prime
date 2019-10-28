@@ -71,7 +71,6 @@ const events = [
     { id: 'Room A', start: '2019-10-22 09:00:00', end: '2019-10-22 17:00:00' }, // busy all day
     { id: 'Room B', start: '2019-10-22 09:00:00', end: '2019-10-22 13:00:00' }, // available in the afternoon
     { id: 'Room C', start: '2019-10-22 12:00:00', end: '2019-10-22 17:00:00' }, // available in the morning
-    // { id: 'Employee A', start: '2019-10-22 09:00:00', end: '2019-10-22 12:00:00' },
     { id: 'Employee A', start: '2019-10-22 11:00:00', end: '2019-10-22 17:00:00' },
     { id: 'Employee B', start: '2019-10-22 14:00:00', end: '2019-10-22 15:00:00' },
     { id: 'Employee C', start: '2019-10-22 09:00:00', end: '2019-10-22 17:00:00' },
@@ -185,8 +184,9 @@ class OptionsDialog extends Component {
             .filter(event => {
                 var eventStartDate = new Date(event.start);
                 var eventEndDate = new Date(event.end);
-                console.log(eventStartDate <= startTime && eventEndDate >= endTime)
-                return eventStartDate <= startTime && eventEndDate >= endTime;
+                console.log(eventStartDate <= endTime || eventEndDate <= startTime)
+                // return eventStartDate <= startTime && eventEndDate >= endTime;
+                return !(endTime <= eventStartDate || eventEndDate <= startTime);
             }).length === 0;
     }
 
@@ -235,7 +235,7 @@ class OptionsDialog extends Component {
         return (
             <List dense>
                 {this.state.options.map(option => {
-                    const hash = `${option.date}-${option.time.start}-${option.time.end}-${Math.random() * 1000}`;
+                    const hash = `${option.date}-${option.time.start}-${option.time.end}-${option.room}`;
                     const labelId = `radio-list-secondary-label-${hash}`;
                     return (
                         // TODO: Format date and time
@@ -272,10 +272,10 @@ class OptionsDialog extends Component {
                             </Box>
                             <ListItemSecondaryAction>
                                 <GreenRadio
-                                    checked={false}
-                                    // onChange={handleChange}
-                                    value="c"
-                                    inputProps={{ 'aria-label': 'C' }}
+                                    checked={this.props.selectedOption === hash}
+                                    onChange={() => this.props.handleSelectOption(hash)}
+                                    value={hash}
+                                // inputProps={{ 'aria-label': 'C' }}
                                 />
                             </ListItemSecondaryAction>
                         </ListItem>

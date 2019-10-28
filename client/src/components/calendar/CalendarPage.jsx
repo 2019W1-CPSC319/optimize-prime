@@ -52,7 +52,8 @@ export default class CalendarPage extends React.Component {
       required: [],
       optional: [],
       selected: 0,
-      selectedOpt: 0,
+      // selectedOpt: 0,
+      selectedOption: 0,
       background: ['#280e3a', '#fff', '#fff', '#fff'],
       color: ['#fff', '#000', '#000', '#000'],
       candidate: '',
@@ -183,6 +184,11 @@ export default class CalendarPage extends React.Component {
     this.setState({ selected: i });
   }
 
+  handleSelectOption = (i) => {
+    console.log(i)
+    this.setState({ selectedOption: i });
+  }
+
   showSnackbarOnSuccess = () => {
     return (
       <Snackbar
@@ -301,6 +307,7 @@ export default class CalendarPage extends React.Component {
           <OptionsDialog
             handleOpen={this.handleOpen}
             handleSave={this.handleSave}
+            handleSelectOption={this.handleSelectOption}
             {...this.state}
           ></OptionsDialog>
         }

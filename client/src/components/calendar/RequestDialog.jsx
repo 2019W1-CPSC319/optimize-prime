@@ -149,7 +149,7 @@ class RequestDialog extends Component {
                                             key={value}
                                             label={value}
                                             className={classes.chip}
-                                            avatar={<Avatar className={classes.avatar}>AW</Avatar>} />
+                                            avatar={<Avatar className={classes.avatar}>{value.charAt(0).toUpperCase()}</Avatar>} />
                                     ))}
                                 </div>
                             )}
