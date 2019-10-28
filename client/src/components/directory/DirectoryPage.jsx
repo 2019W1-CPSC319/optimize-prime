@@ -25,26 +25,6 @@ const styles = {
   },
 };
 
-function createData(id, lastName, firstName, job, email, password) {
-  return { id, lastName, firstName, job, email, password };
-}
-
-const candidates = [
-  createData(1, 'Evans', 'Chris', 'University of British Columbia', 'c.evans@gmail.com', '********'),
-  createData(2, 'Downey Jr.', 'Robert', 'Simon Fraser University', 'r.downey@gmail.com', '********'),
-  createData(3, 'Johansen', 'Scarlet', 'British Columbia Institue of Technology', 's.johansen@gmail.com', '********'),
-  createData(4, 'Holland', 'Tom', 'University of Waterloo', 't.holland@gmail.com', '********'),
-  createData(5, 'Cumberbatch', 'Benedict', 'University of Victoria', 'b.cumberbatch@gmail.com', '********'),
-];
-
-const employees = [
-  createData(6, 'America', 'Captain', 'Senior Project Manager', 'c.america@galvanize.com', '********'),
-  createData(7, 'Man', 'Iron', 'UX Designer', 'i.man@galvanize.com', '********'),
-  createData(8, 'Widow', 'Black', 'Junior Software Developer', 'b.widow@galvanize.com', '********'),
-  createData(9, 'Man', 'Spider', 'Business Analyst', 's.man@galvanize.com', '********'),
-  createData(10, 'Strange', 'Dr.', 'Senior Project Owner', 'd.strange@galvanize.com', '********'),
-];
-
 const CANDIDATE_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
