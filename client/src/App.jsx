@@ -27,7 +27,7 @@ const App = props => (
 
 const mapStateToProps = state => ({
   user: state.user,
-  directory: state.directory,
+  users: state.directory.users,
 });
 
 const mapDispatchToProps = dispatch => ({

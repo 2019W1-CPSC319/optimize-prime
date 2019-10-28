@@ -25,8 +25,8 @@ const styles = {
   },
 };
 
-function createData(id, lastName, firstName, email, job, password) {
-  return { id, lastName, firstName, email, job, password };
+function createData(id, lastName, firstName, job, email, password) {
+  return { id, lastName, firstName, job, email, password };
 }
 
 const candidates = [
@@ -102,7 +102,7 @@ class DirectoryPage extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, users, actions } = this.props;
     const { value, mode, openUserDialog, selectedUser } = this.state;
 
     return (
@@ -131,14 +131,14 @@ class DirectoryPage extends Component {
           <div hidden={value !== 0}>
             <DirectoryTable
               headers={CANDIDATE_TABLE_HEADER}
-              rows={candidates}
+              rows={users.filter(user => user.role === 'candidate')}
               onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
             />
           </div>
           <div hidden={value !== 1}>
             <DirectoryTable
               headers={EMPLOYEE_TABLE_HEADER}
-              rows={employees}
+              rows={users.filter(user => user.role === 'admin')}
               onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
             />
           </div>
@@ -148,6 +148,7 @@ class DirectoryPage extends Component {
           open={openUserDialog}
           onClickCloseDialog={() => this.onClickCloseDialog()}
           selectedUser={selectedUser}
+          actions={actions}
         />
       </div>
     );
