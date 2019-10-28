@@ -113,12 +113,14 @@ class OptionsDialog extends Component {
         blocksForCandidate
             .forEach(block => {
                 eventsRequiredInterviewers.forEach(event => this.handleOverlapping(event, block));
+                var interviewers = [...this.props.required];
                 if (this.canSchedule(block))
                     availableOptions.push({
                         date: block.start.split(' ')[0],
                         time: { start: block.start, end: block.end },
                         rooms: new Set(),
-                        interviewers: this.props.required,
+                        // interviewers: [].concat(this.props.required),
+                        interviewers,
                     });
             });
 
@@ -140,6 +142,14 @@ class OptionsDialog extends Component {
                         });
                 }
             })
+        });
+        options.forEach(option => {
+            console.log('%c option: ' + JSON.stringify(option), 'color: deeppink');
+            console.log('%c this.props.optional:' + this.props.optional, 'color: red');
+            this.props.optional.forEach(optionalInterviewer => {
+                console.log('%c ' + optionalInterviewer, 'background: #222; color: #bada55');
+                if (this.isAvailable(optionalInterviewer, option.time.start, option.time.end)) { option.interviewers.push(optionalInterviewer) };
+            });
         });
 
         this.setState({ options: options });
@@ -165,7 +175,7 @@ class OptionsDialog extends Component {
         var blockStartDate = new Date(block.start);
         var blockEndDate = new Date(block.end);
         if (eventEndDate < blockStartDate || blockStartDate > blockEndDate) return true;
-        if ((blockStartDate - blockStartDate)(1000 * 60) >= this.getInterviewDuration()) return true;
+        if ((eventStartDate - blockStartDate)(1000 * 60) >= this.getInterviewDuration()) return true;
         if ((eventEndDate - blockEndDate)(1000 * 60) >= this.getInterviewDuration()) return true;
         return false;
     }
@@ -184,7 +194,7 @@ class OptionsDialog extends Component {
             .filter(event => {
                 var eventStartDate = new Date(event.start);
                 var eventEndDate = new Date(event.end);
-                console.log(eventStartDate <= endTime || eventEndDate <= startTime)
+                // console.log(eventStartDate <= endTime || eventEndDate <= startTime)
                 // return eventStartDate <= startTime && eventEndDate >= endTime;
                 return !(endTime <= eventStartDate || eventEndDate <= startTime);
             }).length === 0;
