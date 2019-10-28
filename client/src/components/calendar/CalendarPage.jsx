@@ -86,6 +86,9 @@ export default class CalendarPage extends React.Component {
         )
         this.setState({ reqOpen: false });
         this.setState({ optOpen: false });
+        this.setState({ required: [] });
+        this.setState({ optional: [] });
+        this.setState({ candidate: '' });
       } else if (
         result.dismiss === Swal.DismissReason.cancel
       ) {
@@ -133,6 +136,9 @@ export default class CalendarPage extends React.Component {
     this.setState({ reqOpen: false });
     this.setState({ optOpen: false });
     this.setState({ onSuccess: true });
+    this.setState({ required: [] });
+    this.setState({ optional: [] });
+    this.setState({ candidate: '' });
   }
 
   handleSelectInterviewDuration = (i) => {
