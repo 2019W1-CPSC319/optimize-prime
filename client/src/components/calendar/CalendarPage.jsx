@@ -23,7 +23,6 @@ import {
   SnackbarContent,
   Snackbar,
   Slide,
-  Typography,
 } from '@material-ui/core';
 
 function formatDateTime(dateTime) {
@@ -216,8 +215,7 @@ export default class CalendarPage extends React.Component {
           <Fab
             color="primary"
             aria-label="add"
-            style={{ position: 'fixed', right: '30px', bottom: '170px', backgroundColor: '#ff748c' }}
-            // onClick={this.handleOpen}
+            style={{ position: 'fixed', right: '30px', bottom: '170px', backgroundColor: '#e75480' }}
             onClick={this.handleOpen}
           >
             <InsertInvitationRoundedIcon />
@@ -228,7 +226,6 @@ export default class CalendarPage extends React.Component {
             color="primary"
             aria-label="add"
             style={{ position: 'fixed', right: '30px', bottom: '100px', backgroundColor: '#ffa500' }}
-            // onClick={this.handleOpen}
             onClick={this.handleSliding}
           >
             <RoomRoundedIcon />
@@ -238,7 +235,6 @@ export default class CalendarPage extends React.Component {
           color="primary"
           aria-label="add"
           style={{ position: 'fixed', right: '30px', bottom: '30px', backgroundColor: '#003b9a' }}
-          // onClick={this.handleOpen}
           onClick={this.handleSliding}
         >
           <AddRoundedIcon />

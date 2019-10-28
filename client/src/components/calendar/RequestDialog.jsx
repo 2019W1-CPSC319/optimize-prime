@@ -77,13 +77,6 @@ const candidates = [
     'Student J',
 ];
 
-// const durations = [
-//     { minutes: 30 },
-//     { minutes: 45 },
-//     { minutes: 60 },
-//     { minutes: 90 },
-// ]
-
 class RequestDialog extends Component {
     constructor(props) {
         super(props);
@@ -100,7 +93,7 @@ class RequestDialog extends Component {
                             input !== ''
                             && name.toLowerCase().includes(input)
                             && name.toLowerCase() !== input
-                            && <ListItem key={i} button><Button value={name} onClick={this.props.updateCandidateAutosuggested}>{name}</Button></ListItem>
+                            && <ListItem key={i}><Button value={name} onClick={this.props.updateCandidateAutosuggested}>{name}</Button></ListItem>
                         )
                     })}
                 </List>
