@@ -6,6 +6,7 @@ import axios from 'axios';
 // import { getEvents } from '../../GraphService';
 import RequestDialog from './RequestDialog';
 import OptionsDialog from './OptionsDialog';
+import RoomDialog from './RoomDialog';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import RoomRoundedIcon from '@material-ui/icons/RoomRounded';
 import InsertInvitationRoundedIcon from '@material-ui/icons/InsertInvitationRounded';
@@ -45,6 +46,7 @@ export default class CalendarPage extends React.Component {
       events: [],
       optOpen: false,
       reqOpen: false,
+      roomOpen: false,
       onSuccess: false,
       onSlide: false,
       required: [],
@@ -66,6 +68,11 @@ export default class CalendarPage extends React.Component {
   handleOpen = () => {
     this.setState({ reqOpen: true });
     this.setState({ optOpen: false });
+  }
+
+  handleOpenAddRoom = () => {
+    console.log('merong')
+    this.setState({ roomOpen: true });
   }
 
   handleClose = () => {
@@ -98,6 +105,32 @@ export default class CalendarPage extends React.Component {
     })
     this.setState({ reqOpen: false });
     this.setState({ optOpen: false });
+  }
+
+  handleCloseAddRoom = () => {
+    swalWithBootstrapButtons.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'PROCEED',
+      cancelButtonText: 'CANCEL',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.value) {
+        swalWithBootstrapButtons.fire(
+          'Cancelled',
+          'Your progress has not been saved!',
+          'error'
+        )
+        this.setState({ roomOpen: false });
+      } else if (
+        result.dismiss === Swal.DismissReason.cancel
+      ) {
+        this.setState({ roomOpen: false });
+      }
+    })
+    this.setState({ roomOpen: false });
   }
 
   handleSliding = () => {
@@ -141,6 +174,11 @@ export default class CalendarPage extends React.Component {
     this.setState({ candidate: '' });
   }
 
+  handleSaveAddRoom = () => {
+    this.setState({ roomOpen: false });
+    this.setState({ onSuccess: true });
+  }
+
   handleSelectInterviewDuration = (i) => {
     this.setState({ selected: i });
   }
@@ -153,7 +191,7 @@ export default class CalendarPage extends React.Component {
           horizontal: 'left',
         }}
         open={this.state.onSuccess}
-        autoHideDuration={1000}
+        autoHideDuration={3000}
         onClose={() => this.setState({ onSuccess: false })}
       >
         <SnackbarContent
@@ -232,7 +270,7 @@ export default class CalendarPage extends React.Component {
             color="primary"
             aria-label="add"
             style={{ position: 'fixed', right: '30px', bottom: '100px', backgroundColor: '#ffa500' }}
-            onClick={this.handleSliding}
+            onClick={this.handleOpenAddRoom}
           >
             <RoomRoundedIcon />
           </Fab>
@@ -265,6 +303,14 @@ export default class CalendarPage extends React.Component {
             handleSave={this.handleSave}
             {...this.state}
           ></OptionsDialog>
+        }
+        {
+          this.state.roomOpen &&
+          <RoomDialog
+            handleCloseAddRoom={this.handleCloseAddRoom}
+            handleSaveAddRoom={this.handleSaveAddRoom}
+            {...this.state}
+          ></RoomDialog>
         }
         {this.showSnackbarOnSuccess()}
       </div >
