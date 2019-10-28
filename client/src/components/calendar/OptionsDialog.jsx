@@ -113,16 +113,6 @@ class OptionsDialog extends Component {
 
         blocksForCandidate
             .forEach(block => {
-                // TODO: consider overlapping cases
-                // var isAvailable = eventsRequiredInterviewers.filter(event => this.handleOverlapping(event, block)).length === 0;
-                // if (isAvailable) {
-                // availableOptions.push({
-                //     date: block.start.split(' ')[0],
-                //     time: { start: block.start, end: block.end },
-                //     rooms: new Set(),
-                //     interviewers: this.props.required,
-                // });
-                // }
                 eventsRequiredInterviewers.forEach(event => this.handleOverlapping(event, block));
                 if (this.canSchedule(block))
                     availableOptions.push({
@@ -133,61 +123,7 @@ class OptionsDialog extends Component {
                     });
             });
 
-        // filter out availability block that is shorter than interview duration
-        // var blocksForCandidate =
-        //     blocks.filter(block => block.id === this.props.candidate && this.canSchedule(block));
-
-        // const eventsRooms = events.filter(event => event.id.startsWith('Room'));
-
-        console.log(JSON.stringify(availableOptions));
-
-        // availableOptions
-        //     .forEach(option => {
-        //         // const eventsGroupByRoom = this.groupBy(eventsRooms, 'id');
-        //         // console.log('Group by: ' + JSON.stringify(eventsGroupByRoom));
-        //         // console.log(Object.keys(eventsGroupByRoom));
-        //         // const keys = Object.keys(eventsGroupByRoom);
-        //         // keys.forEach(key => {
-        //         //     const 
-        //         // })
-        //         // eventsGroupByRoom.filter(event => )
-        //         rooms.forEach(room => {
-        //             const eventsRoom = events.filter(event => event.id === room.name);
-
-        //         });
-        //         // eventsRooms.forEach(event => {
-        //         //     console.log(JSON.stringify(option.time))
-        //         //     console.log(JSON.stringify(event))
-        //         //     console.log(this.canSchedule(option.time, event));
-        //         //     if (this.canSchedule(option.time, event)) option.rooms.add(event.id);
-        //         //     // option.rooms.add({ room: event.id, startTime: computeStartTime(event, ) });
-        //         // });
-        //     });
-
-        console.log(JSON.stringify(availableOptions));
-
         availableOptions.forEach(availableOption => {
-            // console.log(JSON.stringify(availableOption));
-            // console.log(availableOption.rooms);
-            // availableOption.rooms.forEach(room => {
-            //     var startTime = new Date(availableOption.time.start);
-            //     var endTime = new Date(availableOption.time.end);
-            //     console.log('Room: ' + room);
-            //     console.log('Start time: ' + startTime)
-            //     console.log('End time: ' + endTime)
-
-            //     for (startTime; new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration()) <= endTime; startTime = new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration())) {
-            //         console.log(startTime);
-            //         console.log(new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration()));
-            //         options.push({
-            //             date: availableOption.date,
-            //             time: { start: startTime, end: new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration()) },
-            //             room,
-            //             interviewers: availableOption.interviewers,
-            //         });
-            //     }
-            // })
-
             rooms.forEach(room => {
                 var startTime = new Date(availableOption.time.start);
                 var endTime = new Date(availableOption.time.end);
@@ -196,8 +132,6 @@ class OptionsDialog extends Component {
                 console.log('End time: ' + endTime)
 
                 for (startTime; new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration()) <= endTime; startTime = new Date(startTime.valueOf() + 1000 * 60 * 15)) {
-                    // console.log(startTime);
-                    // console.log(new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration()));
                     if (this.isAvailable(room.name, startTime, new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration())))
                         options.push({
                             date: availableOption.date,
@@ -213,8 +147,6 @@ class OptionsDialog extends Component {
     }
 
     handleOverlapping = (event, block) => {
-        // console.log('event: ' + JSON.stringify(event));
-        // console.log('block: ' + JSON.stringify(block));
         var eventStartDate = new Date(event.start);
         var eventEndDate = new Date(event.end);
         var blockStartDate = new Date(block.start);
@@ -229,8 +161,6 @@ class OptionsDialog extends Component {
     }
 
     canSchedule = (event, block) => {
-        // console.log((new Date(block.end) - new Date(block.start)) / (1000 * 60) >= this.getInterviewDuration());
-        // return (new Date(block.end) - new Date(block.start)) / (1000 * 60) >= this.getInterviewDuration();
         var eventStartDate = new Date(event.start);
         var eventEndDate = new Date(event.end);
         var blockStartDate = new Date(block.start);
@@ -242,7 +172,6 @@ class OptionsDialog extends Component {
     }
 
     canSchedule = (block) => {
-        // console.log((new Date(block.end) - new Date(block.start)) / (1000 * 60) >= this.getInterviewDuration());
         return (new Date(block.end) - new Date(block.start)) / (1000 * 60) >= this.getInterviewDuration();
     }
 
@@ -256,23 +185,10 @@ class OptionsDialog extends Component {
             .filter(event => {
                 var eventStartDate = new Date(event.start);
                 var eventEndDate = new Date(event.end);
-                // console.log(JSON.stringify(event));
-                // console.log(event.start)
-                // console.log(event.end)
-                // console.log(event.start - startTime)
-                // console.log(event.end >= endTime)
                 console.log(eventStartDate <= startTime && eventEndDate >= endTime)
                 return eventStartDate <= startTime && eventEndDate >= endTime;
             }).length === 0;
     }
-
-    // https://stackoverflow.com/questions/14446511/most-efficient-method-to-groupby-on-an-array-of-objects#answer-34890276
-    // groupBy = (xs, key) => {
-    //     return xs.reduce(function (rv, x) {
-    //         (rv[x[key]] = rv[x[key]] || []).push(x);
-    //         return rv;
-    //     }, {});
-    // };
 
     updateRequiredInterviewers = (event) => {
         this.setState({ required: event.target.value });
