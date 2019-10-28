@@ -23,6 +23,7 @@ import {
   SnackbarContent,
   Snackbar,
   Slide,
+  Typography,
 } from '@material-ui/core';
 
 function formatDateTime(dateTime) {
@@ -185,7 +186,7 @@ export default class CalendarPage extends React.Component {
   render() {
     return (
       <div>
-        <h1>Calendar</h1>
+        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Calendar</h1>
         <Paper>
           <Table>
             <TableHead>
@@ -242,7 +243,8 @@ export default class CalendarPage extends React.Component {
         >
           <AddRoundedIcon />
         </Fab>
-        {this.state.reqOpen &&
+        {
+          this.state.reqOpen &&
           <RequestDialog
             handleNext={this.handleNext}
             handleClose={this.handleClose}
@@ -254,7 +256,8 @@ export default class CalendarPage extends React.Component {
             {...this.state}
           ></RequestDialog>
         }
-        {this.state.optOpen &&
+        {
+          this.state.optOpen &&
           <OptionsDialog
             handleOpen={this.handleOpen}
             handleSave={this.handleSave}
@@ -262,7 +265,7 @@ export default class CalendarPage extends React.Component {
           ></OptionsDialog>
         }
         {this.showSnackbarOnSuccess()}
-      </div>
+      </div >
     );
   }
 }
