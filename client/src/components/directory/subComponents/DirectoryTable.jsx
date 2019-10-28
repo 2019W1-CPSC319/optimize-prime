@@ -54,8 +54,8 @@ class DirectoryTable extends Component {
                 <TableCell component="th" scope="row">
                   {row.firstName}
                 </TableCell>
-                <TableCell>{row.job}</TableCell>
                 <TableCell>{row.email}</TableCell>
+                <TableCell>{row.job}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => onClickOpenUserDialog('edit', row.id)}>
                     <Icon>edit</Icon>
