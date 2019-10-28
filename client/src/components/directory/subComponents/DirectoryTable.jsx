@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Button,
+  Icon,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -13,14 +15,6 @@ const styles = {
   table: {
     minWidth: 650,
   },
-  delete: {
-    color: '#ff454e',
-    borderColor: '#ff454e',
-    '&:hover': {
-      backgroundColor:
-        'rgba(255, 69, 78, 0.2)'
-    }
-  }
 };
 
 class DirectoryTable extends Component {
@@ -36,7 +30,7 @@ class DirectoryTable extends Component {
   }
 
   render() {
-    const { classes, headers, rows } = this.props;
+    const { classes, headers, rows, onClickOpenUserDialog } = this.props;
 
     return (
       <Table className={classes.table}>
@@ -53,7 +47,7 @@ class DirectoryTable extends Component {
         <TableBody>
           {
             rows.map(row => (
-              <TableRow key={row.key}>
+              <TableRow key={row.id}>
                 <TableCell component="th" scope="row">
                   {row.lastName}
                 </TableCell>
@@ -63,12 +57,12 @@ class DirectoryTable extends Component {
                 <TableCell>{row.job}</TableCell>
                 <TableCell>{row.email}</TableCell>
                 <TableCell>
-                  <Button
-                    variant="outlined"
-                    className={classes.delete}
-                  >
-                    Delete
-                  </Button>
+                  <IconButton onClick={() => onClickOpenUserDialog('edit', row.id)}>
+                    <Icon>edit</Icon>
+                  </IconButton>
+                  <IconButton onClick={() => onClickOpenUserDialog('delete', row.id)}>
+                    <Icon>delete</Icon>
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))
