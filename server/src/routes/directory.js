@@ -1,5 +1,6 @@
 const router = require('express').Router();
 
+// TODO: Remove when database connected
 const users = [
   {
     id: '1',
@@ -13,13 +14,15 @@ const users = [
 ];
 
 router.get('/', (req, res) => {
+  // TODO: Update when database connected
   res.send(users);
 });
 
 router.post('/', (req, res) => {
   const user = req.body;
+  // TODO: Update when database connected
   users.push(user);
-  res.send('User added!');
+  res.send(user);
 });
 
 module.exports = router;
