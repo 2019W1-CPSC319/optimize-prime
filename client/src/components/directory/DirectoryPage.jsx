@@ -76,6 +76,11 @@ class DirectoryPage extends Component {
     };
   }
 
+  componentDidMount() {
+    const { actions } = this.props;
+    actions.getUsers();
+  }
+
   onClickOpenUserDialog = (mode, userId) => {
     if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
     this.setState({
