@@ -34,9 +34,9 @@ const start = async () => {
 
     app.set('etag', true);
 
-    // await setupAuthentication(app, config.auth, log);
+    await setupAuthentication(app, config.auth, log);
 
-    // app.use('/auth', authRouter);
+    app.use('/auth', authRouter);
     app.use('/user', userRouter);
     app.use('/schedule', scheduleRouter);
     log.info('Setting up user API');

@@ -4,7 +4,7 @@ const passport = require('passport');
 const router = express.Router();
 
 router.get('/signin', (req, res, next) => {
-  passport.authenticate('azuread-openidconnect', {
+  passport.authenticate('azure-connect', {
 
     response: res,
     prompt: 'login',
@@ -17,7 +17,7 @@ router.get('/signin', (req, res, next) => {
 });
 
 router.post('/callback', (req, res, next) => {
-  passport.authenticate('azuread-openidconnect', {
+  passport.authenticate('azure-connect', {
     response: res,
     failureRedirect: '/error',
 
@@ -29,7 +29,7 @@ router.post('/callback', (req, res, next) => {
 router.get('/signout', (req, res) => {
   req.session.destroy(() => {
     req.logout();
-    res.redirect('/');
+    res.redirect(`https://login.windows.net/common/oauth2/logout?post_logout_redirect_uri=${window.location.host}`);
   });
 });
 
