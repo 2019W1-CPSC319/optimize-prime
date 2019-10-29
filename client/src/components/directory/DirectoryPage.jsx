@@ -67,7 +67,6 @@ class DirectoryPage extends Component {
       this.setState({
         interviewers: res.data
       });
-      console.log(candidates);
     }).catch(error => {
       console.log(error);
     });

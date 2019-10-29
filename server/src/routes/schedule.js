@@ -75,7 +75,7 @@ router.get('/candidate/:id', (req, res) => {
 // add a new user in either the candidates table or interview table based on the selected type
 router.post('/newuser', (req, res) => {
   const user = req.body;
-  const type = user.role;
+  const type = user.Role;
   // status Active as default when adding
   const status = "A";
   switch (type) {
