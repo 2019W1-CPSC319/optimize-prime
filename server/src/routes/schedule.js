@@ -76,6 +76,8 @@ router.get('/candidate/:id', (req, res) => {
 router.post('/newuser', (req, res) => {
   const user = req.body;
   const type = user.role;
+  // status Active as default when adding
+  const status = "A";
   switch (type) {
     case "Candidate":
       var sql = "INSERT INTO Candidate(FirstName, LastName, Email, Phone, Status) VALUES (?, ?, ?, ?, ?)";
@@ -84,7 +86,7 @@ router.post('/newuser', (req, res) => {
       var sql = "INSERT INTO Interviewer(FirstName, LastName, Email, Phone, Status) VALUES (?, ?, ?, ?, ?)";
       break;
   }
-  var sqlcmd = connection.format(sql, [user.FirstName, user.LastName, user.Email, user.Phone, "A"]);
+  var sqlcmd = connection.format(sql, [user.FirstName, user.LastName, user.Email, user.Phone, status]);
   connection.query(sqlcmd, function (err, result) {
     if (err) {
       throw err;
