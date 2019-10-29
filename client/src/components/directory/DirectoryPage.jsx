@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-// import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import {
   Button,
   Tab,
@@ -12,6 +11,7 @@ import {
   TableRow,
   Paper
 } from '@material-ui/core';
+import axios from 'axios';
 
 const styles = theme => ({
   title: {
@@ -48,21 +48,40 @@ class DirectoryPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0
+      value: 0,
+      candidates: [],
+      interviewers: []
     };
+  }
+
+  // get all candidates and interviewers on page load
+  componentDidMount() {
+    axios.get('/schedule/candidates').then(res => {
+      this.setState({
+        candidates: res.data
+      });
+    }).catch(error => {
+      console.log(error);
+    });
+    axios.get('/schedule/interviewers').then(res => {
+      this.setState({
+        interviewers: res.data
+      });
+      console.log(candidates);
+    }).catch(error => {
+      console.log(error);
+    });
   }
 
   render() {
     const { classes } = this.props;
+    const {candidates, interviewers} = this.state;
+    
 
     function handleChange(e, value) {
       this.setState({ value: value });
     }
-
-    function createData(name, job, username, password) {
-      return { name, job, username, password };
-    }
-
+    
     function Directory(props) {
       const { label, rows } = props
       return <Paper className={classes.directory}>
@@ -70,19 +89,19 @@ class DirectoryPage extends Component {
           <TableHead>
             <TableRow>
               <TableCell>{label} Name</TableCell>
-              <TableCell>{label === 'Candidate' ? 'University Name' : 'Job Title'}</TableCell>
-              <TableCell>User Name</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Phone</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map(row => (
-              <TableRow key={row.name}>
+              <TableRow key={row.CandidateID}>
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {row.FirstName + " " + row.LastName}
                 </TableCell>
-                <TableCell>{row.job}</TableCell>
-                <TableCell>{row.username}</TableCell>
+                <TableCell>{row.Email}</TableCell>
+                <TableCell>{row.Phone}</TableCell>
                 <TableCell><Button variant="outlined" className={classes.delete}>Delete</Button></TableCell>
               </TableRow>
             ))}
@@ -90,22 +109,6 @@ class DirectoryPage extends Component {
         </Table>
       </Paper>;
     }
-
-    const candidates = [
-      createData('Chris Evans', 'University of British Columbia', 'c.evans@gmail.com', '********'),
-      createData('Robert Downey Jr.', 'Simon Fraser University', 'r.downey@gmail.com', '********'),
-      createData('Scarlet Johansson', 'British Columbia Institue of Technology', 's.johansen@gmail.com', '********'),
-      createData('Tom Holland', 'University of Waterloo', 't.holland@gmail.com', '********'),
-      createData('Benedict Cumberbatch', 'University of Victoria', 'b.cumberbatch@gmail.com', '********'),
-    ];
-
-    const employees = [
-      createData('Captain America', 'Senior Project Manager', 'c.america@galvanize.com', '********'),
-      createData('Iron man', 'UX Designer', 'i.man@galvanize.com', '********'),
-      createData('Black Widow', 'Junior Software Developer', 'b.widow@galvanize.com', '********'),
-      createData('Spider man', 'Business Analyst', 's.man@galvanize.com', '********'),
-      createData('Dr. Strange', 'Senior Project Owner', 'd.strange@galvanize.com', '********'),
-    ];
 
     return <div>
       <div className={classes.header}>
@@ -123,7 +126,7 @@ class DirectoryPage extends Component {
           <Tab label="Employee" />
         </Tabs>
         <div hidden={this.state.value !== 0}><Directory label="Candidate" rows={candidates} /></div>
-        <div hidden={this.state.value !== 1}><Directory label="Employee" rows={employees} /></div>
+        <div hidden={this.state.value !== 1}><Directory label="Employee" rows={interviewers} /></div>
       </Paper>
     </div>;
   }
