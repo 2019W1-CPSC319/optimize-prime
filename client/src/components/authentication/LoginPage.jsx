@@ -62,22 +62,27 @@ class LoginPage extends Component {
 
   render() {
     const { classes } = this.props;
-    return <div>
+
+    const signinLocation = window.location.host + "/auth/signin";
+
+    return (
       <div>
-        <img className={classes.company} src={company} alt={'Galvanize Logo'}></img>
-        <button className={`${classes.button} ${classes.microsoft}`}>
-          <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
-          <div className={classes.divider}></div>
-          <p className={classes.text}>Sign in with Microsoft Account</p>
-        </button>
-        <Typography align="center">or</Typography>
-        <button className={clsx(classes.button, classes.galvanize)}>
-          <img src={galvanize} className={classes.logo} alt={'Galvanize Logo'}></img>
-          <div className={classes.divider}></div>
-          <p className={classes.text}>Sign in with Galvanize Account</p>
-        </button>
+        <div >
+          <img className={classes.company}  src={company} alt={'Galvanize Logo'}></img>
+          <button className={`${classes.button} ${classes.microsoft}`} onClick={() => window.location.assign("localhost:3000/1234")}>
+            <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
+            <div className={classes.divider}></div>
+            <p className={classes.text}>Sign in with Microsoft Account</p>
+          </button>
+          <Typography align="center">or</Typography>
+          <button className={clsx(classes.button, classes.galvanize)}>
+            <img src={galvanize} className={classes.logo} alt={'Galvanize Logo'}></img>
+            <div className={classes.divider}></div>
+            <p className={classes.text}>Sign in with Galvanize Account</p>
+          </button>
+        </div>
       </div>
-    </div>;
+    );
   }
 }
 

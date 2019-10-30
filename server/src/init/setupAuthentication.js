@@ -46,7 +46,7 @@ module.exports = (app) => {
   };
 
   // Configure OIDC strategy
-  passport.use(new OIDCStrategy(
+  passport.use('azure-connect', new OIDCStrategy(
     {
       identityMetadata: `${process.env.OAUTH_AUTHORITY}${process.env.OAUTH_ID_METADATA}`,
       clientID: process.env.OAUTH_APP_ID,

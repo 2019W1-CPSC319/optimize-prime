@@ -21,7 +21,7 @@ class OverviewPage extends Component {
   }
 
   render() {
-    const { classes, ...userProfile } = this.props
+    const { classes, userProfile } = this.props
     return (
       <div>
         <div className={clsx(classes.header, classes.flex)}>
