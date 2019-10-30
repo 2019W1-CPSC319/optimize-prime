@@ -6,18 +6,11 @@ const setupAuthentication = require('./init/setupAuthentication');
 const setupRoutes = require('./init/setupRoutes');
 const setupServer = require('./init/setupServer');
 const setupLogger = require('./init/setupLogger');
-const setupMySql = require('./init/setupMySql')
+const setupMySql = require('./init/setupMySql');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const scheduleRouter = require('./routes/schedule');
 const directoryRouter = require('./routes/directory');
-
-var bodyParser = require('body-parser')
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
-
-// parse application/json
-app.use(bodyParser.json())
 
 const start = async () => {
   let log;
@@ -34,7 +27,9 @@ const start = async () => {
     log.info('Application starting');
 
     app.set('etag', true);
+    // parse application/json
     app.use(express.json());
+    // parse application/x-www-form-urlencoded
     app.use(express.urlencoded({ extended: false }));
 
     await setupAuthentication(app, config.auth, log);
