@@ -1,10 +1,12 @@
 const initialState = {
   loading: false,
-  users: [],
+  candidates: [],
+  interviewers: [],
 };
 
 const DirectoryReducer = (state = initialState, action) => {
-  let mutableUsers = state.users.slice();
+  const mutableUsers = state.candidates.slice();
+  let newState = {};
   switch (action.type) {
     case 'ADD_USER_REQUEST':
       return {
@@ -12,17 +14,13 @@ const DirectoryReducer = (state = initialState, action) => {
         loading: true,
       };
     case 'ADD_USER_SUCCESS':
-      mutableUsers.push(action.user);
-      return {
-        loading: false,
-        users: mutableUsers,
-      };
+      newState = { loading: false };
+      newState[action.role] = mutableUsers.push(action.user);
+      return newState;
     case 'GET_USERS_SUCCESS':
-      mutableUsers = action.users;
-      return {
-        loading: false,
-        users: mutableUsers,
-      };
+      newState = { loading: false };
+      newState[action.role] = action.users;
+      return newState;
     default:
       return state;
   }
