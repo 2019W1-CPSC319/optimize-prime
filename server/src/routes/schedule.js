@@ -46,9 +46,9 @@ router.put('/room/:id', (req, res) => {
 // ***************** CANDIDATES Endpoints *******************
 
 // get all candidates
-router.get('/candidates', (req, res) => {
+router.get('/candidates', async (req, res) => {
   const sql = 'SELECT * FROM Candidate';
-  connection.query(sql, (err, result) => {
+  await connection.query(sql, (err, result) => {
     if (err) {
       throw err;
     }
@@ -75,15 +75,19 @@ router.get('/candidate/:id', (req, res) => {
 router.post('/newuser', (req, res) => {
   const user = req.body;
   const type = user.role;
+  // status Active as default when adding
+  const status = 'A';
+  let sql = '';
   switch (type) {
     case 'Candidate':
-      var sql = 'INSERT INTO Candidate(FirstName, LastName, Email, Phone, Status) VALUES (?, ?, ?, ?, ?)';
+      sql = 'INSERT INTO Candidate(FirstName, LastName, Email, Phone, Status) VALUES (?, ?, ?, ?, ?)';
       break;
     case 'Interviewer':
-      var sql = 'INSERT INTO Interviewer(FirstName, LastName, Email, Phone, Status) VALUES (?, ?, ?, ?, ?)';
+      sql = 'INSERT INTO Interviewer(FirstName, LastName, Email, Phone, Status) VALUES (?, ?, ?, ?, ?)';
       break;
+    default: return;
   }
-  const sqlcmd = connection.format(sql, [user.FirstName, user.LastName, user.Email, user.Phone, 'A']);
+  const sqlcmd = connection.format(sql, [user.FirstName, user.LastName, user.Email, user.Phone, status]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
