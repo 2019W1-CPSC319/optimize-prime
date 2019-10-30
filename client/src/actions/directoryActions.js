@@ -6,9 +6,10 @@ function updateLoadingState(type) {
   };
 }
 
-function addUserSuccess(user) {
+function addUserSuccess(role, user) {
   return {
     type: 'ADD_USER_SUCCESS',
+    role,
     user,
   };
 }
@@ -20,21 +21,22 @@ function addUserFailure(error) {
   };
 }
 
-export const addUser = (user) => async (dispatch) => {
+export const addUser = (role, user) => async (dispatch) => {
   try {
     dispatch(updateLoadingState('ADD_USER_REQUEST'));
-    const response = await axios.post('/users', user);
+    const response = await axios.post('/schedule/newuser', user);
     const addedUser = response.data;
-    return dispatch(addUserSuccess(addedUser));
+    return dispatch(addUserSuccess(`${role}s`, addedUser));
   } catch (error) {
     console.log(error);
     return dispatch(addUserFailure(error));
   }
 };
 
-function getUsersSuccess(users) {
+function getUsersSuccess(role, users) {
   return {
     type: 'GET_USERS_SUCCESS',
+    role,
     users,
   };
 }
@@ -46,12 +48,12 @@ function getUsersFailure(error) {
   };
 }
 
-export const getUsers = () => async (dispatch) => {
+export const getUsers = (role) => async (dispatch) => {
   try {
     dispatch(updateLoadingState('GET_USERS_REQUEST'));
-    const response = await axios.get('/users');
+    const response = await axios.get(`/schedule/${role}s`);
     const users = response.data;
-    return dispatch(getUsersSuccess(users));
+    return dispatch(getUsersSuccess(`${role}s`, users));
   } catch (error) {
     console.log(error);
     return dispatch(getUsersFailure(error));
