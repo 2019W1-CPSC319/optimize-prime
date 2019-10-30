@@ -98,11 +98,10 @@ class UserDialog extends Component {
     } = this.state;
 
     if (mode === 'add') {
-      actions.addUser({
+      actions.addUser(role, {
         firstName,
         lastName,
         email,
-        role,
       });
     } else if (mode === 'edit') {
       // TODO: edit user action
