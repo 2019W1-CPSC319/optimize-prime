@@ -20,7 +20,7 @@ router.post('/room', (req, res) => {
   const room = req.body;
   // the room is active by default
   const status = 'A';
-  const sql = 'INSERT INTO Rooms(Name, Seats, Status) VALUES (?, ?, ?)';
+  const sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
   const sqlcmd = connection.format(sql, [room.name, room.seats, status]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -33,7 +33,7 @@ router.post('/room', (req, res) => {
 // update the status of a room to disabled, in the rooms table
 router.put('/room/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Rooms SET Status = 'D' WHERE roomID = ?";
+  const sql = "UPDATE Rooms SET Status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -60,7 +60,7 @@ router.get('/candidates', async (req, res) => {
 // get a specific candidate
 router.get('/candidate/:id', (req, res) => {
   const { id } = req.params;
-  const sql = 'SELECT * FROM Candidate WHERE candidateId = ?';
+  const sql = 'SELECT * FROM Candidate WHERE id = ?';
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -80,14 +80,14 @@ router.post('/newuser', (req, res) => {
   let sql = '';
   switch (type) {
     case 'Candidate':
-      sql = 'INSERT INTO Candidate(FirstName, LastName, Email, Phone, Status) VALUES (?, ?, ?, ?, ?)';
+      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
       break;
     case 'Interviewer':
-      sql = 'INSERT INTO Interviewer(FirstName, LastName, Email, Phone, Status) VALUES (?, ?, ?, ?, ?)';
+      sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
       break;
     default: return;
   }
-  const sqlcmd = connection.format(sql, [user.FirstName, user.LastName, user.Email, user.Phone, status]);
+  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
@@ -100,7 +100,7 @@ router.post('/newuser', (req, res) => {
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Candidate SET Status = 'D' WHERE candidateID = ?";
+  const sql = "UPDATE Candidate SET Status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -129,7 +129,7 @@ router.get('/interviewers', (req, res) => {
 // update the status of a interviewer to disabled, in the interviewer table
 router.put('/interviewer/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Interviewer SET Status = 'D' WHERE interviewerID = ?";
+  const sql = "UPDATE Interviewer SET Status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
