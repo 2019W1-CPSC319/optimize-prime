@@ -58,3 +58,21 @@ export const fetchUser = () => async (dispatch) => {
     return dispatch(fetchUserFailure(error));
   }
 };
+
+const sendEmailSuccess = () => (
+  {
+    type: 'EMAIL_SEND_SUCCESS',
+  }
+);
+
+export const sendEmail = (subject, body) => async (dispatch) => {
+  try {
+    dispatch(initRequest());
+    await axios.post('/user/sendemail', {
+      subject, body,
+    });
+    dispatch(sendEmailSuccess());
+  } catch (error) {
+    console.log(error);
+  }
+};
