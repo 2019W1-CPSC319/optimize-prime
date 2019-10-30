@@ -58,7 +58,8 @@ class DirectoryPage extends Component {
 
   componentDidMount() {
     const { actions } = this.props;
-    actions.getUsers();
+    actions.getUsers('candidate');
+    actions.getUsers('interviewer');
   }
 
   onClickOpenUserDialog = (mode, userId) => {
@@ -82,7 +83,7 @@ class DirectoryPage extends Component {
   }
 
   render() {
-    const { classes, users, actions } = this.props;
+    const { classes, candidates, interviewers, actions } = this.props;
     const { value, mode, openUserDialog, selectedUser } = this.state;
 
     return (
@@ -111,14 +112,14 @@ class DirectoryPage extends Component {
           <div hidden={value !== 0}>
             <DirectoryTable
               headers={CANDIDATE_TABLE_HEADER}
-              rows={users.filter(user => user.role === 'candidate')}
+              rows={candidates}
               onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
             />
           </div>
           <div hidden={value !== 1}>
             <DirectoryTable
               headers={EMPLOYEE_TABLE_HEADER}
-              rows={users.filter(user => user.role === 'admin')}
+              rows={interviewers}
               onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
             />
           </div>
