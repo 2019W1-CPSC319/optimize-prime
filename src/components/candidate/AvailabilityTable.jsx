@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import { withStyles } from "@material-ui/core/styles"
 // Material UI
 import {
         Table, TableBody, TableHead, TableCell, TableRow,
@@ -65,6 +66,15 @@ const times = [
   <MenuItem value={14.75}>5:45pm</MenuItem>,
 ]
 
+const styles = {
+  fabAdd: {
+    borderRadius: "4px",
+    top: "-1em",
+    left: "40%",
+    backgroundColor: "#4CAF50",
+    margin: "30px 30px"
+  }
+}
 
 class AvailabilityTable extends Component {
 
@@ -106,6 +116,7 @@ class AvailabilityTable extends Component {
   }
 
   render() {
+    const { classes } = this.props;
       return (
             <div>
               <Table aria-label="Availability">
@@ -128,9 +139,9 @@ class AvailabilityTable extends Component {
                                    variant="inline"
                                    format="MM/dd/yyyy"
                                    minDate={new Date()}
-                                   margin="normal"
+                                   margin="0"
                                    id="date-picker-inline"
-                                   label="Select your availability"
+                                  //  label="Select your availability"
                                    value={row.date}
                                    // onChange={handleDateChange}
                                    KeyboardButtonProps={{
@@ -157,21 +168,24 @@ class AvailabilityTable extends Component {
                               </Button>
                           </TableCell>
                         </TableRow>
-                      ))}
+                    ))}
+                    <TableRow>
+                      <TableCell colSpan={3}>
+                        <Button color="primary" variant="outlined" >
+                          Submit
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Fab aria-label="add" size="small" onClick={this.handleAddRow} className={classes.fabAdd}>
+                          <AddIcon />
+                        </Fab>
+                      </TableCell>
+                    </TableRow>
                   </TableBody>
               </Table>
-              <Fab aria-label="add" size="small" onClick={this.handleAddRow} className="fab-add">
-                  <AddIcon />
-              </Fab>
-              <div className="submit-btn-container">
-                <Button color="primary" variant="outlined" >
-                  Submit
-                </Button>
-              </div>
             </div>
         );
   }
 }
 
-export default AvailabilityTable;
-
+export default withStyles(styles)(AvailabilityTable);
