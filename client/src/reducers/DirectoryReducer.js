@@ -14,11 +14,11 @@ const DirectoryReducer = (state = initialState, action) => {
         loading: true,
       };
     case 'ADD_USER_SUCCESS':
-      newState = { loading: false };
+      newState = { ...state, loading: false };
       newState[action.role] = mutableUsers.push(action.user);
       return newState;
     case 'GET_USERS_SUCCESS':
-      newState = { loading: false };
+      newState = { ...state, loading: false };
       newState[action.role] = action.users;
       return newState;
     default:
