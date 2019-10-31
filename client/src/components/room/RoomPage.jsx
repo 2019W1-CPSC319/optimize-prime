@@ -87,9 +87,46 @@ export default class RoomPage extends React.Component {
         this.setState({ roomOpen: false });
     }
 
-    handleSaveAddRoom = () => {
+    handleSaveAddRoom = (event) => {
+        try {
+            event.preventDefault();
+            let data = {
+                name: event.target[0].value,
+                seats: event.target[1].value,
+            }
+            axios.post(`/schedule/room`, data).then(res => {
+                console.log(res);
+                Swal.fire(
+                    'Success',
+                    'Successfully added new user',
+                    'success'
+                );
+            }).catch(error => {
+                console.error(error);
+            });
+        }
+        catch (err) {
+            console.error(JSON.stringify(err));
+        }
         this.setState({ roomOpen: false });
         this.setState({ onSuccess: true });
+    }
+
+    handleDeleteRoom = () => {
+        const { value } = this.props;
+        try {
+            axios.put(`/schedule/room/${value}`).then(res => {
+                console.log(res);
+                // this.setState({
+                //     rooms: res.data
+                // });
+            }).catch(error => {
+                console.error(error);
+            });
+        }
+        catch (err) {
+            console.error(JSON.stringify(err));
+        }
     }
 
     showSnackbarOnSuccess = () => {
@@ -125,23 +162,6 @@ export default class RoomPage extends React.Component {
                 this.setState({
                     rooms: res.data
                 });
-            }).catch(error => {
-                console.error(error);
-            });
-        }
-        catch (err) {
-            console.error(JSON.stringify(err));
-        }
-    }
-
-    handleDeleteRoom = () => {
-        const { value } = this.props;
-        try {
-            axios.put(`/schedule/room/${value}`).then(res => {
-                console.log(res);
-                // this.setState({
-                //     rooms: res.data
-                // });
             }).catch(error => {
                 console.error(error);
             });

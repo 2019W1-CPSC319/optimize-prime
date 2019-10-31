@@ -57,7 +57,7 @@ class RoomDialog extends Component {
                     </DialogContentText>
                     <TextField
                         required
-                        id="outlined-name"
+                        id="name"
                         label="Room Name"
                         placeholder="100A"
                         // className={classes.textField}
@@ -66,7 +66,7 @@ class RoomDialog extends Component {
                         fullWidth
                     />
                     <TextField
-                        id="outlined-max-capacity"
+                        id="capacity"
                         label="Maximum Capacity"
                         // className={clsx(classes.margin, classes.textField)}
                         margin="normal"
