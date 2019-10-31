@@ -29,7 +29,7 @@ const times = [
   <MenuItem value={9.25}>9:15am</MenuItem>,
   <MenuItem value={9.5}>9:30am</MenuItem>,
   <MenuItem value={9.75}>9:45am</MenuItem>,
-  
+
   <MenuItem value={10}>10:00am</MenuItem>,
   <MenuItem value={10.25}>10:15am</MenuItem>,
   <MenuItem value={10.5}>10:30am</MenuItem>,
@@ -105,11 +105,8 @@ class AvailabilityTable extends Component {
   createRow(id, date, from, to) {
       return {id, date, from, to};
   }
-  
+
   handleSelectorChange = event => {
-    alert(event.target.value);
-    alert(event.target.name);
-    console.log(event.target);
     event.target.name = "1pm";
   }
 
