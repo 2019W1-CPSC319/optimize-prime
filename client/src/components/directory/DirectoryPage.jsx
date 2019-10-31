@@ -29,14 +29,14 @@ const CANDIDATE_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
   { key: 'email', title: 'Email' },
-  { key: 'school', title: 'School Name' },
+  { key: 'phone', title: 'Phone Number' },
 ];
 
 const EMPLOYEE_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
   { key: 'email', title: 'Email' },
-  { key: 'title', title: 'Job Title' },
+  { key: 'phone', title: 'Phone Number' },
 ];
 
 const ALLOWED_USER_ACTIONS = [
