@@ -23,6 +23,9 @@ const NAVIGATION_OPTIONS = [
     key: 'calendar', title: 'Calendar', path: '/calendar', icon: 'calendar_today',
   },
   {
+    key: 'room', title: 'Room', path: '/room', icon: 'room',
+  },
+  {
     key: 'directory', title: 'Manage Accounts', path: '/directory', icon: 'people',
   },
   {
@@ -76,7 +79,7 @@ class PrivateRoute extends React.Component {
   componentDidMount() {
     const { pageProps } = this.props
 
-    if(!pageProps.user.profile) {
+    if (!pageProps.user.profile) {
       pageProps.actions.fetchUser();
     }
   }
@@ -161,17 +164,17 @@ class PrivateRoute extends React.Component {
     //     <Redirect to="/login" />
     //   );
     // }
-    if(pageProps.user.loading || !pageProps.user.hasTriedLogin) {
+    if (pageProps.user.loading || !pageProps.user.hasTriedLogin) {
       return <div>Loading</div>;
     };
 
-    if(!pageProps.user.profile) {
-      return(
+    if (!pageProps.user.profile) {
+      return (
         <Redirect to='/login' />
       );
     };
 
-    
+
     return (
       <Route
         {...routeProps}
