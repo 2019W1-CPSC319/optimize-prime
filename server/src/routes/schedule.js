@@ -79,10 +79,10 @@ router.post('/newuser', (req, res) => {
   const status = 'A';
   let sql = '';
   switch (type) {
-    case 'Candidate':
+    case 'candidate':
       sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
       break;
-    case 'Interviewer':
+    case 'interviewer':
       sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
       break;
     default: return;
@@ -92,7 +92,8 @@ router.post('/newuser', (req, res) => {
     if (err) {
       throw err;
     }
-    res.send(result);
+    const addedUser = { ...user, id: result.insertId };
+    res.send(addedUser);
   });
 });
 
