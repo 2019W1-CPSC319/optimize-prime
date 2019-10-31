@@ -90,7 +90,7 @@ class UserDialog extends Component {
     return state;
   }
 
-  onClickSubmit = () => {
+  onClickSubmit = async () => {
     const { actions, mode, onClickCloseDialog } = this.props;
     const {
       firstName,
@@ -101,7 +101,7 @@ class UserDialog extends Component {
     } = this.state;
 
     if (mode === 'add') {
-      actions.addUser(role, {
+      await actions.addUser(role, {
         firstName,
         lastName,
         email,
@@ -118,6 +118,8 @@ class UserDialog extends Component {
       // });
     }
 
+    // Clear dialog state
+    this.setState(this.initializeUserInfoFields());
     onClickCloseDialog();
   }
 
