@@ -119,21 +119,20 @@ export default class RoomPage extends React.Component {
         )
     }
 
-    // async componentDidMount() {
-    //   try {
-    //     // Get the user's access token
-    //     var accessToken = await window.msal.acquireTokenSilent({
-    //       scopes: config.scopes
-    //     });
-    //     // Get the user's events
-    //     var events = await getEvents(accessToken);
-    //     // Update the array of events in state
-    //     this.setState({ events: events.value });
-    //   }
-    //   catch (err) {
-    //     this.props.showError('ERROR', JSON.stringify(err));
-    //   }
-    // }
+    async componentDidMount() {
+        try {
+            axios.get('/schedule/rooms').then(res => {
+                this.setState({
+                    rooms: res.data
+                });
+            }).catch(error => {
+                console.error(error);
+            });
+        }
+        catch (err) {
+            console.error(JSON.stringify(err));
+        }
+    }
 
     render() {
         return (
