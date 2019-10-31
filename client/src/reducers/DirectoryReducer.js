@@ -1,3 +1,4 @@
+/* eslint-disable prefer-object-spread */
 const initialState = {
   loading: false,
   candidates: [],
@@ -5,7 +6,6 @@ const initialState = {
 };
 
 const DirectoryReducer = (state = initialState, action) => {
-  const mutableUsers = state.candidates.slice();
   let newState = {};
   switch (action.type) {
     case 'ADD_USER_REQUEST':
@@ -14,11 +14,11 @@ const DirectoryReducer = (state = initialState, action) => {
         loading: true,
       };
     case 'ADD_USER_SUCCESS':
-      newState = { ...state, loading: false };
-      newState[action.role] = mutableUsers.push(action.user);
+      newState = Object.assign({}, state, { loading: false });
+      newState[action.role].push(action.user);
       return newState;
     case 'GET_USERS_SUCCESS':
-      newState = { ...state, loading: false };
+      newState = Object.assign({}, state, { loading: false });
       newState[action.role] = action.users;
       return newState;
     default:
