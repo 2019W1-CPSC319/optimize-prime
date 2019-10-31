@@ -55,12 +55,14 @@ const USER_DIALOG = {
     { key: 'firstName', title: 'First Name', type: 'string' },
     { key: 'lastName', title: 'Last Name', type: 'string' },
     { key: 'email', title: 'Email', type: 'string' },
+    { key: 'phone', title: 'Phone Number', type: 'string' },
     {
       key: 'role',
       title: 'Role',
       type: 'select',
       selectOptions: [
         { key: 'admin', title: 'Administrator' },
+        { key: 'interviewer', title: 'Interviewer' },
         { key: 'candidate', title: 'Candidate' },
       ],
     },
@@ -94,6 +96,7 @@ class UserDialog extends Component {
       firstName,
       lastName,
       email,
+      phone,
       role,
     } = this.state;
 
@@ -102,6 +105,8 @@ class UserDialog extends Component {
         firstName,
         lastName,
         email,
+        phone,
+        role,
       });
     } else if (mode === 'edit') {
       // TODO: edit user action
@@ -175,10 +180,11 @@ class UserDialog extends Component {
       firstName,
       lastName,
       email,
+      phone,
       role,
     } = this.state;
 
-    return !firstName || !lastName || !email || !role;
+    return !firstName || !lastName || !email || !phone || !role;
   }
 
   render() {
