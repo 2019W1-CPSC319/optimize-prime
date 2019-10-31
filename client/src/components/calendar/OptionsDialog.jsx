@@ -64,16 +64,19 @@ const blocks = [
     { id: 'Student A', start: '2019-10-22 09:00:00', end: '2019-10-22 12:00:00' },
     { id: 'Student A', start: '2019-10-22 13:00:00', end: '2019-10-22 13:30:00' },
     { id: 'Student A', start: '2019-10-22 14:00:00', end: '2019-10-22 17:00:00' },
-    { id: 'Student D', start: '2019-10-22 09:00:00', end: '2019-10-22 17:00:00' },
+    { id: 'Student B', start: '2019-10-22 09:00:00', end: '2019-10-22 17:00:00' }, // available all day (22nd)
+    { id: 'Student c', start: '2019-10-23 09:00:00', end: '2019-10-23 17:00:00' }, // available all day (23rd)
 ]
 
 const events = [
-    { id: 'Room A', start: '2019-10-22 09:00:00', end: '2019-10-22 17:00:00' }, // busy all day
-    { id: 'Room B', start: '2019-10-22 09:00:00', end: '2019-10-22 13:00:00' }, // available in the afternoon
-    { id: 'Room C', start: '2019-10-22 12:00:00', end: '2019-10-22 17:00:00' }, // available in the morning
-    { id: 'Employee A', start: '2019-10-22 11:00:00', end: '2019-10-22 17:00:00' },
-    { id: 'Employee B', start: '2019-10-22 14:00:00', end: '2019-10-22 15:00:00' },
-    { id: 'Employee C', start: '2019-10-22 09:00:00', end: '2019-10-22 17:00:00' },
+    { id: 'Room A', start: '2019-10-22 12:00:00', end: '2019-10-22 17:00:00' }, // available in the morning
+    { id: 'Room B', start: '2019-10-22 09:00:00', end: '2019-10-22 12:00:00' }, // available in the afternoon
+    { id: 'Room C', start: '2019-10-22 09:00:00', end: '2019-10-22 17:00:00' }, // busy all day
+
+    { id: 'Employee A', start: '2019-10-22 10:00:00', end: '2019-10-22 11:00:00' },
+    { id: 'Employee A', start: '2019-10-22 13:00:00', end: '2019-10-22 17:00:00' },
+    { id: 'Employee B', start: '2019-10-22 09:00:00', end: '2019-10-22 12:00:00' }, // available in the afternoon
+    { id: 'Employee C', start: '2019-10-22 09:00:00', end: '2019-10-22 17:00:00' }, // busy all day
 ]
 
 class OptionsDialog extends Component {
@@ -110,20 +113,52 @@ class OptionsDialog extends Component {
         // events for all the required interviewers
         const eventsRequiredInterviewers = events.filter(event => this.props.required.includes(event.id));
 
-        blocksForCandidate
-            .forEach(block => {
-                eventsRequiredInterviewers.forEach(event => this.handleOverlapping(event, block));
-                var interviewers = [...this.props.required];
-                if (this.canSchedule(block))
-                    availableOptions.push({
-                        date: block.start.split(' ')[0],
-                        time: { start: block.start, end: block.end },
-                        rooms: new Set(),
-                        // interviewers: [].concat(this.props.required),
-                        interviewers,
-                    });
-            });
+        blocksForCandidate.forEach(block => {
+            // TODO: consider events within blocks AND long enough to schedule a new interview
+            eventsRequiredInterviewers.forEach(event => this.handleOverlapping(event, block));
+            var interviewers = [...this.props.required];
+            if (this.canSchedule(block))
+                availableOptions.push({
+                    date: block.start.split(' ')[0],
+                    time: { start: block.start, end: block.end },
+                    rooms: new Set(),
+                    // interviewers: [].concat(this.props.required),
+                    interviewers,
+                });
+            //     eventsRequiredInterviewers.forEach(event => {
+            //         var blockSD = new Date(block.start);
+            //         var blockED = new Date(block.end);
+            //         var eventSD = new Date(event.start);
+            //         var eventED = new Date(event.end);
+            //         var interviewers = [...this.props.required];
+            //         // var date, time;
+            //         if (blockSD <= eventSD && eventED <= blockED) {
+            //             if ((eventSD - blockSD) <= this.getInterviewDuration() * 1000 * 60) {
+            //                 availableOptions.push({
+            //                     date: block.start,
+            //                     time: { start: block.start, end: event.start },
+            //                     rooms: new Set(),
+            //                     interviewers,
+            //                 });
+            //             }
+            //             if ((blockED - eventED) <= this.getInterviewDuration() * 1000 * 60) {
+            //                 availableOptions.push({
+            //                     date: block.end,
+            //                     time: { start: event.end, end: block.end },
+            //                     rooms: new Set(),
+            //                     interviewers,
+            //                 });
+            //             }
+            //         } else {
+            //             block.start = 0;
+            //             block.end = eventSD < block.end ? event.start : block.end;
+            //         }
+            //     })
+        });
 
+        // for each available options, determine whether, for each room, room is available
+        // if YES => push it to options as one of the options
+        // if  NO => do nothing
         availableOptions.forEach(availableOption => {
             rooms.forEach(room => {
                 var startTime = new Date(availableOption.time.start);
@@ -143,6 +178,10 @@ class OptionsDialog extends Component {
                 }
             })
         });
+
+        // iterate through options, for each option determine whether each optional interviewer is available at that time period
+        // if YES => add to the list
+        // if  NO => do nothing
         options.forEach(option => {
             console.log('%c option: ' + JSON.stringify(option), 'color: deeppink');
             console.log('%c this.props.optional:' + this.props.optional, 'color: red');

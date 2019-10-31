@@ -1,12 +1,13 @@
 import React from 'react';
 import moment from 'moment';
+import { withStyles } from '@material-ui/core/styles';
 // import config from '../../Config';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 // import { getEvents } from '../../GraphService';
 import RequestDialog from './RequestDialog';
 import OptionsDialog from './OptionsDialog';
-import RoomDialog from './RoomDialog';
+import RoomDialog from './../room/RoomDialog';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import RoomRoundedIcon from '@material-ui/icons/RoomRounded';
 import InsertInvitationRoundedIcon from '@material-ui/icons/InsertInvitationRounded';
@@ -38,7 +39,9 @@ const swalWithBootstrapButtons = Swal.mixin({
   buttonsStyling: true
 })
 
-export default class CalendarPage extends React.Component {
+const styles = theme => ({});
+
+class CalendarPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -324,3 +327,5 @@ export default class CalendarPage extends React.Component {
     );
   }
 }
+
+export default withStyles(styles)(CalendarPage);

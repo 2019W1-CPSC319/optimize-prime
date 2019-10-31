@@ -30,8 +30,7 @@ class SettingsPage extends Component {
         'Successfully added new user',
         'success'
       )
-      });
-
+    });
   }
 
   render() {
@@ -56,7 +55,6 @@ class SettingsPage extends Component {
               name="Last Name"
               margin="normal"
             />
-
 
             <TextField className="input-box"
               id="standard-name"
