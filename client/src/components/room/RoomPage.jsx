@@ -134,6 +134,23 @@ export default class RoomPage extends React.Component {
         }
     }
 
+    handleDeleteRoom = () => {
+        const { value } = this.props;
+        try {
+            axios.put(`/schedule/room/${value}`).then(res => {
+                console.log(res);
+                // this.setState({
+                //     rooms: res.data
+                // });
+            }).catch(error => {
+                console.error(error);
+            });
+        }
+        catch (err) {
+            console.error(JSON.stringify(err));
+        }
+    }
+
     render() {
         return (
             <div>
@@ -154,7 +171,15 @@ export default class RoomPage extends React.Component {
                                         <TableRow key={room.id}>
                                             <TableCell>{room.name}</TableCell>
                                             <TableCell align="center">{room.capacity}</TableCell>
-                                            <TableCell><Button value={room.id} color="default" variant="outlined">Delete</Button></TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    value={room.id}
+                                                    color="default"
+                                                    variant="outlined"
+                                                    onClick={this.handleDeleteRoom}
+                                                >Delete
+                                                </Button>
+                                            </TableCell>
                                         </TableRow>
                                     );
                                 })}
