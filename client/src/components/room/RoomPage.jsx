@@ -41,16 +41,16 @@ export default class RoomPage extends React.Component {
 
         this.state = {
             rooms: [
-                { id: 0, name: '100A', capacity: 10 },
-                { id: 1, name: '101A', capacity: 6 },
-                { id: 2, name: '102A', capacity: 3 },
-                { id: 3, name: '200A', capacity: 4 },
-                { id: 4, name: '200B', capacity: 4 },
-                { id: 5, name: '202A', capacity: 5 },
-                { id: 6, name: '300A', capacity: 10 },
-                { id: 7, name: '301A', capacity: 20 },
-                { id: 8, name: '302A', capacity: 5 },
-                { id: 9, name: '302B', capacity: 10 },
+                { id: 0, name: '100A', seats: 10 },
+                { id: 1, name: '101A', seats: 6 },
+                { id: 2, name: '102A', seats: 3 },
+                { id: 3, name: '200A', seats: 4 },
+                { id: 4, name: '200B', seats: 4 },
+                { id: 5, name: '202A', seats: 5 },
+                { id: 6, name: '300A', seats: 10 },
+                { id: 7, name: '301A', seats: 20 },
+                { id: 8, name: '302A', seats: 5 },
+                { id: 9, name: '302B', seats: 10 },
             ],
             roomOpen: false,
             onSuccess: false,
@@ -186,11 +186,11 @@ export default class RoomPage extends React.Component {
                         </TableHead>
                         <TableBody>
                             {this.state.rooms.map(
-                                function (room) {
+                                room => {
                                     return (
                                         <TableRow key={room.id}>
                                             <TableCell>{room.name}</TableCell>
-                                            <TableCell align="center">{room.capacity}</TableCell>
+                                            <TableCell align="center">{room.seats}</TableCell>
                                             <TableCell>
                                                 <Button
                                                     value={room.id}

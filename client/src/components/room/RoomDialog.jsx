@@ -66,7 +66,7 @@ class RoomDialog extends Component {
                         fullWidth
                     />
                     <TextField
-                        id="capacity"
+                        id="seats"
                         label="Maximum Capacity"
                         // className={clsx(classes.margin, classes.textField)}
                         margin="normal"
