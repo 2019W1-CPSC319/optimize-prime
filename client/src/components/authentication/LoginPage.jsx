@@ -69,7 +69,7 @@ class LoginPage extends Component {
       <div>
         <div >
           <img className={classes.company}  src={company} alt={'Galvanize Logo'}></img>
-          <button className={`${classes.button} ${classes.microsoft}`} onClick={() => window.location.assign("localhost:3000/1234")}>
+          <button className={`${classes.button} ${classes.microsoft}`} onClick={() => window.location.assign("/auth/signin")}>
             <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
             <div className={classes.divider}></div>
             <p className={classes.text}>Sign in with Microsoft Account</p>
