@@ -11,7 +11,10 @@ import {
   TableRow,
   Paper
 } from '@material-ui/core';
-import axios from 'axios';
+
+import { connect } from 'react-redux';
+import * as candidateSelectors from '../../selectors/CandidateSelectors';
+import * as interviewerSelectors from '../../selectors/InterviewerSelectors';
 
 const styles = theme => ({
   title: {
@@ -56,26 +59,15 @@ class DirectoryPage extends Component {
 
   // get all candidates and interviewers on page load
   componentDidMount() {
-    axios.get('/schedule/candidates').then(res => {
-      this.setState({
-        candidates: res.data
-      });
-    }).catch(error => {
-      console.log(error);
-    });
-    axios.get('/schedule/interviewers').then(res => {
-      this.setState({
-        interviewers: res.data
-      });
-    }).catch(error => {
-      console.log(error);
-    });
+    const { fetchInterviewers, fetchCandidates } = this.props.actions;
+    fetchInterviewers()
+    fetchCandidates()
   }
 
   render() {
     const { classes } = this.props;
-    const {candidates, interviewers} = this.state;
-    
+    const { candidates, interviewers } = this.props;
+
 
     function handleChange(e, value) {
       this.setState({ value: value });
@@ -95,12 +87,12 @@ class DirectoryPage extends Component {
           </TableHead>
           <TableBody>
             {rows.map(row => (
-              <TableRow key={row.CandidateID}>
+              <TableRow key={row.id}>
                 <TableCell component="th" scope="row">
-                  {row.FirstName + " " + row.LastName}
+                  {row.firstName + " " + row.lastName}
                 </TableCell>
-                <TableCell>{row.Email}</TableCell>
-                <TableCell>{row.Phone}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.phone}</TableCell>
                 <TableCell><Button variant="outlined" className={classes.delete}>Delete</Button></TableCell>
               </TableRow>
             ))}
@@ -131,4 +123,9 @@ class DirectoryPage extends Component {
   }
 }
 
-export default withStyles(styles)(DirectoryPage);
+const mapStateToProps = state => ({
+  candidates: candidateSelectors.getCandidates(state),
+  interviewers: interviewerSelectors.getInterviewers(state)
+})
+
+export default withStyles(styles)(connect(mapStateToProps)(DirectoryPage));

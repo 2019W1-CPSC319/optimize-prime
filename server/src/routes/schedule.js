@@ -61,7 +61,7 @@ router.get('/candidates', async (req, res) => {
 // get a specific candidate
 router.get('/candidate/:id', (req, res) => {
   const { id } = req.params;
-  const sql = 'SELECT * FROM Candidate WHERE candidateId = ?';
+  const sql = 'SELECT * FROM Candidate WHERE id = ?';
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {

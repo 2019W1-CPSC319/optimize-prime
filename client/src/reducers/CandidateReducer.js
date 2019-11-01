@@ -1,10 +1,5 @@
 const CandidateReducer = (state = {}, action) => {
   switch (action.type) {
-    case 'INIT_REQUEST':
-      return {
-        ...state,
-        loading: action.payload,
-      };
     case 'FETCH_CANDIDATES_SUCCESS':
       return {
         ...state,
