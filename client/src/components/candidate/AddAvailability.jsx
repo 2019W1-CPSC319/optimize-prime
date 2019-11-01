@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as candidateActions from '../../actions/candidateActions';
+import * as candidateSelectors from '../../selectors/CandidateSelectors';
 
 import { withStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
@@ -44,10 +47,18 @@ class AddAvailability extends Component {
     };
   }
 
-  render() {
-    const { classes } = this.props;
-    const { name } = this.state;
+  componentDidMount(){
+    if(!this.props.candidate){
+      this.props.fetchCandidate(this.props.id);
+    }
+  }
 
+  render() {
+    const { classes, candidate } = this.props;
+    const { name } = this.state;
+    if(!this.props.candidate) {
+      return <div>Loading</div>
+    }
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" className={classes.title}>
@@ -56,7 +67,7 @@ class AddAvailability extends Component {
         <div className={classes.container}>
           <img className={classes.bigLogo} src={logo_long} alt="Galvanize Logo" />
           <div className={classes.subText}>
-            <Typography>{`Hi ${name}, `}</Typography>
+            <Typography>{`Hi ${candidate.firstName}, `}</Typography>
             <Typography>
               Please add your availability to come in for an on-site interview at our <b>Vancouver</b> office below.
             </Typography>
@@ -71,4 +82,12 @@ class AddAvailability extends Component {
   }
 }
 
-export default withStyles(styles)(AddAvailability);
+const mapStateToProps = (state, ownProps) => ({
+  candidate: candidateSelectors.getCandidateById(state, ownProps.id)
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchCandidate: (id) => dispatch(candidateActions.fetchSpecificCandidate(id))
+})
+
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AddAvailability));

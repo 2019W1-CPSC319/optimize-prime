@@ -17,9 +17,20 @@ const fetchCandidatesFailure = (error) => (
 
 export const fetchCandidates = () => async (dispatch) => {
   try {
-    const response = axios.get('/schedule/candidates');
+    const response = await axios.get('/schedule/candidates');
     return dispatch(fetchCandidatesSuccess(response.data));
   } catch (error) {
     return dispatch(fetchCandidatesFailure(error));
+  }
+};
+
+export const fetchSpecificCandidate = (id) => async (dispatch) => {
+  try {
+    const response = await axios({
+      url: `/schedule/candidate/${id}`,
+    });
+    dispatch(fetchCandidatesSuccess(response.data));
+  } catch (error) {
+    console.log(error);
   }
 };
