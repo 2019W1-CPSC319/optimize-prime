@@ -23,10 +23,6 @@ import {
     Button,
 } from '@material-ui/core';
 
-function formatDateTime(dateTime) {
-    return moment.utc(dateTime).local().format('M/D/YY h:mm A');
-}
-
 const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
         confirmButton: 'btn btn-success',
@@ -112,10 +108,9 @@ export default class RoomPage extends React.Component {
         this.setState({ onSuccess: true });
     }
 
-    handleDeleteRoom = () => {
-        const { value } = this.props;
+    handleDeleteRoom = (id) => {
         try {
-            axios.put(`/schedule/room/${value}`).then(res => {
+            axios.put(`/schedule/room/${id}`).then(res => {
                 console.log(res);
                 // this.setState({
                 //     rooms: res.data
@@ -157,11 +152,17 @@ export default class RoomPage extends React.Component {
     }
 
     async componentDidMount() {
+        const { pageProps } = this.props;
+
+        if (!pageProps.user.profile) {
+            pageProps.actions.findMeetingTimes();
+        }
+
         try {
             axios.get('/schedule/rooms').then(res => {
-                this.setState({
-                    rooms: res.data
-                });
+                // this.setState({
+                //     rooms: res.data
+                // });
             }).catch(error => {
                 console.error(error);
             });
@@ -196,7 +197,7 @@ export default class RoomPage extends React.Component {
                                                     value={room.id}
                                                     color="default"
                                                     variant="outlined"
-                                                    onClick={this.handleDeleteRoom}
+                                                    onClick={() => this.handleDeleteRoom(room.id)}
                                                 >Delete
                                                 </Button>
                                             </TableCell>

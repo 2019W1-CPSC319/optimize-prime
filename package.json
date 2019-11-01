@@ -39,7 +39,8 @@
     "start:client": "rimraf ./cache && rimraf ./dist/client && parcel ./client/public/index.html --port 3010 --hmr-port 3011 --out-dir ./dist/client",
     "build": "rimraf ./dist/client && parcel build ./client/public/index.html --out-dir ./dist/client",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "node server/src/start.js"
   },
   "eslintConfig": {
     "extends": "react-app"

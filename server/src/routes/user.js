@@ -17,4 +17,19 @@ router.get('/profile', notAuthMiddleware, async (req, res) => {
   }
 });
 
+router.get('/findMeetingTimes', notAuthMiddleware, async (req, res) => {
+  try {
+    const response = await axios({
+      url: 'https://graph.microsoft.com/v1.0/users/me/findMeetingTimes',
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
+      },
+    });
+
+    res.send(response.data);
+  } catch (err) {
+    res.status(err.response.status).send(err.message);
+  }
+});
+
 module.exports = router;

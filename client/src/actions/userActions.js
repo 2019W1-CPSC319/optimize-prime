@@ -58,3 +58,15 @@ export const fetchUser = () => async (dispatch) => {
     return dispatch(fetchUserFailure(error));
   }
 };
+
+export const findMeetingTimes = () => async (dispatch) => {
+  try {
+    dispatch(initRequest());
+    const response = await axios.get('/user/findMeetingTimes');
+    const profile = response.data;
+    return dispatch(fetchUserSuccess(profile));
+  } catch (error) {
+    console.log(error);
+    return dispatch(fetchUserFailure(error));
+  }
+};
