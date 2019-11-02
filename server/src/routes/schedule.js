@@ -128,7 +128,7 @@ router.get('/interviewers', (req, res) => {
 });
 
 // update the status of a interviewer to disabled, in the interviewer table
-router.put('/interviewer/:id', (req, res) => {
+router.put('/interviewer/delete/:id', (req, res) => {
   const { id } = req.params;
   const sql = "UPDATE Interviewer SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
