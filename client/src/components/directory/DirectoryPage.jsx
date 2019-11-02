@@ -86,9 +86,6 @@ class DirectoryPage extends Component {
     const { classes, candidates, interviewers, actions } = this.props;
     const { value, mode, openUserDialog, selectedUser } = this.state;
 
-    console.log(candidates)
-    console.log(interviewers)
-
     return (
       <div>
         <div className={classes.header}>

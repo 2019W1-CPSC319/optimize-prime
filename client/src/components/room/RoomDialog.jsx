@@ -51,7 +51,6 @@ class RoomDialog extends Component {
         return (
             <Dialog open={this.props.roomOpen} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Add a new room</DialogTitle>
-                {/* <form onSubmit={this.props.handleSaveAddRoom}> */}
                 <DialogContent>
                     <DialogContentText>
                         To add a new room, provide all the required fields.
@@ -90,7 +89,6 @@ class RoomDialog extends Component {
                     <Button onClick={this.props.handleCloseAddRoom} color="primary">Cancel</Button>
                     <Button type="submit" onClick={this.props.handleSaveAddRoom} color="primary">Save</Button>
                 </DialogActions>
-                {/* </form> */}
             </Dialog >
         );
     }
