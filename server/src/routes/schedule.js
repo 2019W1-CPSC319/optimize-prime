@@ -98,7 +98,7 @@ router.post('/newuser', (req, res) => {
     if (type === "candidate") {
       try {
         const subject = "Availability"
-        const body = "Hi " + user.firstName + "," + " Please fill out your availability by going here:";
+        const body = "Hi " + user.firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate";
         const response = axios({
           method: 'post',
           url: 'https://graph.microsoft.com/v1.0/me/sendMail',
