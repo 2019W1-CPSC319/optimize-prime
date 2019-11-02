@@ -8,8 +8,7 @@ const initialState = {
 const DirectoryReducer = (state = initialState, action) => {
   let newState = {};
   switch (action.type) {
-    case 'ADD_USER_REQUEST':
-    case 'DELETE_USER_REQUEST':
+    case 'INIT_REQUEST':
       return {
         ...state,
         loading: true,
