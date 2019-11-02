@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const connection = require('../init/setupMySql');
+const axios = require('axios');
 
 // ***************** ROOMS Endpoints *******************
 
@@ -80,7 +81,7 @@ router.post('/newuser', (req, res) => {
   let sql = '';
   switch (type) {
     case 'candidate':
-      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
+      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';     
       break;
     case 'interviewer':
       sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
@@ -93,10 +94,42 @@ router.post('/newuser', (req, res) => {
       throw err;
     }
     const addedUser = { ...user, id: result.insertId };
-    res.send(addedUser);
-  });
-});
 
+    if (type === "candidate") {
+      try {
+        const subject = "Availability"
+        const body = "Hi " + user.firstName + "," + " Please fill out your availability by going here:";
+        const response = axios({
+          method: 'post',
+          url: 'https://graph.microsoft.com/v1.0/me/sendMail',
+          headers: {
+            Authorization: `Bearer ${req.user.accessToken}`,
+          },
+          data: {
+            message: {
+              subject: subject,
+              body: {
+                contentType: 'text',
+                content: body,
+              },
+              toRecipients: [
+                {
+                  emailAddress: {
+                    address: user.email,
+                  },
+                },
+              ],
+            },
+          },
+        });
+        res.send(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    res.send(addedUser);
+});
+});
 
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/:id', (req, res) => {
