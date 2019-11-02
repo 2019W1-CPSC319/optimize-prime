@@ -121,12 +121,16 @@ class AvailabilityTable extends Component {
    */
   handleSelectorChange = (event) = (event, id, field) => {
     const rows = this.state.rows;
-    if (field == FIELD_FROM) {
-      rows[id].from = event.target.value;
-    } else {
-      rows[id].to = event.target.value;
+    for (const row of rows){
+      if (row.id == id) {
+        if (field == FIELD_FROM) {
+          row.from = event.target.value;
+        } else {
+          row.to = event.target.value;
+        }
+      }
     }
-    this.setState({rows: rows});
+    this.setState(rows);
   }
 
   /**
