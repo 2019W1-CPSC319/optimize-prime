@@ -99,7 +99,7 @@ router.post('/newuser', (req, res) => {
 
 
 // update the status of a candidate to disabled, in the candidate table
-router.put('/candidate/:id', (req, res) => {
+router.put('/candidate/delete/:id', (req, res) => {
   const { id } = req.params;
   const sql = "UPDATE Candidate SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
