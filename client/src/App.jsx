@@ -16,7 +16,7 @@ const App = props => (
   <BrowserRouter>
     <Switch>
       <Route exact path="/login" render={() => <LoginPage {...props} />} />
-      <Route exact path="/candidate" render={() => <CandidatePage {...props} />} />
+      <Route exact path="/candidate/:id" render={(routeProps) => <CandidatePage {...props} id={routeProps.match.params.id} />} />
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
       <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
       <PrivateRoute exact path="/directory" pageProps={props} render={() => <DirectoryPage {...props} />} />

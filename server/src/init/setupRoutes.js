@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const cheerio = require("cheerio");
+const cheerio = require('cheerio');
 
 module.exports = (app, staticPath, log) => {
   log.debug(`Serving static files from ${staticPath}`);
@@ -15,11 +15,11 @@ module.exports = (app, staticPath, log) => {
     const initState = JSON.stringify({
       user: req.user ? {
         name: req.user.name,
-        username: req.user.username
-      } : undefined
+        username: req.user.username,
+      } : undefined,
     });
     const script = `<script id="initState" type="text/plain">${initState}</script>`;
-    $("head").append(script);
+    $('head').append(script);
     res.send($.html());
   });
 };
