@@ -51,6 +51,8 @@ export default class RoomPage extends React.Component {
             ],
             roomOpen: false,
             onSuccess: false,
+            name: '',
+            seats: 0,
         };
     }
 
@@ -84,12 +86,16 @@ export default class RoomPage extends React.Component {
         this.setState({ roomOpen: false });
     }
 
-    handleSaveAddRoom = (event) => {
+    handleSaveAddRoom = () => {
         try {
-            event.preventDefault();
+            // event.preventDefault();
+            // let data = {
+            //     name: event.target[0].value,
+            //     seats: event.target[1].value,
+            // }
             let data = {
-                name: event.target[0].value,
-                seats: event.target[1].value,
+                name: this.state.name,
+                seats: this.state.seats,
             }
             console.log(data)
             axios.post(`/schedule/room`, data).then(res => {
@@ -125,6 +131,16 @@ export default class RoomPage extends React.Component {
         catch (err) {
             console.error(JSON.stringify(err));
         }
+    }
+
+    handleChangeRoomName = (event) => {
+        event.persist();
+        this.setState({ name: event.target.value });
+    }
+
+    handleChangeRoomSeats = (event) => {
+        event.persist();
+        this.setState({ seats: event.target.value });
     }
 
     showSnackbarOnSuccess = () => {
@@ -225,6 +241,8 @@ export default class RoomPage extends React.Component {
                     <RoomDialog
                         handleCloseAddRoom={this.handleCloseAddRoom}
                         handleSaveAddRoom={this.handleSaveAddRoom}
+                        handleChangeRoomName={this.handleChangeRoomName}
+                        handleChangeRoomSeats={this.handleChangeRoomSeats}
                         {...this.state}
                     ></RoomDialog>
                 }

@@ -51,41 +51,46 @@ class RoomDialog extends Component {
         return (
             <Dialog open={this.props.roomOpen} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Add a new room</DialogTitle>
-                <form onSubmit={this.props.handleSaveAddRoom}>
-                    <DialogContent>
-                        <DialogContentText>
-                            To add a new room, provide all the required fields.
+                {/* <form onSubmit={this.props.handleSaveAddRoom}> */}
+                <DialogContent>
+                    <DialogContentText>
+                        To add a new room, provide all the required fields.
                     </DialogContentText>
-                        <TextField
-                            required
-                            id="name"
-                            label="Room Name"
-                            placeholder="100A"
-                            // className={classes.textField}
-                            margin="normal"
-                            variant="outlined"
-                            fullWidth
-                        />
-                        <TextField
-                            id="seats"
-                            label="Maximum Capacity"
-                            // className={clsx(classes.margin, classes.textField)}
-                            margin="normal"
-                            variant="outlined"
-                            // value={10}
-                            placeholder="10"
-                            // onChange={handleChange('weight')}
-                            InputProps={{
-                                endAdornment: <InputAdornment position="end"><PeopleRoundedIcon /></InputAdornment>,
-                            }}
-                            fullWidth
-                        />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.props.handleCloseAddRoom} color="primary">Cancel</Button>
-                        <Button type="submit" onClick={this.props.handleSaveAddRoom} color="primary">Save</Button>
-                    </DialogActions>
-                </form>
+                    <TextField
+                        required
+                        id="name"
+                        label="Room Name"
+                        placeholder="100A"
+                        name="name"
+                        value={this.props.name}
+                        // className={classes.textField}
+                        margin="normal"
+                        variant="outlined"
+                        onChange={this.props.handleChangeRoomName}
+                        fullWidth
+                    />
+                    <TextField
+                        id="seats"
+                        label="Maximum Capacity"
+                        // className={clsx(classes.margin, classes.textField)}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.props.seats}
+                        placeholder="10"
+                        name="seats"
+                        // onChange={handleChange('weight')}
+                        onChange={this.props.handleChangeRoomSeats}
+                        InputProps={{
+                            endAdornment: <InputAdornment position="end"><PeopleRoundedIcon /></InputAdornment>,
+                        }}
+                        fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.props.handleCloseAddRoom} color="primary">Cancel</Button>
+                    <Button type="submit" onClick={this.props.handleSaveAddRoom} color="primary">Save</Button>
+                </DialogActions>
+                {/* </form> */}
             </Dialog >
         );
     }
