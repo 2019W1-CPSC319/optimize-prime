@@ -101,7 +101,7 @@ router.post('/newuser', (req, res) => {
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Candidate SET Status = 'D' WHERE id = ?";
+  const sql = "UPDATE Candidate SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -130,7 +130,7 @@ router.get('/interviewers', (req, res) => {
 // update the status of a interviewer to disabled, in the interviewer table
 router.put('/interviewer/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Interviewer SET Status = 'D' WHERE id = ?";
+  const sql = "UPDATE Interviewer SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
