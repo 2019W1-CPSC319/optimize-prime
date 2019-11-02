@@ -1,8 +1,6 @@
 const router = require('express').Router();
 const connection = require('../init/setupMySql');
 
-// ***************** ROOMS Endpoints *******************
-
 // get all rooms
 router.get('/rooms', (req, res) => {
   var sql = "SELECT * FROM Rooms";
@@ -13,7 +11,6 @@ router.get('/rooms', (req, res) => {
     res.send(result);
   })
 });
-
 
 // add a new room, to the rooms table.
 router.post('/room', (req, res) => {
@@ -30,7 +27,6 @@ router.post('/room', (req, res) => {
   })
 });
 
-
 // update the status of a room to disabled, in the rooms table
 router.put('/room/:id', (req, res) => {
   const id = req.params.id;
@@ -44,8 +40,6 @@ router.put('/room/:id', (req, res) => {
   })
 });
 
-// ***************** CANDIDATES Endpoints *******************
-
 // get all candidates 
 router.get('/candidates', (req, res) => {
   var sql = "SELECT * FROM Candidate";
@@ -56,7 +50,6 @@ router.get('/candidates', (req, res) => {
     res.send(result);
   })
 });
-
 
 // get a specific candidate
 router.get('/candidate/:id', (req, res) => {
@@ -70,7 +63,6 @@ router.get('/candidate/:id', (req, res) => {
     res.send(result);
   })
 });
-
 
 // add a new user in either the candidates table or interview table based on the selected type
 router.post('/newuser', (req, res) => {
@@ -95,7 +87,6 @@ router.post('/newuser', (req, res) => {
   })
 });
 
-
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/:id', (req, res) => {
   const id = req.params.id;
@@ -108,15 +99,6 @@ router.put('/candidate/:id', (req, res) => {
     res.send(result);
   })
 });
-
-// ***************** Candidate AVAILABILITY Endpoints *******************
-
-
-
-
-
-
-// ***************** INTERVIEWERS Endpoints *******************
 
 // get all interviewers 
 router.get('/interviewers', (req, res) => {

@@ -36,7 +36,7 @@ router.post('/sendemail', notAuthMiddleware, async (req, res) => {
           toRecipients: [
             {
               emailAddress: {
-                address: 'aliceykim0828@gmail.com',
+                address: req.body.candidate,
               },
             },
           ],
