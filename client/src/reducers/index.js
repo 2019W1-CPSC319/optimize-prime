@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import user from './AuthReducer';
-import candidates from './CandidateReducer';
+import directory from './DirectoryReducer';
 
 const RootReducer = combineReducers({
   user,
-  candidates,
+  directory,
 });
 
 export default RootReducer;

@@ -2,132 +2,138 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Button,
+  Icon,
+  Paper,
   Tab,
   Tabs,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Paper
 } from '@material-ui/core';
 import axios from 'axios';
 
-const styles = theme => ({
+import DirectoryTable from './subComponents/DirectoryTable';
+import UserDialog from './UserDialog';
+
+const styles = {
   title: {
     fontWeight: 'normal',
     marginLeft: '30px',
   },
-  flex: {
-    display: 'flex',
-    [theme.breakpoints.down('sm')]: {
-      display: 'block',
-    },
-  },
   header: {
+    display: 'flex',
     justifyContent: 'space-between',
   },
-  directory: {
-    width: '100%',
-    overflowX: 'auto',
+  tableContainer: {
+    margin: '40px 10px',
   },
-  table: {
-    minWidth: 650,
-  },
-  delete: {
-    color: '#ff454e',
-    borderColor: '#ff454e',
-    '&:hover': {
-      backgroundColor:
-        'rgba(255, 69, 78, 0.2)'
-    }
-  }
-});
+};
+
+const CANDIDATE_TABLE_HEADER = [
+  { key: 'lastName', title: 'Last Name' },
+  { key: 'firstName', title: 'First Name' },
+  { key: 'email', title: 'Email' },
+  { key: 'phone', title: 'Phone Number' },
+];
+
+const EMPLOYEE_TABLE_HEADER = [
+  { key: 'lastName', title: 'Last Name' },
+  { key: 'firstName', title: 'First Name' },
+  { key: 'email', title: 'Email' },
+  { key: 'phone', title: 'Phone Number' },
+];
+
+const ALLOWED_USER_ACTIONS = [
+  'add',
+  'edit',
+  'delete',
+];
 
 class DirectoryPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: 0,
-      candidates: [],
-      interviewers: []
+      mode: '',
+      openUserDialog: false,
+      selectedUser: '',
     };
   }
 
-  // get all candidates and interviewers on page load
   componentDidMount() {
-    axios.get('/schedule/candidates').then(res => {
-      this.setState({
-        candidates: res.data
-      });
-    }).catch(error => {
-      console.log(error);
-    });
-    axios.get('/schedule/interviewers').then(res => {
-      this.setState({
-        interviewers: res.data
-      });
-    }).catch(error => {
-      console.log(error);
+    const { actions } = this.props;
+    actions.getUsers('candidate');
+    actions.getUsers('interviewer');
+  }
+
+  onClickOpenUserDialog = (mode, userId) => {
+    if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
+    this.setState({
+      mode,
+      selectedUser: userId || '',
+      openUserDialog: true,
     });
   }
 
+  onClickCloseDialog = () => {
+    this.setState({
+      mode: '',
+      openUserDialog: false
+    });
+  }
+
+  onChangeTab = (e, tab) => {
+    this.setState({ value: tab });
+  }
+
   render() {
-    const { classes } = this.props;
-    const {candidates, interviewers} = this.state;
-    
+    const { classes, candidates, interviewers, actions } = this.props;
+    const { value, mode, openUserDialog, selectedUser } = this.state;
 
-    function handleChange(e, value) {
-      this.setState({ value: value });
-    }
-    
-    function Directory(props) {
-      const { label, rows } = props
-      return <Paper className={classes.directory}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>{label} Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map(row => (
-              <TableRow key={row.CandidateID}>
-                <TableCell component="th" scope="row">
-                  {row.FirstName + " " + row.LastName}
-                </TableCell>
-                <TableCell>{row.Email}</TableCell>
-                <TableCell>{row.Phone}</TableCell>
-                <TableCell><Button variant="outlined" className={classes.delete}>Delete</Button></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>;
-    }
-
-    return <div>
-      <div className={classes.header}>
-        <h1 className={classes.title}>Directory</h1>
+    return (
+      <div>
+        <div className={classes.header}>
+          <h1 className={classes.title}>Directory</h1>
+          <Button
+            variant="outlined"
+            className={classes.button}
+            onClick={() => this.onClickOpenUserDialog('add')}
+          >
+            <Icon className={classes.icon}>person_add</Icon>
+            ADD NEW USER
+          </Button>
+        </div>
+        <Paper className={classes.tableContainer}>
+          <Tabs
+            value={value}
+            indicatorColor="primary"
+            textColor="primary"
+            onChange={(e, tab) => this.onChangeTab(e, tab)}
+          >
+            <Tab label="Candidate" />
+            <Tab label="Employee" />
+          </Tabs>
+          <div hidden={value !== 0}>
+            <DirectoryTable
+              headers={CANDIDATE_TABLE_HEADER}
+              rows={candidates}
+              onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
+            />
+          </div>
+          <div hidden={value !== 1}>
+            <DirectoryTable
+              headers={EMPLOYEE_TABLE_HEADER}
+              rows={interviewers}
+              onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
+            />
+          </div>
+        </Paper>
+        <UserDialog
+          mode={mode}
+          open={openUserDialog}
+          onClickCloseDialog={() => this.onClickCloseDialog()}
+          selectedUser={selectedUser}
+          actions={actions}
+        />
       </div>
-      <Paper style={{ margin: '40px 10px auto' }} square>
-        <Tabs
-          value={this.state.value}
-          indicatorColor="primary"
-          textColor="primary"
-          onChange={handleChange.bind(this)}
-          aria-label="disabled tabs example"
-        >
-          <Tab label="Candidate" />
-          <Tab label="Employee" />
-        </Tabs>
-        <div hidden={this.state.value !== 0}><Directory label="Candidate" rows={candidates} /></div>
-        <div hidden={this.state.value !== 1}><Directory label="Employee" rows={interviewers} /></div>
-      </Paper>
-    </div>;
+    );
   }
 }
 
