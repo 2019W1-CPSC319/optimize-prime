@@ -31,6 +31,14 @@ class SettingsPage extends Component {
         'success'
       )
     });
+    axios.post('/user/sendemail', { subject: 'Test email from Galvanize', body: 'Hello, world!' }).then(res => {
+      // Swal.fire(
+      //   'Success',
+      //   'Successfully added new user',
+      //   'success'
+      // )
+      console.log('Email was successfully sent!')
+    });
   }
 
   render() {

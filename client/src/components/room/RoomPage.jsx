@@ -210,7 +210,7 @@ export default class RoomPage extends React.Component {
                                 room => {
                                     if (room.status === 'A')
                                         return (
-                                            <TableRow key={140}>
+                                            <TableRow key={room.roomId}>
                                                 <TableCell>{room.name}</TableCell>
                                                 <TableCell align="center">{room.seats}</TableCell>
                                                 <TableCell>
@@ -223,7 +223,7 @@ export default class RoomPage extends React.Component {
                                                 </TableCell>
                                             </TableRow>
                                         );
-                                    else return <TableRow></TableRow>
+                                    else return <TableRow key={room.roomId}></TableRow>
                                 })}
                         </TableBody>
                     </Table>
