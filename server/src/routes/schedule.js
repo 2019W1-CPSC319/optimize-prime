@@ -20,11 +20,7 @@ router.post('/room', (req, res) => {
   const room = req.body;
   // the room is active by default
   const status = 'A';
-<<<<<<< HEAD
-  const sql = 'INSERT INTO Rooms(Name, Seats, Status) VALUES (?, ?, ?)';
-=======
   const sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
->>>>>>> 4cc594a9cdfa76c88172f8c5381618f974fd36ae
   const sqlcmd = connection.format(sql, [room.name, room.seats, status]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -34,18 +30,10 @@ router.post('/room', (req, res) => {
   });
 });
 
-<<<<<<< HEAD
-
-// update the status of a room to disabled, in the rooms table
-router.put('/room/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = "UPDATE Rooms SET Status = 'D' WHERE roomID = ?";
-=======
 // update the status of a room to disabled, in the rooms table
 router.put('/room/:id', (req, res) => {
   const { id } = req.params;
   const sql = "UPDATE Rooms SET Status = 'D' WHERE id = ?";
->>>>>>> 4cc594a9cdfa76c88172f8c5381618f974fd36ae
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
