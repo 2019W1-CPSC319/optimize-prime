@@ -72,10 +72,11 @@ const times = [
 const styles = {
   fabAdd: {
     borderRadius: "4px",
-    top: "-1em",
-    left: "40%",
     backgroundColor: "#4CAF50",
-    margin: "30px 30px"
+  },
+  submitBtn: {
+    borderRadius: "4px",
+    margin: "30px 30px",
   }
 }
 
@@ -115,6 +116,9 @@ class AvailabilityTable extends Component {
     return {id, date, from, to};
   }
 
+  /**
+   * Handler for selecting different times in the to or from fields.
+   */
   handleSelectorChange = (event) = (event, id, field) => {
     const rows = this.state.rows;
     if (field == FIELD_FROM) {
@@ -123,7 +127,19 @@ class AvailabilityTable extends Component {
       rows[id].to = event.target.value;
     }
     this.setState({rows: rows});
-    console.log(rows[id].from);
+  }
+
+  /**
+   * Hadler for submit button
+   */
+  handleDateChange = (event) = (date, id) => {
+    const rows = this.state.rows;
+    rows[id].date = date;
+    this.setState({rows: rows});
+  }
+
+  handleSubmit = () => {
+    console.log(this.state.rows);
   }
 
   render() {
@@ -154,7 +170,7 @@ class AvailabilityTable extends Component {
                                    id="date-picker-inline"
                                   //  label="Select your availability"
                                    value={row.date}
-                                   // onChange={handleDateChange}
+                                   onChange={(date) => this.handleDateChange(date, row.id)}
                                    KeyboardButtonProps={{
                                        'aria-label': 'change date',
                                    }}
@@ -182,9 +198,6 @@ class AvailabilityTable extends Component {
                     ))}
                     <TableRow>
                       <TableCell colSpan={3}>
-                        <Button color="primary" variant="outlined" >
-                          Submit
-                        </Button>
                       </TableCell>
                       <TableCell>
                         <Fab aria-label="add" size="small" onClick={this.handleAddRow} className={classes.fabAdd}>
@@ -194,6 +207,11 @@ class AvailabilityTable extends Component {
                     </TableRow>
                   </TableBody>
               </Table>
+          <div>
+            <Button color="primary" variant="outlined" onClick={this.handleSubmit} className={classes.submitBtn}>
+              Submit
+            </Button>
+          </div>
             </div>
         );
   }
