@@ -7,10 +7,18 @@ import {
   Tab,
   Tabs,
 } from '@material-ui/core';
-import axios from 'axios';
+import Swal from 'sweetalert2';
 
 import DirectoryTable from './subComponents/DirectoryTable';
 import UserDialog from './UserDialog';
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: true
+});
 
 const styles = {
   title: {
@@ -63,13 +71,35 @@ class DirectoryPage extends Component {
     actions.getUsers('interviewer');
   }
 
-  onClickOpenUserDialog = (mode, userId) => {
+  onClickUserAction = (mode, userId) => {
     if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
-    this.setState({
-      mode,
-      selectedUser: userId || '',
-      openUserDialog: true,
-    });
+
+    if (mode === 'delete') {
+      swalWithBootstrapButtons.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then((result) => {
+        const { value, dismiss } = result;
+        if (value) {
+          swalWithBootstrapButtons.fire(
+            'Deleted',
+            'The user has been deleted.',
+            'success'
+          );
+        }
+      })
+    } else {
+      this.setState({
+        mode,
+        selectedUser: userId || '',
+        openUserDialog: true,
+      });
+    }
   }
 
   onClickCloseDialog = () => {
@@ -94,7 +124,7 @@ class DirectoryPage extends Component {
           <Button
             variant="outlined"
             className={classes.button}
-            onClick={() => this.onClickOpenUserDialog('add')}
+            onClick={() => this.onClickUserAction('add')}
           >
             <Icon className={classes.icon}>person_add</Icon>
             ADD NEW USER
@@ -114,14 +144,14 @@ class DirectoryPage extends Component {
             <DirectoryTable
               headers={CANDIDATE_TABLE_HEADER}
               rows={candidates}
-              onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
+              onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
             />
           </div>
           <div hidden={value !== 1}>
             <DirectoryTable
               headers={EMPLOYEE_TABLE_HEADER}
               rows={interviewers}
-              onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
+              onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
             />
           </div>
         </Paper>
