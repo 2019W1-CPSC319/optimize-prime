@@ -17,7 +17,7 @@ const swalWithBootstrapButtons = Swal.mixin({
     confirmButton: 'btn btn-success',
     cancelButton: 'btn btn-danger'
   },
-  buttonsStyling: true
+  buttonsStyling: true,
 });
 
 const styles = {
