@@ -73,16 +73,14 @@ class LoginPage extends Component {
     return (
       <div>
         <div >
-          <img className={classes.company} src={company} alt={'Galvanize Logo'}></img>
-          <button className={`${classes.button} ${classes.microsoft}`} onClick={() => window.location.assign("localhost:3000/1234")}>
-            <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'}></img>
+          <img className={classes.company} src={company} alt={'Galvanize Logo'} />
+          <button className={`${classes.button} ${classes.microsoft}`} onClick={() => window.location.assign("/auth/signin")}>
+            <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'} />
             <div className={classes.divider}></div>
             <p className={classes.text}>Sign in with Microsoft Account</p>
           </button>
           <Typography align="center">or</Typography>
           <button className={clsx(classes.button, classes.guest)}>
-            {/* <img src={galvanize} className={classes.logo} alt={'Galvanize Logo'}></img> */}
-            {/* <div className={classes.divider}></div> */}
             <p className={classes.noIconText}>Sign in with Guest Account</p>
           </button>
         </div>

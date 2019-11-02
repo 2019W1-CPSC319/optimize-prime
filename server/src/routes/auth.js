@@ -27,9 +27,9 @@ router.post('/callback', (req, res, next) => {
 });
 
 router.get('/signout', (req, res) => {
-  req.session.destroy(() => {
+  req.session.destroy((err) => {
     req.logout();
-    res.redirect(`https://login.windows.net/common/oauth2/logout?post_logout_redirect_uri=${window.location.host}`);
+    res.redirect('/');
   });
 });
 
