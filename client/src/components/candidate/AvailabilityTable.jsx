@@ -19,6 +19,9 @@ import 'date-fns';
 
 import "./AvailabilityTable.css"
 
+const FIELD_FROM = 1;
+const FIELD_TO = 2;
+
 const times = [
   <MenuItem value={9}>9:00am</MenuItem>,
   <MenuItem value={9.25}>9:15am</MenuItem>,
@@ -55,15 +58,15 @@ const times = [
   <MenuItem value={15.5}>3:30pm</MenuItem>,
   <MenuItem value={15.75}>3:45pm</MenuItem>,
 
-  <MenuItem value={14}>4:00pm</MenuItem>,
-  <MenuItem value={14.25}>4:15pm</MenuItem>,
-  <MenuItem value={14.5}>4:30pm</MenuItem>,
-  <MenuItem value={14.75}>4:45pm</MenuItem>,
+  <MenuItem value={16}>4:00pm</MenuItem>,
+  <MenuItem value={16.25}>4:15pm</MenuItem>,
+  <MenuItem value={16.5}>4:30pm</MenuItem>,
+  <MenuItem value={16.75}>4:45pm</MenuItem>,
 
-  <MenuItem value={14}>5:00pm</MenuItem>,
-  <MenuItem value={14.25}>5:15pm</MenuItem>,
-  <MenuItem value={14.5}>5:30pm</MenuItem>,
-  <MenuItem value={14.75}>5:45pm</MenuItem>,
+  <MenuItem value={17}>5:00pm</MenuItem>,
+  <MenuItem value={17.25}>5:15pm</MenuItem>,
+  <MenuItem value={17.5}>5:30pm</MenuItem>,
+  <MenuItem value={17.75}>5:45pm</MenuItem>
 ]
 
 const styles = {
@@ -83,14 +86,14 @@ class AvailabilityTable extends Component {
 
     this.state = {
       indexctr: 1,
-      rows: [this.createRow(0, new Date(), 2, 3)]
+      rows: [this.createRow(0, new Date(), 9, 17)]
     };
   }
 
   handleAddRow = () => {
     // Adds a row to the table
     this.setState((prevState, props) => {
-      const row = this.createRow(this.state.indexctr, new Date(), 0, 0);
+      const row = this.createRow(this.state.indexctr, new Date(), 9, 17);
       const newindex = this.state.indexctr + 1
       this.setState({indexctr: newindex, rows: [...prevState.rows, row]})
     })
@@ -109,11 +112,18 @@ class AvailabilityTable extends Component {
   }
 
   createRow(id, date, from, to) {
-      return {id, date, from, to};
+    return {id, date, from, to};
   }
 
-  handleSelectorChange = event => {
-    event.target.name = "1pm";
+  handleSelectorChange = (event) = (event, id, field) => {
+    const rows = this.state.rows;
+    if (field == FIELD_FROM) {
+      rows[id].from = event.target.value;
+    } else {
+      rows[id].to = event.target.value;
+    }
+    this.setState({rows: rows});
+    console.log(rows[id].from);
   }
 
   render() {
@@ -154,12 +164,12 @@ class AvailabilityTable extends Component {
                           </TableCell>
                           <TableCell>
                             {/* <Select className="selector" onChange={this.handleSelectorChange}inputProps={{id: 'start', name: "Start"}}> */}
-                            <Select className="selector" onChange={this.handleSelectorChange()}>
+                            <Select className="selector" value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
                               {times}
                             </Select>
                           </TableCell>
                           <TableCell>
-                            <Select className="selector" onChange={this.handleSelectorChange()}>
+                            <Select className="selector" value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
                               {times}
                             </Select>
                           </TableCell>

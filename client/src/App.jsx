@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import * as Actions from './actions/index';
 import PrivateRoute from './components/core/PrivateRoute';
 import LoginPage from './components/authentication/LoginPage';
-import CandidatePage from './components/candidate/AddAvailability';
+import CandidatePage from './components/candidate/CandidatePage';
 import OverviewPage from './components/dashboard/OverviewPage';
 import CalendarPage from './components/calendar/CalendarPage';
 import DirectoryPage from './components/directory/DirectoryPage';
