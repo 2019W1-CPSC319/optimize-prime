@@ -139,7 +139,21 @@ class AvailabilityTable extends Component {
   }
 
   handleSubmit = () => {
-    console.log(this.state.rows);
+    var times = [];
+    for (const row of this.state.rows) {
+      const start = new Date(row.date.getYear(),
+                             row.date.getMonth(),
+                             row.date.getDay(),
+                             row.from,
+                             (row.from % 1) * 60)
+      const end = new Date(row.date.getYear(),
+                           row.date.getMonth(),
+                           row.date.getDay(),
+                           row.to,
+                           (row.to% 1) * 60)
+      times.push({start: start, end: end});
+    }
+    console.log(times);
   }
 
   render() {
