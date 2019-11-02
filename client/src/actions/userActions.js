@@ -49,10 +49,10 @@ function fetchUserFailure(error) {
 
 export const fetchUser = () => async (dispatch) => {
   try {
-    dispatch(initRequest());
-    const response = await axios.get('/user/profile');
-    const profile = response.data;
-    return dispatch(fetchUserSuccess(profile));
+    // dispatch(initRequest());
+    // const response = await axios.get('/user/profile');
+    // const profile = response.data;
+    // return dispatch(fetchUserSuccess(profile));
   } catch (error) {
     console.log(error);
     return dispatch(fetchUserFailure(error));

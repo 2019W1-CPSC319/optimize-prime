@@ -8,11 +8,13 @@ const mysql = require('mysql');
 //   database: 'scheduler',
 // });
 
+
+
 const connection = mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  database: process.env.MYSQL_DB,
-  user: process.env.MYSQL_DB_USERNAME,
-  password: process.env.MYSQL_DB_PASSWORD,
+  host: 'lasovo.duckdns.org',
+  database: 'scheduler',
+  user: 'galvanize',
+  password: 'galvan1ze',
 });
 
 connection.connect((err) => {

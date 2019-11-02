@@ -22,6 +22,7 @@ import {
     Slide,
     Button,
 } from '@material-ui/core';
+import { random } from 'node-forge';
 
 const swalWithBootstrapButtons = Swal.mixin({
     customClass: {
@@ -90,6 +91,7 @@ export default class RoomPage extends React.Component {
                 name: event.target[0].value,
                 seats: event.target[1].value,
             }
+            console.log(data)
             axios.post(`/schedule/room`, data).then(res => {
                 console.log(res);
                 Swal.fire(
@@ -109,6 +111,7 @@ export default class RoomPage extends React.Component {
     }
 
     handleDeleteRoom = (id) => {
+        console.log(id);
         try {
             axios.put(`/schedule/room/${id}`).then(res => {
                 console.log(res);
@@ -154,15 +157,16 @@ export default class RoomPage extends React.Component {
     async componentDidMount() {
         const { pageProps } = this.props;
 
-        if (!pageProps.user.profile) {
-            pageProps.actions.findMeetingTimes();
-        }
+        // if (!pageProps.user.profile) {
+        //     pageProps.actions.findMeetingTimes();
+        // }
 
         try {
             axios.get('/schedule/rooms').then(res => {
-                // this.setState({
-                //     rooms: res.data
-                // });
+                console.log(res.data)
+                this.setState({
+                    rooms: res.data
+                });
             }).catch(error => {
                 console.error(error);
             });
@@ -188,21 +192,22 @@ export default class RoomPage extends React.Component {
                         <TableBody>
                             {this.state.rooms.map(
                                 room => {
-                                    return (
-                                        <TableRow key={room.id}>
-                                            <TableCell>{room.name}</TableCell>
-                                            <TableCell align="center">{room.seats}</TableCell>
-                                            <TableCell>
-                                                <Button
-                                                    value={room.id}
-                                                    color="default"
-                                                    variant="outlined"
-                                                    onClick={() => this.handleDeleteRoom(room.id)}
-                                                >Delete
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
+                                    if (room.status === 'A')
+                                        return (
+                                            <TableRow key={140}>
+                                                <TableCell>{room.name}</TableCell>
+                                                <TableCell align="center">{room.seats}</TableCell>
+                                                <TableCell>
+                                                    <Button
+                                                        value={room.roomId}
+                                                        color="default"
+                                                        variant="outlined"
+                                                        onClick={() => this.handleDeleteRoom(room.roomId)}
+                                                    >Delete</Button>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    else return <TableRow></TableRow>
                                 })}
                         </TableBody>
                     </Table>

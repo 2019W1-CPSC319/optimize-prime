@@ -13,6 +13,7 @@ router.get('/profile', notAuthMiddleware, async (req, res) => {
 
     res.send(response.data);
   } catch (err) {
+    console.error(err);
     res.status(err.response.status).send(err.message);
   }
 });
