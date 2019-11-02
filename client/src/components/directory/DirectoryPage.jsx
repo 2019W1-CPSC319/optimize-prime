@@ -175,7 +175,7 @@ class DirectoryPage extends Component {
           >
             {
               tabs.map(tab => (
-                <Tab label={tab.title} />
+                <Tab key={tab.key} label={tab.title} />
               ))
             }
           </Tabs>
