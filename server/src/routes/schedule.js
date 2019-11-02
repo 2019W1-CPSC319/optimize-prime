@@ -47,7 +47,7 @@ router.put('/room/:id', (req, res) => {
 
 // get all candidates
 router.get('/candidates', async (req, res) => {
-  const sql = 'SELECT * FROM Candidate';
+  const sql = "SELECT * FROM Candidate WHERE status <> 'D'";
   await connection.query(sql, (err, result) => {
     if (err) {
       throw err;
