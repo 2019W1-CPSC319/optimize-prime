@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const connection = require('../init/setupMySql');
+const axios = require('axios');
 
 // ***************** ROOMS Endpoints *******************
 
@@ -138,6 +139,88 @@ router.put('/interviewer/:id', (req, res) => {
     }
     res.send(result);
   });
+});
+
+
+
+
+// find meeting times depending on candidate availability
+
+
+router.post('/meeting', async (req, res) => {
+  
+  const attendees = [
+
+  {
+    Type: "Required",
+    EmailAddress: {
+      Name: "Stefan",
+      Address: "stefanmilosevic@optimizeprime.onmicrosoft.com"
+    }
+  }
+]
+
+  const timeConstraints = [{}];
+
+  const meetingDuration = "";
+
+
+
+try {
+  const response = await axios({
+    method: 'post',
+    url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+    headers: {
+      Authorization: `Bearer ${req.user.accessToken}`,
+    },
+    data: 
+    {
+      "attendees": [
+        {
+          "emailAddress": {
+            "address": "martinjohansen@optimizeprime.onmicrosoft.com",
+          },
+          "type": "Required"
+        }
+      ],
+      "timeConstraint": {
+        "timeslots": [
+          {
+            "start": {
+              "dateTime": "2019-11-02T22:10:26.589Z",
+              "timeZone": "Pacific Standard Time"
+            },
+            "end": {
+              "dateTime": "2019-11-09T23:10:26.589Z",
+              "timeZone": "Pacific Standard Time"
+            }
+          }
+        ]
+      },
+        meetingDuration: "PT1H" 
+      }});
+      // { 
+      //   Attendees: attendees,  
+      //   TimeConstraint: { 
+      //     // ActivityDomain:"Work", Optional
+      //     Timeslots: [ 
+      //       { 
+      //         Start: { 
+      //           DateTime: "2016-05-20T07:00:00",  
+      //           TimeZone: "Pacific Standard Time" 
+      //         },  
+      //         End: { 
+      //           DateTime: "2016-05-20T17:00:00",  
+      //           TimeZone: "Pacific Standard Time" 
+      //         } 
+      //       } 
+      //     ] 
+      //   },  
+
+      console.log(response);
+    } catch(error) {
+      console.log(error);
+    }   
 });
 
 module.exports = router;

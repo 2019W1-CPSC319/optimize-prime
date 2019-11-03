@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import './settingsPage.css';
 import logo from '../../images/galvanize.png';
+import axios from 'axios';
 
 
 class SettingsPage extends Component {
@@ -13,12 +14,26 @@ class SettingsPage extends Component {
     };
   }
 
+  findMeetingTimes() {
+    // const url = "https://outlook.office.com/api/{version}/me/findmeetingtimes"
+    const data = {};
+    axios.post('schedule/meeting', data);
+  }
+
   render() {
     return (
       <div>
+
+      <button onClick={this.findMeetingTimes}>Test</button>
+
+
+
+
         <h1 className="settings-title">Settings</h1>
         <div className="container">
           <p>Add New User</p>
+          <Button onClick={this.findMeetingTimes}>Test</Button>
+
           <img id="logo" src={logo}>
           </img>
           <form>
