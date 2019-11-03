@@ -43,6 +43,7 @@ class RoomDialog extends Component {
                     </DialogContentText>
                     <TextField
                         required
+                        autoFocus={true}
                         id="name"
                         label="Room Name"
                         placeholder="100A"
@@ -54,12 +55,12 @@ class RoomDialog extends Component {
                         fullWidth
                     />
                     <TextField
+                        required
                         id="seats"
                         label="Maximum Capacity"
                         margin="normal"
                         variant="outlined"
-                        value={this.props.seats}
-                        placeholder="10"
+                        value={this.props.seats || ''}
                         name="seats"
                         onChange={this.props.handleChangeRoomSeats}
                         InputProps={{
