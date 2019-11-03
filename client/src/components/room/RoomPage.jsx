@@ -96,16 +96,14 @@ export default class RoomPage extends React.Component {
     }
 
     handleDeleteRoom = (id) => {
-        console.log(id);
+        const { actions } = this.props;
         try {
-            axios.put(`/schedule/room/${id}`).then(res => {
-                console.log(res);
-                // this.setState({
-                //     rooms: res.data
-                // });
-            }).catch(error => {
-                console.error(error);
-            });
+            actions.deleteRoom(id);
+            swalWithBootstrapButtons.fire(
+                'Success',
+                'Successfully deleted a user',
+                'success'
+            );
         }
         catch (err) {
             console.error(JSON.stringify(err));

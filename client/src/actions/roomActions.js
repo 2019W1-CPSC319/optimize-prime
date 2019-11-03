@@ -32,6 +32,32 @@ export const addRoom = (data) => async (dispatch) => {
   }
 };
 
+function deleteRoomSuccess(id) {
+  return {
+    type: 'DELETE_ROOM_SUCCESS',
+    id,
+  };
+}
+
+function deleteRoomFailure(error) {
+  return {
+    type: 'DELETE_ROOM_FAILURE',
+    error,
+  };
+}
+
+export const deleteRoom = (id) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.put(`/schedule/room/${id}`);
+    // const room = response.data;
+    return dispatch(deleteRoomSuccess(id));
+  } catch (error) {
+    console.log(error);
+    return dispatch(deleteRoomFailure(error));
+  }
+};
+
 function getRoomsSuccess(rooms) {
   return {
     type: 'GET_ROOMS_SUCCESS',
