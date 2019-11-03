@@ -49,29 +49,14 @@ export default class RoomPage extends React.Component {
     }
 
     handleCloseAddRoom = () => {
-        swalWithBootstrapButtons.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'PROCEED',
-            cancelButtonText: 'CANCEL',
-            reverseButtons: true
-        }).then((result) => {
-            if (result.value) {
-                swalWithBootstrapButtons.fire(
-                    'Cancelled',
-                    'Your progress has not been saved!',
-                    'error'
-                )
-                this.setState({ roomOpen: false });
-            } else if (
-                result.dismiss === Swal.DismissReason.cancel
-            ) {
-                this.setState({ roomOpen: false });
-            }
-        })
+        // swalWithBootstrapButtons.fire(
+        //     'Cancelled',
+        //     'Your progress has not been saved!',
+        //     'error'
+        // )
         this.setState({ roomOpen: false });
+        this.setState({ name: '' });
+        this.setState({ seats: 0 });
     }
 
     handleSaveAddRoom = async () => {
@@ -89,6 +74,8 @@ export default class RoomPage extends React.Component {
             );
             this.setState({ roomOpen: false });
             this.setState({ onSuccess: true });
+            this.setState({ name: '' });
+            this.setState({ seats: 0 });
         }
         catch (err) {
             console.error(JSON.stringify(err));
@@ -97,17 +84,25 @@ export default class RoomPage extends React.Component {
 
     handleDeleteRoom = (id) => {
         const { actions } = this.props;
-        try {
-            actions.deleteRoom(id);
-            swalWithBootstrapButtons.fire(
-                'Success',
-                'Successfully deleted a user',
-                'success'
-            );
-        }
-        catch (err) {
-            console.error(JSON.stringify(err));
-        }
+        swalWithBootstrapButtons.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then(async (result) => {
+            const { value } = result;
+            if (value) {
+                actions.deleteRoom(id);
+                swalWithBootstrapButtons.fire(
+                    'Deleted',
+                    'The room has been deleted.',
+                    'success'
+                );
+            }
+        })
     }
 
     handleChangeRoomName = (event) => {
