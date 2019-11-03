@@ -3,7 +3,7 @@ const connection = require('../init/setupMySql');
 
 // get all rooms
 router.get('/rooms', (req, res) => {
-  const sql = 'SELECT * FROM Rooms';
+  const sql = 'SELECT * FROM Rooms WHERE status="A"';
   connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -13,17 +13,27 @@ router.get('/rooms', (req, res) => {
 });
 
 // add a new room, to the rooms table.
-router.post('/room', (req, res) => {
+router.post('/room', async (req, res) => {
   const room = req.body;
   // the room is active by default
-  const status = 'A';
-  const sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
-  const sqlcmd = connection.format(sql, [room.name, room.seats, status]);
-  connection.query(sqlcmd, (err, result) => {
+  let sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
+  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A']);
+  // let id;
+
+  connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
       throw err;
     }
-    res.send(result);
+    // let addedRoom = await connection.query(sqlcmd);
+    sql = 'SELECT * FROM Rooms WHERE id=?';
+    sqlcmd = connection.format(sql, [addedRoom.insertId]);
+    connection.query(sqlcmd, (err, savedRoom) => {
+      if (err) {
+        throw err;
+      }
+      // const addedRoom = { ...room, id: result.insertId };
+      res.send(savedRoom[0]);
+    });
   });
 });
 
