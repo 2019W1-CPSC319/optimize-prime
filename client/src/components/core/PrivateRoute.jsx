@@ -80,7 +80,7 @@ class PrivateRoute extends React.Component {
     const { pageProps } = this.props
 
     if (!pageProps.user.profile) {
-      // pageProps.actions.fetchUser();
+      pageProps.actions.fetchUser();
     }
   }
 
@@ -164,15 +164,15 @@ class PrivateRoute extends React.Component {
     //     <Redirect to="/login" />
     //   );
     // }
-    // if (pageProps.user.loading || !pageProps.user.hasTriedLogin) {
-    //   return <div>Loading</div>;
-    // };
+    if (pageProps.user.loading || !pageProps.user.hasTriedLogin) {
+      return <div>Loading</div>;
+    };
 
-    // if (!pageProps.user.profile) {
-    //   return (
-    //     <Redirect to='/login' />
-    //   );
-    // };
+    if (!pageProps.user.profile) {
+      return (
+        <Redirect to='/login' />
+      );
+    };
 
 
     return (

@@ -1,29 +1,15 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-// import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-import PersonIcon from '@material-ui/icons/Person';
 import PeopleRoundedIcon from '@material-ui/icons/PeopleRounded';
 import {
-    Avatar,
     Button,
-    ButtonGroup,
-    FormControl,
-    Chip,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Grid,
-    MenuItem,
-    Input,
     InputAdornment,
-    InputLabel,
-    Select,
     TextField,
-    List,
-    ListItem,
-    Paper
 } from '@material-ui/core';
 
 const styles = theme => ({
@@ -62,7 +48,6 @@ class RoomDialog extends Component {
                         placeholder="100A"
                         name="name"
                         value={this.props.name}
-                        // className={classes.textField}
                         margin="normal"
                         variant="outlined"
                         onChange={this.props.handleChangeRoomName}
@@ -71,13 +56,11 @@ class RoomDialog extends Component {
                     <TextField
                         id="seats"
                         label="Maximum Capacity"
-                        // className={clsx(classes.margin, classes.textField)}
                         margin="normal"
                         variant="outlined"
                         value={this.props.seats}
                         placeholder="10"
                         name="seats"
-                        // onChange={handleChange('weight')}
                         onChange={this.props.handleChangeRoomSeats}
                         InputProps={{
                             endAdornment: <InputAdornment position="end"><PeopleRoundedIcon /></InputAdornment>,
