@@ -23,7 +23,7 @@ function addUserFailure(error) {
 
 export const addUser = (role, user) => async (dispatch) => {
   try {
-    dispatch(updateLoadingState('ADD_USER_REQUEST'));
+    dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.post('/schedule/newuser', user);
     const addedUser = response.data;
     return dispatch(addUserSuccess(`${role}s`, addedUser));
@@ -50,12 +50,39 @@ function getUsersFailure(error) {
 
 export const getUsers = (role) => async (dispatch) => {
   try {
-    dispatch(updateLoadingState('GET_USERS_REQUEST'));
+    dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.get(`/schedule/${role}s`);
     const users = response.data;
     return dispatch(getUsersSuccess(`${role}s`, users));
   } catch (error) {
     console.log(error);
     return dispatch(getUsersFailure(error));
+  }
+};
+
+function deleteUserSuccess(role, userId) {
+  return {
+    type: 'DELETE_USER_SUCCESS',
+    role,
+    userId,
+  };
+}
+
+function deleteUserFailure(error) {
+  return {
+    type: 'DELETE_USER_FAILURE',
+    error,
+  };
+}
+
+export const deleteUser = (role, userId) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.put(`/schedule/${role}/delete/${userId}`);
+    const addedUser = response.data;
+    return dispatch(deleteUserSuccess(`${role}s`, userId));
+  } catch (error) {
+    console.log(error);
+    return dispatch(deleteUserFailure(error));
   }
 };
