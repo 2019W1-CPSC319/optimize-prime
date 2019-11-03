@@ -1,20 +1,11 @@
 require('dotenv').config();
 const mysql = require('mysql');
 
-// const connection = mysql.createConnection({
-//   host: '127.0.0.1',
-//   user: 'root',
-//   password: '',
-//   database: 'scheduler',
-// });
-
-
-
 const connection = mysql.createConnection({
-  host: 'lasovo.duckdns.org',
-  database: 'scheduler',
-  user: 'galvanize',
-  password: 'galvan1ze',
+  host: process.env.MYSQL_HOST,
+  database: process.env.MYSQL_DB,
+  user: process.env.MYSQL_DB_USERNAME,
+  password: process.env.MYSQL_DB_PASSWORD,
 });
 
 connection.connect((err) => {
