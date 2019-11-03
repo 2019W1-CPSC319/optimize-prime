@@ -309,7 +309,7 @@ class OptionsDialog extends Component {
     render() {
         // const { classes } = this.props;
         return (
-            <Dialog open={true} aria-labelledby="form-options">
+            <Dialog open={this.props.optOpen} aria-labelledby="form-options">
                 <DialogTitle id="form-options">Select Interview Slot</DialogTitle>
                 <DialogContent>
                     <DialogContentText>

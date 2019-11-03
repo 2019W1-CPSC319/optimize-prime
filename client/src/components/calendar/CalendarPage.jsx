@@ -7,10 +7,7 @@ import axios from 'axios';
 // import { getEvents } from '../../GraphService';
 import RequestDialog from './RequestDialog';
 import OptionsDialog from './OptionsDialog';
-import RoomDialog from './../room/RoomDialog';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import RoomRoundedIcon from '@material-ui/icons/RoomRounded';
-import InsertInvitationRoundedIcon from '@material-ui/icons/InsertInvitationRounded';
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
 import { green } from '@material-ui/core/colors';
 import {
@@ -49,7 +46,6 @@ class CalendarPage extends React.Component {
       events: [],
       optOpen: false,
       reqOpen: false,
-      roomOpen: false,
       onSuccess: false,
       onSlide: false,
       required: [],
@@ -74,71 +70,17 @@ class CalendarPage extends React.Component {
     this.setState({ optOpen: false });
   }
 
-  handleOpenAddRoom = () => {
-    console.log('merong')
-    this.setState({ roomOpen: true });
-  }
-
   handleClose = () => {
-    swalWithBootstrapButtons.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'PROCEED',
-      cancelButtonText: 'CANCEL',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.value) {
-        swalWithBootstrapButtons.fire(
-          'Cancelled',
-          'Your progress has not been saved!',
-          'error'
-        )
-        this.setState({ reqOpen: false });
-        this.setState({ optOpen: false });
-        this.setState({ required: [] });
-        this.setState({ optional: [] });
-        this.setState({ candidate: '' });
-      } else if (
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
-        this.setState({ reqOpen: true });
-        this.setState({ optOpen: false });
-      }
-    })
+    swalWithBootstrapButtons.fire(
+      'Cancelled',
+      'Your progress has not been saved!',
+      'error'
+    )
     this.setState({ reqOpen: false });
     this.setState({ optOpen: false });
-  }
-
-  handleCloseAddRoom = () => {
-    swalWithBootstrapButtons.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'PROCEED',
-      cancelButtonText: 'CANCEL',
-      reverseButtons: true
-    }).then((result) => {
-      if (result.value) {
-        swalWithBootstrapButtons.fire(
-          'Cancelled',
-          'Your progress has not been saved!',
-          'error'
-        )
-        this.setState({ roomOpen: false });
-      } else if (
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
-        this.setState({ roomOpen: false });
-      }
-    })
-    this.setState({ roomOpen: false });
-  }
-
-  handleSliding = () => {
-    this.setState({ onSlide: !this.state.onSlide });
+    this.setState({ required: [] });
+    this.setState({ optional: [] });
+    this.setState({ candidate: '' });
   }
 
   updateCandidate = (event) => {
@@ -170,17 +112,17 @@ class CalendarPage extends React.Component {
   }
 
   handleSave = () => {
+    swalWithBootstrapButtons.fire(
+      'Success',
+      'Successfully added new user',
+      'success'
+    );
     this.setState({ reqOpen: false });
     this.setState({ optOpen: false });
     this.setState({ onSuccess: true });
     this.setState({ required: [] });
     this.setState({ optional: [] });
     this.setState({ candidate: '' });
-  }
-
-  handleSaveAddRoom = () => {
-    this.setState({ roomOpen: false });
-    this.setState({ onSuccess: true });
   }
 
   handleSelectInterviewDuration = (i) => {
@@ -264,64 +206,30 @@ class CalendarPage extends React.Component {
             </TableBody>
           </Table>
         </Paper>
-        <Slide direction="up" in={this.state.onSlide} mountOnEnter unmountOnExit>
-          <Fab
-            color="primary"
-            aria-label="add"
-            style={{ position: 'fixed', right: '30px', bottom: '170px', backgroundColor: '#e75480' }}
-            onClick={this.handleOpen}
-          >
-            <InsertInvitationRoundedIcon />
-          </Fab>
-        </Slide>
-        <Slide direction="up" in={this.state.onSlide} mountOnEnter unmountOnExit>
-          <Fab
-            color="primary"
-            aria-label="add"
-            style={{ position: 'fixed', right: '30px', bottom: '100px', backgroundColor: '#ffa500' }}
-            onClick={this.handleOpenAddRoom}
-          >
-            <RoomRoundedIcon />
-          </Fab>
-        </Slide>
         <Fab
           color="primary"
           aria-label="add"
           style={{ position: 'fixed', right: '30px', bottom: '30px', backgroundColor: '#003b9a' }}
-          onClick={this.handleSliding}
+          onClick={this.handleOpen}
         >
           <AddRoundedIcon />
         </Fab>
-        {
-          this.state.reqOpen &&
-          <RequestDialog
-            handleNext={this.handleNext}
-            handleClose={this.handleClose}
-            updateCandidate={this.updateCandidate}
-            updateCandidateAutosuggested={this.updateCandidateAutosuggested}
-            updateRequiredInterviewers={this.updateRequiredInterviewers}
-            updateOptionalInterviewers={this.updateOptionalInterviewers}
-            handleSelectInterviewDuration={this.handleSelectInterviewDuration}
-            {...this.state}
-          ></RequestDialog>
-        }
-        {
-          this.state.optOpen &&
-          <OptionsDialog
-            handleOpen={this.handleOpen}
-            handleSave={this.handleSave}
-            handleSelectOption={this.handleSelectOption}
-            {...this.state}
-          ></OptionsDialog>
-        }
-        {
-          this.state.roomOpen &&
-          <RoomDialog
-            handleCloseAddRoom={this.handleCloseAddRoom}
-            handleSaveAddRoom={this.handleSaveAddRoom}
-            {...this.state}
-          ></RoomDialog>
-        }
+        <RequestDialog
+          handleNext={this.handleNext}
+          handleClose={this.handleClose}
+          updateCandidate={this.updateCandidate}
+          updateCandidateAutosuggested={this.updateCandidateAutosuggested}
+          updateRequiredInterviewers={this.updateRequiredInterviewers}
+          updateOptionalInterviewers={this.updateOptionalInterviewers}
+          handleSelectInterviewDuration={this.handleSelectInterviewDuration}
+          {...this.state}
+        ></RequestDialog>
+        <OptionsDialog
+          handleOpen={this.handleOpen}
+          handleSave={this.handleSave}
+          handleSelectOption={this.handleSelectOption}
+          {...this.state}
+        ></OptionsDialog>
         {this.showSnackbarOnSuccess()}
       </div >
     );
