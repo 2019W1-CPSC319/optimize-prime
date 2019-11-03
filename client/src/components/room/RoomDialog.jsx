@@ -46,7 +46,6 @@ class RoomDialog extends Component {
                         autoFocus={true}
                         id="name"
                         label="Room Name"
-                        placeholder="100A"
                         name="name"
                         value={this.props.name}
                         margin="normal"
