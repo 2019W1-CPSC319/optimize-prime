@@ -11,8 +11,17 @@ import {
   TextField,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import Swal from 'sweetalert2';
 
 import logo from '../../images/logo.png';
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: true,
+});
 
 const styles = {
   dialogTitleRoot: {
@@ -118,6 +127,11 @@ class UserDialog extends Component {
       // });
     }
 
+    swalWithBootstrapButtons.fire(
+      mode === 'add' ? 'Added!' : 'Saved',
+      `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
+      'success'
+    )
     // Clear dialog state
     this.setState(this.initializeUserInfoFields());
     onClickCloseDialog();

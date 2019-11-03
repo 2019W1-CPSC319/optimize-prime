@@ -2,11 +2,9 @@ const router = require('express').Router();
 const connection = require('../init/setupMySql');
 const axios = require('axios');
 
-// ***************** ROOMS Endpoints *******************
-
 // get all rooms
 router.get('/rooms', (req, res) => {
-  const sql = 'SELECT * FROM Rooms';
+  const sql = 'SELECT * FROM Rooms WHERE status="A"';
   connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -15,19 +13,24 @@ router.get('/rooms', (req, res) => {
   });
 });
 
-
 // add a new room, to the rooms table.
-router.post('/room', (req, res) => {
+router.post('/room', async (req, res) => {
   const room = req.body;
-  // the room is active by default
-  const status = 'A';
-  const sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
-  const sqlcmd = connection.format(sql, [room.name, room.seats, status]);
-  connection.query(sqlcmd, (err, result) => {
+  let sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
+  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A']);
+  connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
       throw err;
     }
-    res.send(result);
+    sql = 'SELECT * FROM Rooms WHERE id=?';
+    sqlcmd = connection.format(sql, [addedRoom.insertId]);
+    connection.query(sqlcmd, (err, savedRoom) => {
+      if (err) {
+        throw err;
+      }
+      // savedRoom is the room that has just been added which consists of id, name, seats, and status attributes
+      res.send(savedRoom[0]);
+    });
   });
 });
 
@@ -48,7 +51,7 @@ router.put('/room/:id', (req, res) => {
 
 // get all candidates
 router.get('/candidates', async (req, res) => {
-  const sql = 'SELECT * FROM Candidate';
+  const sql = "SELECT * FROM Candidate WHERE status <> 'D'";
   await connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -56,7 +59,6 @@ router.get('/candidates', async (req, res) => {
     res.send(result);
   });
 });
-
 
 // get a specific candidate
 router.get('/candidate/:id', (req, res) => {
@@ -70,7 +72,6 @@ router.get('/candidate/:id', (req, res) => {
     res.send(result);
   });
 });
-
 
 // add a new user in either the candidates table or interview table based on the selected type
 router.post('/newuser', (req, res) => {
@@ -128,13 +129,13 @@ router.post('/newuser', (req, res) => {
       }
     }
     res.send(addedUser);
-});
+  });
 });
 
 // update the status of a candidate to disabled, in the candidate table
-router.put('/candidate/:id', (req, res) => {
+router.put('/candidate/delete/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Candidate SET Status = 'D' WHERE id = ?";
+  const sql = "UPDATE Candidate SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -144,10 +145,10 @@ router.put('/candidate/:id', (req, res) => {
   });
 });
 
-// ***************** Candidate AVAILABILITY Endpoints *******************
+// ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
 
-// ***************** INTERVIEWERS Endpoints *******************
+// ***************** INTERVIEWERS Endpoints *****************************
 
 // get all interviewers
 router.get('/interviewers', (req, res) => {
@@ -161,9 +162,9 @@ router.get('/interviewers', (req, res) => {
 });
 
 // update the status of a interviewer to disabled, in the interviewer table
-router.put('/interviewer/:id', (req, res) => {
+router.put('/interviewer/delete/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Interviewer SET Status = 'D' WHERE id = ?";
+  const sql = "UPDATE Interviewer SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {

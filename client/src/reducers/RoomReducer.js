@@ -1,11 +1,10 @@
 /* eslint-disable prefer-object-spread */
 const initialState = {
   loading: false,
-  candidates: [],
-  interviewers: [],
+  rooms: []
 };
 
-const DirectoryReducer = (state = initialState, action) => {
+const RoomReducer = (state = initialState, action) => {
   let newState = {};
   switch (action.type) {
     case 'INIT_REQUEST':
@@ -13,21 +12,21 @@ const DirectoryReducer = (state = initialState, action) => {
         ...state,
         loading: true,
       };
-    case 'ADD_USER_SUCCESS':
+    case 'ADD_ROOM_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
-      newState[action.role].push(action.user);
+      newState['rooms'].push(action.room);
       return newState;
-    case 'GET_USERS_SUCCESS':
+    case 'GET_ROOMS_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
-      newState[action.role] = action.users;
+      newState.rooms = action.rooms;
       return newState;
-    case 'DELETE_USER_SUCCESS':
+    case 'DELETE_ROOM_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
-      newState[action.role] = newState[action.role].filter((user) => user.id !== action.userId);
+      newState['rooms'] = newState['rooms'].filter((room) => room.id !== action.id);
       return newState;
     default:
       return state;
   }
 };
 
-export default DirectoryReducer;
+export default RoomReducer;

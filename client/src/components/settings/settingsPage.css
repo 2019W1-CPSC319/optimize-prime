@@ -15,7 +15,7 @@
     text-align: center;
     margin-left: 30px;
     width: 280px;
-    height: 530px;
+    height: 580px;
     border-radius: 20px;
     text-align: center;
     display: inline-block;
@@ -23,6 +23,7 @@
 
 .btn-submit {
     box-sizing: border-box;	
+    margin-top: 20px !important;
     height: 35px;	
     width: 145px;	
     border-radius: 4px;
