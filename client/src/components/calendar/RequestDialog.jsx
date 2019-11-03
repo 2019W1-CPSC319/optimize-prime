@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-// import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import PersonIcon from '@material-ui/icons/Person';
 import {
     Avatar,
@@ -87,7 +86,6 @@ class RequestDialog extends Component {
             <Paper style={{ padding: '0' }} square>
                 <List style={{ padding: '0' }} dense>
                     {candidates.map((name, i) => {
-                        // console.log(name.toLowerCase().startsWith('o'))
                         const input = this.props.candidate.toLowerCase();
                         return (
                             input !== ''

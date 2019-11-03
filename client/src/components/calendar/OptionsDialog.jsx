@@ -1,18 +1,11 @@
 import React, { Component } from 'react';
 import Moment from 'react-moment';
-// import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
-// import MeetingRoomIcon from '@material-ui/icons/MeetingRoom';
-// import GroupIcon from '@material-ui/icons/Group';
-// import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import { green } from '@material-ui/core/colors';
 import {
     Avatar,
     Button,
     Box,
-    // Card,
-    // CardContent,
-    // Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
@@ -20,7 +13,6 @@ import {
     DialogTitle,
     List,
     ListItem,
-    // ListItemAvatar,
     ListItemText,
     ListItemSecondaryAction,
     Typography,
@@ -125,35 +117,6 @@ class OptionsDialog extends Component {
                     // interviewers: [].concat(this.props.required),
                     interviewers,
                 });
-            //     eventsRequiredInterviewers.forEach(event => {
-            //         var blockSD = new Date(block.start);
-            //         var blockED = new Date(block.end);
-            //         var eventSD = new Date(event.start);
-            //         var eventED = new Date(event.end);
-            //         var interviewers = [...this.props.required];
-            //         // var date, time;
-            //         if (blockSD <= eventSD && eventED <= blockED) {
-            //             if ((eventSD - blockSD) <= this.getInterviewDuration() * 1000 * 60) {
-            //                 availableOptions.push({
-            //                     date: block.start,
-            //                     time: { start: block.start, end: event.start },
-            //                     rooms: new Set(),
-            //                     interviewers,
-            //                 });
-            //             }
-            //             if ((blockED - eventED) <= this.getInterviewDuration() * 1000 * 60) {
-            //                 availableOptions.push({
-            //                     date: block.end,
-            //                     time: { start: event.end, end: block.end },
-            //                     rooms: new Set(),
-            //                     interviewers,
-            //                 });
-            //             }
-            //         } else {
-            //             block.start = 0;
-            //             block.end = eventSD < block.end ? event.start : block.end;
-            //         }
-            //     })
         });
 
         // for each available options, determine whether, for each room, room is available
@@ -163,9 +126,6 @@ class OptionsDialog extends Component {
             rooms.forEach(room => {
                 var startTime = new Date(availableOption.time.start);
                 var endTime = new Date(availableOption.time.end);
-                console.log('Room: ' + room.name);
-                console.log('Start time: ' + startTime)
-                console.log('End time: ' + endTime)
 
                 for (startTime; new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration()) <= endTime; startTime = new Date(startTime.valueOf() + 1000 * 60 * 15)) {
                     if (this.isAvailable(room.name, startTime, new Date(startTime.valueOf() + 1000 * 60 * this.getInterviewDuration())))
@@ -183,10 +143,7 @@ class OptionsDialog extends Component {
         // if YES => add to the list
         // if  NO => do nothing
         options.forEach(option => {
-            console.log('%c option: ' + JSON.stringify(option), 'color: deeppink');
-            console.log('%c this.props.optional:' + this.props.optional, 'color: red');
             this.props.optional.forEach(optionalInterviewer => {
-                console.log('%c ' + optionalInterviewer, 'background: #222; color: #bada55');
                 if (this.isAvailable(optionalInterviewer, option.time.start, option.time.end)) { option.interviewers.push(optionalInterviewer) };
             });
         });
@@ -224,17 +181,11 @@ class OptionsDialog extends Component {
     }
 
     isAvailable = (room, startTime, endTime) => {
-        console.log('StartTime at isAvailable: ' + startTime);
-        console.log('EndTime at isAvailable: ' + endTime);
-        console.log(room);
-        // console.log(events.filter(event => event.id === room).length);
         return events
             .filter(event => event.id === room)
             .filter(event => {
                 var eventStartDate = new Date(event.start);
                 var eventEndDate = new Date(event.end);
-                // console.log(eventStartDate <= endTime || eventEndDate <= startTime)
-                // return eventStartDate <= startTime && eventEndDate >= endTime;
                 return !(endTime <= eventStartDate || eventEndDate <= startTime);
             }).length === 0;
     }
@@ -248,18 +199,14 @@ class OptionsDialog extends Component {
     }
 
     updateCandidate = (event) => {
-        // console.log(event)
         this.setState({ candidate: event.target.value });
     }
 
     handlePopoverOpen = (event) => {
-        // console.log('open popover')
-        // console.log(event.target)
         this.setState(event.target);
     };
 
     handlePopoverClose = () => {
-        // console.log('close popover')
         this.setState(null);
     };
 
@@ -287,7 +234,6 @@ class OptionsDialog extends Component {
                     const hash = `${option.date}-${option.time.start}-${option.time.end}-${option.room}`;
                     const labelId = `radio-list-secondary-label-${hash}`;
                     return (
-                        // TODO: Format date and time
                         <ListItem key={hash}>
                             {/* <ListItemAvatar>
                                 <Avatar
@@ -324,7 +270,6 @@ class OptionsDialog extends Component {
                                     checked={this.props.selectedOption === hash}
                                     onChange={() => this.props.handleSelectOption(hash)}
                                     value={hash}
-                                // inputProps={{ 'aria-label': 'C' }}
                                 />
                             </ListItemSecondaryAction>
                         </ListItem>
