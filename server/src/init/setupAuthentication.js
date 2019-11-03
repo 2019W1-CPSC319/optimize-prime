@@ -7,7 +7,7 @@ const graph = require('../utils/graph');
 
 module.exports = (app) => {
   const users = {};
-
+  console.log(process.env)
   app.use(expressSession({
     secret: 'session secret',
     resave: false,
@@ -53,7 +53,7 @@ module.exports = (app) => {
       clientID: process.env.OAUTH_APP_ID,
       responseType: 'code id_token',
       responseMode: 'form_post',
-      redirectUrl: process.env.OAUTH_REDIRECT_URI,
+      redirectUrl: 'http://localhost:3000/auth/callback',
       allowHttpForRedirectUrl: true,
       clientSecret: process.env.OAUTH_APP_PASSWORD,
       validateIssuer: false,

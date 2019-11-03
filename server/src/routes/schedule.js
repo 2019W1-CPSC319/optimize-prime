@@ -1,11 +1,9 @@
 const router = require('express').Router();
 const connection = require('../init/setupMySql');
 
-// ***************** ROOMS Endpoints *******************
-
 // get all rooms
 router.get('/rooms', (req, res) => {
-  const sql = 'SELECT * FROM Rooms';
+  const sql = 'SELECT * FROM Rooms WHERE status="A"';
   connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -14,19 +12,24 @@ router.get('/rooms', (req, res) => {
   });
 });
 
-
 // add a new room, to the rooms table.
-router.post('/room', (req, res) => {
+router.post('/room', async (req, res) => {
   const room = req.body;
-  // the room is active by default
-  const status = 'A';
-  const sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
-  const sqlcmd = connection.format(sql, [room.name, room.seats, status]);
-  connection.query(sqlcmd, (err, result) => {
+  let sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
+  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A']);
+  connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
       throw err;
     }
-    res.send(result);
+    sql = 'SELECT * FROM Rooms WHERE id=?';
+    sqlcmd = connection.format(sql, [addedRoom.insertId]);
+    connection.query(sqlcmd, (err, savedRoom) => {
+      if (err) {
+        throw err;
+      }
+      // savedRoom is the room that has just been added which consists of id, name, seats, and status attributes
+      res.send(savedRoom[0]);
+    });
   });
 });
 
@@ -56,7 +59,6 @@ router.get('/candidates', async (req, res) => {
   });
 });
 
-
 // get a specific candidate
 router.get('/candidate/:id', (req, res) => {
   const { id } = req.params;
@@ -69,7 +71,6 @@ router.get('/candidate/:id', (req, res) => {
     res.send(result);
   });
 });
-
 
 // add a new user in either the candidates table or interview table based on the selected type
 router.post('/newuser', (req, res) => {
@@ -97,7 +98,6 @@ router.post('/newuser', (req, res) => {
   });
 });
 
-
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/delete/:id', (req, res) => {
   const { id } = req.params;
@@ -111,10 +111,10 @@ router.put('/candidate/delete/:id', (req, res) => {
   });
 });
 
-// ***************** Candidate AVAILABILITY Endpoints *******************
+// ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
 
-// ***************** INTERVIEWERS Endpoints *******************
+// ***************** INTERVIEWERS Endpoints *****************************
 
 // get all interviewers
 router.get('/interviewers', (req, res) => {

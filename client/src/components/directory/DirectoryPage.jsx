@@ -8,7 +8,6 @@ import {
   Tabs,
 } from '@material-ui/core';
 import Swal from 'sweetalert2';
-
 import DirectoryTable from './subComponents/DirectoryTable';
 import UserDialog from './UserDialog';
 

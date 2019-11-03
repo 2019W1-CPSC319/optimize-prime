@@ -46,7 +46,6 @@ function fetchUserFailure(error) {
   };
 }
 
-
 export const fetchUser = () => async (dispatch) => {
   try {
     dispatch(initRequest());
@@ -74,5 +73,17 @@ export const sendEmail = (subject, body) => async (dispatch) => {
     dispatch(sendEmailSuccess());
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const findMeetingTimes = () => async (dispatch) => {
+  try {
+    dispatch(initRequest());
+    const response = await axios.get('/user/findMeetingTimes');
+    const profile = response.data;
+    return dispatch(fetchUserSuccess(profile));
+  } catch (error) {
+    console.log(error);
+    return dispatch(fetchUserFailure(error));
   }
 };
