@@ -144,27 +144,54 @@ router.put('/interviewer/:id', (req, res) => {
 
 
 
-// find meeting times depending on candidate availability
 
+
+
+// ***************** Find Meeting Times  *********************** 
+
+// find all the possible meeting times, given the following constraints/information: 
+// attendess, timeConstraints, meetingDuration, locationConstraints
 
 router.post('/meeting', async (req, res) => {
+
+  // candidate ID       (will get from req.body)
+  // const id = 1;
   
+  // let startTime;
+  // let endTime;
+
+  // query the database to get the candidates availability (this will be useed as the time constratint)
+
+  // const sql = 'SELECT * FROM Candidate c INNER JOIN a ON c.candidateID = a.candidateID WHERE id = ?';
+  // const sqlcmd = connection.format(sql, [id]);
+  // connection.query(sqlcmd, (err, result) => {
+  //   if (err) {
+  //     throw err;
+  //   }
+  
+  //   // extract start and end time
+  //   startTime = result.startTime;
+  //   endTime = result.endTime;
+
+  // });
+
   const attendees = [
-
-  {
-    Type: "Required",
-    EmailAddress: {
-      Name: "Stefan",
-      Address: "stefanmilosevic@optimizeprime.onmicrosoft.com"
+    {
+      Type: "Required",
+        EmailAddress: {
+          Address: "stefanmilosevic@optimizeprime.onmicrosoft.com"
+        }
     }
-  }
-]
+  ]
 
-  const timeConstraints = [{}];
+  // use timeConstraints below when done
+const startTime = "2019-11-02T22:10:26.589Z";
+const endTime = "2019-11-09T23:10:26.589Z";
+const timeZone = "Pacific Standard Time";
 
-  const meetingDuration = "";
+const meetingDuration = "PT1H";
 
-
+  // should add locationConstraint
 
 try {
   const response = await axios({
@@ -175,48 +202,23 @@ try {
     },
     data: 
     {
-      "attendees": [
-        {
-          "emailAddress": {
-            "address": "martinjohansen@optimizeprime.onmicrosoft.com",
-          },
-          "type": "Required"
-        }
-      ],
+      "attendees": attendees,
       "timeConstraint": {
         "timeslots": [
           {
             "start": {
-              "dateTime": "2019-11-02T22:10:26.589Z",
-              "timeZone": "Pacific Standard Time"
+              "dateTime": startTime,
+              "timeZone": timeZone
             },
             "end": {
-              "dateTime": "2019-11-09T23:10:26.589Z",
-              "timeZone": "Pacific Standard Time"
+              "dateTime": endTime,
+              "timeZone": timeZone
             }
           }
         ]
       },
-        meetingDuration: "PT1H" 
+        meetingDuration: meetingDuration
       }});
-      // { 
-      //   Attendees: attendees,  
-      //   TimeConstraint: { 
-      //     // ActivityDomain:"Work", Optional
-      //     Timeslots: [ 
-      //       { 
-      //         Start: { 
-      //           DateTime: "2016-05-20T07:00:00",  
-      //           TimeZone: "Pacific Standard Time" 
-      //         },  
-      //         End: { 
-      //           DateTime: "2016-05-20T17:00:00",  
-      //           TimeZone: "Pacific Standard Time" 
-      //         } 
-      //       } 
-      //     ] 
-      //   },  
-
       console.log(response);
     } catch(error) {
       console.log(error);
