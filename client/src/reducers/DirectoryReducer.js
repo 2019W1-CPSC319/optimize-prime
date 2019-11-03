@@ -8,7 +8,7 @@ const initialState = {
 const DirectoryReducer = (state = initialState, action) => {
   let newState = {};
   switch (action.type) {
-    case 'ADD_USER_REQUEST':
+    case 'INIT_REQUEST':
       return {
         ...state,
         loading: true,
@@ -20,6 +20,10 @@ const DirectoryReducer = (state = initialState, action) => {
     case 'GET_USERS_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = action.users;
+      return newState;
+    case 'DELETE_USER_SUCCESS':
+      newState = Object.assign({}, state, { loading: false });
+      newState[action.role] = newState[action.role].filter((user) => user.id !== action.userId);
       return newState;
     default:
       return state;

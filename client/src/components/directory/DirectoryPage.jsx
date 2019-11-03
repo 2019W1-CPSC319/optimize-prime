@@ -7,9 +7,17 @@ import {
   Tab,
   Tabs,
 } from '@material-ui/core';
-
+import Swal from 'sweetalert2';
 import DirectoryTable from './subComponents/DirectoryTable';
 import UserDialog from './UserDialog';
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: true,
+});
 
 const styles = {
   title: {
@@ -45,6 +53,11 @@ const ALLOWED_USER_ACTIONS = [
   'delete',
 ];
 
+const tabs = [
+  { key: 'candidate', title: 'Candidates' },
+  { key: 'interviewer', title: 'Interviewers' },
+]
+
 class DirectoryPage extends Component {
   constructor(props) {
     super(props);
@@ -62,13 +75,38 @@ class DirectoryPage extends Component {
     actions.getUsers('interviewer');
   }
 
-  onClickOpenUserDialog = (mode, userId) => {
+  onClickUserAction = (mode, userId) => {
     if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
-    this.setState({
-      mode,
-      selectedUser: userId || '',
-      openUserDialog: true,
-    });
+
+    if (mode === 'delete') {
+      const { actions } = this.props;
+      swalWithBootstrapButtons.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then(async (result) => {
+        const { value } = result;
+        if (value) {
+          const { value: tabIndex } = this.state;
+          await actions.deleteUser(tabs[tabIndex].key, userId);
+          swalWithBootstrapButtons.fire(
+            'Deleted',
+            'The user has been deleted.',
+            'success'
+          );
+        }
+      })
+    } else {
+      this.setState({
+        mode,
+        selectedUser: userId || '',
+        openUserDialog: true,
+      });
+    }
   }
 
   onClickCloseDialog = () => {
@@ -78,12 +116,40 @@ class DirectoryPage extends Component {
     });
   }
 
-  onChangeTab = (e, tab) => {
-    this.setState({ value: tab });
+  onChangeTab = (e, index) => {
+    this.setState({ value: index });
+  }
+
+  renderDirectoryTable = () => {
+    const { candidates, interviewers } = this.props;
+    const { value } = this.state;
+    const key = tabs[value].key;
+
+    if (key === 'candidate') {
+      return (
+        <DirectoryTable
+          headers={CANDIDATE_TABLE_HEADER}
+          rows={candidates}
+          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+        />
+      );
+    }
+
+    else if (key === 'interviewer') {
+      return (
+        <DirectoryTable
+          headers={EMPLOYEE_TABLE_HEADER}
+          rows={interviewers}
+          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+        />
+      );
+    }
+
+    return null;
   }
 
   render() {
-    const { classes, candidates, interviewers, actions } = this.props;
+    const { classes, actions } = this.props;
     const { value, mode, openUserDialog, selectedUser } = this.state;
 
     return (
@@ -93,7 +159,7 @@ class DirectoryPage extends Component {
           <Button
             variant="outlined"
             className={classes.button}
-            onClick={() => this.onClickOpenUserDialog('add')}
+            onClick={() => this.onClickUserAction('add')}
           >
             <Icon className={classes.icon}>person_add</Icon>
             ADD NEW USER
@@ -104,25 +170,15 @@ class DirectoryPage extends Component {
             value={value}
             indicatorColor="primary"
             textColor="primary"
-            onChange={(e, tab) => this.onChangeTab(e, tab)}
+            onChange={(e, tabIndex) => this.onChangeTab(e, tabIndex)}
           >
-            <Tab label="Candidate" />
-            <Tab label="Employee" />
+            {
+              tabs.map(tab => (
+                <Tab key={tab.key} label={tab.title} />
+              ))
+            }
           </Tabs>
-          <div hidden={value !== 0}>
-            <DirectoryTable
-              headers={CANDIDATE_TABLE_HEADER}
-              rows={candidates}
-              onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
-            />
-          </div>
-          <div hidden={value !== 1}>
-            <DirectoryTable
-              headers={EMPLOYEE_TABLE_HEADER}
-              rows={interviewers}
-              onClickOpenUserDialog={(action, userId) => this.onClickOpenUserDialog(action, userId)}
-            />
-          </div>
+          { this.renderDirectoryTable() }
         </Paper>
         <UserDialog
           mode={mode}
