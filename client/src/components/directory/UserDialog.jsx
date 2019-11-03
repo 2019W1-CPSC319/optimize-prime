@@ -109,29 +109,34 @@ class UserDialog extends Component {
       role,
     } = this.state;
 
-    if (mode === 'add') {
-      await actions.addUser(role, {
-        firstName,
-        lastName,
-        email,
-        phone,
-        role,
-      });
-    } else if (mode === 'edit') {
-      // TODO: edit user action
-      // actions.updateUser({
-      //   firstName,
-      //   lastName,
-      //   email,
-      //   role,
-      // });
+    try {
+      if (mode === 'add') {
+        await actions.addUser(role, {
+          firstName,
+          lastName,
+          email,
+          phone,
+          role,
+        });
+      } else if (mode === 'edit') {
+        // TODO: edit user action
+        // actions.updateUser({
+        //   firstName,
+        //   lastName,
+        //   email,
+        //   role,
+        // });
+      }
+
+      swalWithBootstrapButtons.fire(
+        mode === 'add' ? 'Added!' : 'Saved',
+        `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
+        'success'
+      );
+    } catch (error) {
+      console.log(error);
     }
 
-    swalWithBootstrapButtons.fire(
-      mode === 'add' ? 'Added!' : 'Saved',
-      `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
-      'success'
-    )
     // Clear dialog state
     this.setState(this.initializeUserInfoFields());
     onClickCloseDialog();
