@@ -15,23 +15,19 @@ router.get('/rooms', (req, res) => {
 // add a new room, to the rooms table.
 router.post('/room', async (req, res) => {
   const room = req.body;
-  // the room is active by default
   let sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
   let sqlcmd = connection.format(sql, [room.name, room.seats, 'A']);
-  // let id;
-
   connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
       throw err;
     }
-    // let addedRoom = await connection.query(sqlcmd);
     sql = 'SELECT * FROM Rooms WHERE id=?';
     sqlcmd = connection.format(sql, [addedRoom.insertId]);
     connection.query(sqlcmd, (err, savedRoom) => {
       if (err) {
         throw err;
       }
-      // const addedRoom = { ...room, id: result.insertId };
+      // savedRoom is the room that has just been added which consists of id, name, seats, and status attributes
       res.send(savedRoom[0]);
     });
   });
@@ -115,7 +111,7 @@ router.put('/candidate/delete/:id', (req, res) => {
   });
 });
 
-// ***************** Candidate AVAILABILITY Endpoints *******************
+// ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
 
 // ***************** INTERVIEWERS Endpoints *****************************
