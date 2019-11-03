@@ -30,7 +30,7 @@ class DirectoryTable extends Component {
   }
 
   render() {
-    const { classes, headers, rows, onClickOpenUserDialog } = this.props;
+    const { classes, headers, rows, onClickUserAction } = this.props;
 
     return (
       <Table className={classes.table}>
@@ -57,10 +57,10 @@ class DirectoryTable extends Component {
                 <TableCell>{row.email}</TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => onClickOpenUserDialog('edit', row.id)}>
+                  <IconButton onClick={() => onClickUserAction('edit', row.id)}>
                     <Icon>edit</Icon>
                   </IconButton>
-                  <IconButton onClick={() => onClickOpenUserDialog('delete', row.id)}>
+                  <IconButton onClick={() => onClickUserAction('delete', row.id)}>
                     <Icon>delete</Icon>
                   </IconButton>
                 </TableCell>

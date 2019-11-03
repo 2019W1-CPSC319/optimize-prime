@@ -47,7 +47,7 @@ router.put('/room/:id', (req, res) => {
 
 // get all candidates
 router.get('/candidates', async (req, res) => {
-  const sql = 'SELECT * FROM Candidate';
+  const sql = "SELECT * FROM Candidate WHERE status <> 'D'";
   await connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -99,9 +99,9 @@ router.post('/newuser', (req, res) => {
 
 
 // update the status of a candidate to disabled, in the candidate table
-router.put('/candidate/:id', (req, res) => {
+router.put('/candidate/delete/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Candidate SET Status = 'D' WHERE id = ?";
+  const sql = "UPDATE Candidate SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -128,9 +128,9 @@ router.get('/interviewers', (req, res) => {
 });
 
 // update the status of a interviewer to disabled, in the interviewer table
-router.put('/interviewer/:id', (req, res) => {
+router.put('/interviewer/delete/:id', (req, res) => {
   const { id } = req.params;
-  const sql = "UPDATE Interviewer SET Status = 'D' WHERE id = ?";
+  const sql = "UPDATE Interviewer SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
