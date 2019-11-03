@@ -162,7 +162,7 @@ router.post('/meeting', async (req, res) => {
 
   // query the database to get the candidates availability (this will be useed as the time constratint)
 
-  // const sql = 'SELECT * FROM Candidate c INNER JOIN a ON c.candidateID = a.candidateID WHERE id = ?';
+  // const sql = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.candidateID = a.candidateID WHERE id = ?';
   // const sqlcmd = connection.format(sql, [id]);
   // connection.query(sqlcmd, (err, result) => {
   //   if (err) {
