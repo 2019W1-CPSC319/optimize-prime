@@ -76,3 +76,19 @@ export const sendEmail = (subject, body) => async (dispatch) => {
     console.log(error);
   }
 };
+
+const createEventSuccess = () => (
+  {
+    type: 'CREATE_EVENT_SUCCESS',
+  }
+);
+
+export const createEvent = () => async (dispatch) => {
+  try {
+    dispatch(initRequest());
+    await axios.post('/user/createevent');
+    dispatch(createEventSuccess());
+  } catch (error) {
+    console.log(error);
+  }
+};
