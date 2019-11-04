@@ -23,12 +23,6 @@ class SettingsPage extends Component {
   render() {
     return (
       <div>
-
-      <button onClick={this.findMeetingTimes}>Test</button>
-
-
-
-
         <h1 className="settings-title">Settings</h1>
         <div className="container">
           <p>Add New User</p>
