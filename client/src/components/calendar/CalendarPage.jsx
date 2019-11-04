@@ -213,7 +213,7 @@ class CalendarPage extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, actions } = this.props;
     return (
       <div>
         <div className={clsx(classes.header, classes.flex)}>
@@ -222,6 +222,7 @@ class CalendarPage extends Component {
             <EventIcon className={classes.icon}></EventIcon>
             <Typography>Schedule Interview</Typography>
           </Button>
+          <Button onClick={() => actions.createEvent()}>TEST</Button>
         </div>
         <Grid container justify="center" style={{ margin: '20px 10px auto', width: 'calc(100% - 20px)' }}>
           {[
