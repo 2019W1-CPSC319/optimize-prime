@@ -156,7 +156,7 @@ router.post('/meeting', async (req, res) => {
 
   // candidate ID       (will get from req.body)
   // const id = 1;
-  
+
   // let startTime;
   // let endTime;
 
@@ -168,7 +168,7 @@ router.post('/meeting', async (req, res) => {
   //   if (err) {
   //     throw err;
   //   }
-  
+
   //   // extract start and end time
   //   startTime = result.startTime;
   //   endTime = result.endTime;
@@ -178,51 +178,68 @@ router.post('/meeting', async (req, res) => {
   const attendees = [
     {
       Type: "Required",
-        EmailAddress: {
-          Address: "stefanmilosevic@optimizeprime.onmicrosoft.com"
-        }
+      EmailAddress: {
+        Address: "stefanmilosevic@optimizeprime.onmicrosoft.com"
+      }
     }
   ]
 
-  // use timeConstraints below when done
-const startTime = "2019-11-02T22:10:26.589Z";
-const endTime = "2019-11-09T23:10:26.589Z";
-const timeZone = "Pacific Standard Time";
+  const startTime = "2019-11-02T22:10:26.589Z";
+  const endTime = "2019-11-09T23:10:26.589Z";
+  const timeZone = "Pacific Standard Time";
 
-const meetingDuration = "PT1H";
+  const meetingDuration = "PT1H";
 
   // should add locationConstraint
 
-try {
-  const response = await axios({
-    method: 'post',
-    url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
-    headers: {
-      Authorization: `Bearer ${req.user.accessToken}`,
-    },
-    data: 
-    {
-      "attendees": attendees,
-      "timeConstraint": {
-        "timeslots": [
-          {
-            "start": {
-              "dateTime": startTime,
-              "timeZone": timeZone
-            },
-            "end": {
-              "dateTime": endTime,
-              "timeZone": timeZone
-            }
-          }
-        ]
+  try {
+    const response = await axios({
+      method: 'post',
+      url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
       },
+      data:
+      {
+        "attendees": attendees,
+        "timeConstraint": {
+          "timeslots": [
+            {
+              "start": {
+                "dateTime": startTime,
+                "timeZone": timeZone
+              },
+              "end": {
+                "dateTime": endTime,
+                "timeZone": timeZone
+              }
+            }
+          ]
+        },
         meetingDuration: meetingDuration
-      }});
-      console.log(response);
-    } catch(error) {
-      console.log(error);
-    }   
+      }
+    });
+    // console.log(response);
+
+    const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
+
+    if (meetingTimeSuggestions.length === 0) {
+      res.send("No Meeting times are availble")
+    }
+
+    let possibleMeetings = [];
+    for (meeting of meetingTimeSuggestions) {
+      const meetingTimeSlot = meeting.meetingTimeSlot;
+      const obj = {
+        start: meetingTimeSlot.start,
+        end: meetingTimeSlot.end
+      }
+      possibleMeetings.push(obj);
+    }
+    res.send(possibleMeetings);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = router;
