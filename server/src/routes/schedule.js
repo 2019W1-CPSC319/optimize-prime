@@ -96,6 +96,7 @@ router.post('/newuser', (req, res) => {
     }
     const addedUser = { ...user, id: result.insertId };
 
+    // send email to the candidate, so they can fill out their availability
     if (type === "candidate") {
       try {
         const subject = "Availability"
