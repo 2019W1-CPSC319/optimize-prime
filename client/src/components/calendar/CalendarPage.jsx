@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import clsx from 'clsx';
 import { withStyles } from '@material-ui/core/styles';
 import Swal from 'sweetalert2'
-
+import axios from 'axios';
 import EventIcon from '@material-ui/icons/Event';
 import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import PeopleIcon from '@material-ui/icons/People';
@@ -179,8 +179,11 @@ class CalendarPage extends Component {
   }
 
   handleNext() {
+    const data = {};
+    axios.post('schedule/meeting', data);
     this.setState({ reqOpen: false });
     this.setState({ optOpen: true });
+
   }
 
   handleBack() {
@@ -385,7 +388,8 @@ class CalendarPage extends Component {
             <Button onClick={this.handleClose.bind(this)} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleNext.bind(this)} color="primary">
+            <Button             
+            onClick={() => this.handleNext()} color="primary">
               Next
             </Button>
           </DialogActions>

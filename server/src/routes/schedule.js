@@ -184,8 +184,8 @@ router.post('/meeting', async (req, res) => {
     }
   ]
 
-  const startTime = "2019-11-02T22:10:26.589Z";
-  const endTime = "2019-11-09T23:10:26.589Z";
+  const startTime = "2019-11-03T09:00:00";
+  const endTime = "2019-11-03T10:00:00";
   const timeZone = "Pacific Standard Time";
 
   const meetingDuration = "PT1H";
