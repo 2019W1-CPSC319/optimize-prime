@@ -87,7 +87,8 @@ class AvailabilityTable extends Component {
 
     this.state = {
       indexctr: 1,
-      rows: [this.createRow(0, new Date(), 9, 17)]
+      rows: [this.createRow(0, new Date(), 9, 17)],
+      submitHandler: props.submitHandler
     };
   }
 
@@ -157,7 +158,7 @@ class AvailabilityTable extends Component {
                            (row.to% 1) * 60)
       times.push({start: start, end: end});
     }
-    console.log(times);
+    this.state.submitHandler(times);
   }
 
   render() {
@@ -184,7 +185,7 @@ class AvailabilityTable extends Component {
                                    variant="inline"
                                    format="MM/dd/yyyy"
                                    minDate={new Date()}
-                                   margin="0"
+                                   margin="none"
                                    id="date-picker-inline"
                                   //  label="Select your availability"
                                    value={row.date}

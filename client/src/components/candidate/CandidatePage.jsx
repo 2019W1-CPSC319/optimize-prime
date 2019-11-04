@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import * as candidateActions from '../../actions/candidateActions';
 import * as candidateSelectors from '../../selectors/CandidateSelectors';
 
+import Swal from 'sweetalert2'
+
 import { withStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 import AvailabilityTable from "./AvailabilityTable.jsx"
@@ -53,11 +55,30 @@ class AddAvailability extends Component {
     }
   }
 
+  handleSubmit = (times) => {
+    // Add on the candidate name to the times
+    const availability = {
+      candidate: this.props.candidate,
+      times: times
+    };
+    this.props.sendAvailability(availability);
+  }
+
   render() {
     const { classes, candidate } = this.props;
     const { name } = this.state;
     if(!this.props.candidate) {
       return <div>Loading</div>
+    }
+    if(this.props.success) {
+      Swal.fire({
+        type: "success",
+        title: "Your availability has been submitted!",
+        text: "We'll get back to you with an interview invitation in the next few days.",
+        showConfirmButton: false,
+        timer: 10000
+      });
+      this.props.success = false;
     }
     return (
       <div className={classes.wrapper}>
@@ -75,7 +96,7 @@ class AddAvailability extends Component {
               Start off by adding when you'll be free in the next month and we'll get back to you if we need any more info.
             </Typography>
           </div>
-          <AvailabilityTable />
+          <AvailabilityTable submitHandler={this.handleSubmit}/>
         </div>
       </div>
     );
@@ -83,11 +104,13 @@ class AddAvailability extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  candidate: candidateSelectors.getCandidateById(state, ownProps.id)
+  candidate: candidateSelectors.getCandidateById(state, ownProps.id),
+  success: state.success
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCandidate: (id) => dispatch(candidateActions.fetchSpecificCandidate(id))
+  fetchCandidate: (id) => dispatch(candidateActions.fetchSpecificCandidate(id)),
+  sendAvailability: (id) => dispatch(candidateActions.sendAvailability(id))
 })
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AddAvailability));

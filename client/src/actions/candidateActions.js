@@ -15,6 +15,12 @@ const fetchCandidatesFailure = (error) => (
   }
 );
 
+const sendAvailabilitySuccess = () => {
+  {
+    type: 'SEND_AVAILABILITY_SUCCESS'
+  }
+}
+
 export const fetchCandidates = () => async (dispatch) => {
   try {
     const response = await axios.get('/schedule/candidates');
@@ -34,3 +40,12 @@ export const fetchSpecificCandidate = (id) => async (dispatch) => {
     console.log(error);
   }
 };
+
+export const sendAvailability = (availability) => async (dispatch) => {
+  try {
+    await axios.post('/schedule/sendAvailability', {availability});
+    return dispatch(sendAvailabilitySuccess());
+  } catch (error) {
+    console.log(error);
+  }
+}
