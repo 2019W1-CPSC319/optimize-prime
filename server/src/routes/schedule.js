@@ -1,6 +1,10 @@
 const router = require('express').Router();
 const connection = require('../init/setupMySql');
+const uuidv1 = require('uuid/v1');
 const axios = require('axios');
+
+
+// ***************** ROOMS Endpoints *******************
 
 // get all rooms
 router.get('/rooms', (req, res) => {
@@ -79,28 +83,28 @@ router.post('/newuser', (req, res) => {
   const type = user.role;
   // status Active as default when adding
   const status = 'A';
+  const uuid = uuidv1();
   let sql = '';
   switch (type) {
     case 'candidate':
-      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';     
+      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';     
       break;
     case 'interviewer':
       sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
       break;
     default: return;
   }
-  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status]);
+  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
     }
     const addedUser = { ...user, id: result.insertId };
 
-    // send email to the candidate, so they can fill out their availability
     if (type === "candidate") {
       try {
         const subject = "Availability"
-        const body = "Hi " + user.firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate";
+        const body = "Hi " + user.firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate/" + uuid;
         const response = axios({
           method: 'post',
           url: 'https://graph.microsoft.com/v1.0/me/sendMail',
