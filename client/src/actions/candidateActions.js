@@ -28,11 +28,12 @@ export const fetchCandidates = () => async (dispatch) => {
   }
 };
 
-export const fetchSpecificCandidate = (id) => async (dispatch) => {
+export const fetchSpecificCandidate = (uuid) => async (dispatch) => {
   try {
     const response = await axios({
-      url: `/schedule/candidate/${id}`,
+      url: `/schedule/candidate/${uuid}`,
     });
+    console.log(response);
     dispatch(fetchCandidatesSuccess(response.data));
   } catch (error) {
     console.log(error);

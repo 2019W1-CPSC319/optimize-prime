@@ -59,14 +59,16 @@ router.get('/candidates', async (req, res) => {
 
 
 // get a specific candidate
-router.get('/candidate/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = 'SELECT * FROM Candidate WHERE id = ?';
-  const sqlcmd = connection.format(sql, [id]);
+router.get('/candidate/:uuid', (req, res) => {
+  const { uuid } = req.params;
+  console.log(req.params)
+  const sql = 'SELECT * FROM Candidate WHERE uuid = ?';
+  const sqlcmd = connection.format(sql, [uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
     }
+    console.log(result);
     res.send(result);
   });
 });
@@ -74,7 +76,7 @@ router.get('/candidate/:id', (req, res) => {
 
 // add a new user in either the candidates table or interview table based on the selected type
 router.post('/newuser', (req, res) => {
-  const user = req.body;
+  const user = req.body
   const type = user.Role;
   // status Active as default when adding
   const status = 'A';
