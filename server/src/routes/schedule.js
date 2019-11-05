@@ -115,8 +115,20 @@ router.put('/candidate/:id', (req, res) => {
 
 router.post('/availability', (req, res) => {
   const availability = req.body;
+
+  const uuid = availability.uuid;
+  const sqlSelect = 'SELECT * FROM Candidate WHERE uuid = ?';
+  const sqlSelectcmd = connection.format(sqlSelect, [uuid]);
+  let candidateId;
+  connection.query(sqlSelectcmd, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    candidateId = result.id;
+  });
+
   const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES (?, ?, ?)';
-  const sqlcmd = connection.format(sql, [availability.candidateId, availability.starrTime, availability.endTime]);
+  const sqlcmd = connection.format(sql, [candidateId, availability.starrTime, availability.endTime]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
