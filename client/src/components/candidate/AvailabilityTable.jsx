@@ -21,50 +21,50 @@ const FIELD_FROM = 1;
 const FIELD_TO = 2;
 
 const times = [
-  <MenuItem value={9}>9:00am</MenuItem>,
-  <MenuItem value={9.25}>9:15am</MenuItem>,
-  <MenuItem value={9.5}>9:30am</MenuItem>,
-  <MenuItem value={9.75}>9:45am</MenuItem>,
+  <MenuItem key={0} value={9}>9:00am</MenuItem>,
+  <MenuItem key={1} value={9.25}>9:15am</MenuItem>,
+  <MenuItem key={2} value={9.5}>9:30am</MenuItem>,
+  <MenuItem key={3} value={9.75}>9:45am</MenuItem>,
 
-  <MenuItem value={10}>10:00am</MenuItem>,
-  <MenuItem value={10.25}>10:15am</MenuItem>,
-  <MenuItem value={10.5}>10:30am</MenuItem>,
-  <MenuItem value={10.75}>10:45am</MenuItem>,
+  <MenuItem key={4} value={10}>10:00am</MenuItem>,
+  <MenuItem key={5} value={10.25}>10:15am</MenuItem>,
+  <MenuItem key={6} value={10.5}>10:30am</MenuItem>,
+  <MenuItem key={7} value={10.75}>10:45am</MenuItem>,
 
-  <MenuItem value={11}>11:00am</MenuItem>,
-  <MenuItem value={11.25}>11:15am</MenuItem>,
-  <MenuItem value={11.5}>11:30am</MenuItem>,
-  <MenuItem value={11.75}>11:45am</MenuItem>,
+  <MenuItem key={8} value={11}>11:00am</MenuItem>,
+  <MenuItem key={9} value={11.25}>11:15am</MenuItem>,
+  <MenuItem key={10} value={11.5}>11:30am</MenuItem>,
+  <MenuItem key={11} value={11.75}>11:45am</MenuItem>,
 
-  <MenuItem value={12}>12:00pm</MenuItem>,
-  <MenuItem value={12.25}>12:15pm</MenuItem>,
-  <MenuItem value={12.5}>12:30pm</MenuItem>,
-  <MenuItem value={12.75}>12:45pm</MenuItem>,
+  <MenuItem key={12} value={12}>12:00pm</MenuItem>,
+  <MenuItem key={13} value={12.25}>12:15pm</MenuItem>,
+  <MenuItem key={14} value={12.5}>12:30pm</MenuItem>,
+  <MenuItem key={15} value={12.75}>12:45pm</MenuItem>,
 
-  <MenuItem value={13}>1:00pm</MenuItem>,
-  <MenuItem value={13.25}>1:15pm</MenuItem>,
-  <MenuItem value={13.5}>1:30pm</MenuItem>,
-  <MenuItem value={13.75}>1:45pm</MenuItem>,
+  <MenuItem key={16} value={13}>1:00pm</MenuItem>,
+  <MenuItem key={17} value={13.25}>1:15pm</MenuItem>,
+  <MenuItem key={18} value={13.5}>1:30pm</MenuItem>,
+  <MenuItem key={19} value={13.75}>1:45pm</MenuItem>,
 
-  <MenuItem value={14}>2:00pm</MenuItem>,
-  <MenuItem value={14.25}>2:15pm</MenuItem>,
-  <MenuItem value={14.5}>2:30pm</MenuItem>,
-  <MenuItem value={14.75}>2:45pm</MenuItem>,
+  <MenuItem key={20} value={14}>2:00pm</MenuItem>,
+  <MenuItem key={21} value={14.25}>2:15pm</MenuItem>,
+  <MenuItem key={22} value={14.5}>2:30pm</MenuItem>,
+  <MenuItem key={23} value={14.75}>2:45pm</MenuItem>,
 
-  <MenuItem value={15}>3:00pm</MenuItem>,
-  <MenuItem value={15.25}>3:15pm</MenuItem>,
-  <MenuItem value={15.5}>3:30pm</MenuItem>,
-  <MenuItem value={15.75}>3:45pm</MenuItem>,
+  <MenuItem key={24} value={15}>3:00pm</MenuItem>,
+  <MenuItem key={25} value={15.25}>3:15pm</MenuItem>,
+  <MenuItem key={26} value={15.5}>3:30pm</MenuItem>,
+  <MenuItem key={27} value={15.75}>3:45pm</MenuItem>,
 
-  <MenuItem value={16}>4:00pm</MenuItem>,
-  <MenuItem value={16.25}>4:15pm</MenuItem>,
-  <MenuItem value={16.5}>4:30pm</MenuItem>,
-  <MenuItem value={16.75}>4:45pm</MenuItem>,
+  <MenuItem key={28} value={16}>4:00pm</MenuItem>,
+  <MenuItem key={29} value={16.25}>4:15pm</MenuItem>,
+  <MenuItem key={30} value={16.5}>4:30pm</MenuItem>,
+  <MenuItem key={31} value={16.75}>4:45pm</MenuItem>,
 
-  <MenuItem value={17}>5:00pm</MenuItem>,
-  <MenuItem value={17.25}>5:15pm</MenuItem>,
-  <MenuItem value={17.5}>5:30pm</MenuItem>,
-  <MenuItem value={17.75}>5:45pm</MenuItem>
+  <MenuItem key={32} value={17}>5:00pm</MenuItem>,
+  <MenuItem key={33} value={17.25}>5:15pm</MenuItem>,
+  <MenuItem key={34} value={17.5}>5:30pm</MenuItem>,
+  <MenuItem key={35} value={17.75}>5:45pm</MenuItem>
 ]
 
 const styles = {
@@ -180,23 +180,23 @@ class AvailabilityTable extends Component {
                   </TableHead>
                   <TableBody>
                       {this.state.rows.map(row => (
-                        <TableRow>
+                        <TableRow key={row.id}>
                           <TableCell>
-                          <MuiPickersUtilsProvider utils={DateFnsUtils} className={classes.datePicker}>
-                            <KeyboardDatePicker
-                                disableToolbar
-                                variant="inline"
-                                format="MM/dd/yyyy"
-                                minDate={new Date()}
-                                margin="none"
-                                id="date-picker-inline"
-                                value={row.date}
-                                onChange={(date) => this.handleDateChange(date, row.id)}
-                                KeyboardButtonProps={{
-                                    'aria-label': 'change date',
-                                }}
-                              />
-                       </MuiPickersUtilsProvider>
+                            <MuiPickersUtilsProvider utils={DateFnsUtils} className={classes.datePicker}>
+                              <KeyboardDatePicker
+                                  disableToolbar
+                                  variant="inline"
+                                  format="MM/dd/yyyy"
+                                  minDate={new Date()}
+                                  margin="none"
+                                  id="date-picker-inline"
+                                  value={row.date}
+                                  onChange={(date) => this.handleDateChange(date, row.id)}
+                                  KeyboardButtonProps={{
+                                      'aria-label': 'change date',
+                                  }}
+                                />
+                            </MuiPickersUtilsProvider>
                           </TableCell>
                           <TableCell>
                             <Select className={classes.timeSelector} value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
