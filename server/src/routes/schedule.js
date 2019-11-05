@@ -124,16 +124,17 @@ router.post('/availability', (req, res) => {
     if (err) {
       throw err;
     }
-    candidateId = result.id;
-  });
+    console.log(result);
+    candidateId = result[0].id;
 
-  const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES (?, ?, ?)';
-  const sqlcmd = connection.format(sql, [candidateId, availability.starrTime, availability.endTime]);
-  connection.query(sqlcmd, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send(result);
+    const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES (?, ?, ?)';
+    const sqlcmd = connection.format(sql, [candidateId, availability.startTime, availability.endTime]);
+    connection.query(sqlcmd, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.send(result);
+    });
   });
 });
 
