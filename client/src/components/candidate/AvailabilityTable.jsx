@@ -98,11 +98,9 @@ class AvailabilityTable extends Component {
 
   handleAddRow = () => {
     // Adds a row to the table
-    this.setState((prevState, props) => {
-      const row = this.createRow(this.state.indexctr, new Date(), 9, 17);
-      const newindex = this.state.indexctr + 1
-      this.setState({indexctr: newindex, rows: [...prevState.rows, row]})
-    })
+    const row = this.createRow(this.state.indexctr, new Date(), 9, 17);
+    const newindex = this.state.indexctr + 1;
+    this.setState({indexctr: newindex, rows: [...this.state.rows, row]});
   }
 
   handleRemoveRow = (id) => {
@@ -114,7 +112,6 @@ class AvailabilityTable extends Component {
       }
     }
     this.setState({rows: rows});
-    return {rows: rows};
   }
 
   createRow(id, date, from, to) {
