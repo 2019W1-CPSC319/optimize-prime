@@ -13,6 +13,8 @@ import {
 import Fab from "@material-ui/core/Fab"
 import AddIcon from "@material-ui/icons/Add"
 
+import Swal from 'sweetalert2'
+
 // Date Picker
 import DateFnsUtils from '@date-io/date-fns';
 import 'date-fns';
@@ -96,7 +98,7 @@ class AvailabilityTable extends Component {
 
     this.state = {
       indexctr: 1,
-      rows: [this.createRow(0, new Date(), 9, 17)],
+      rows: [this.createRow(0, twoDaysFuture, 9, 17)],
       submitHandler: props.submitHandler,
       twoDaysFuture: twoDaysFuture
     };
@@ -104,7 +106,7 @@ class AvailabilityTable extends Component {
 
   handleAddRow = () => {
     // Adds a row to the table
-    const row = this.createRow(this.state.indexctr, new Date(), 9, 17);
+    const row = this.createRow(this.state.indexctr, this.state.twoDaysFuture, 9, 17);
     const newindex = this.state.indexctr + 1;
     this.setState({indexctr: newindex, rows: [...this.state.rows, row]});
   }
@@ -148,13 +150,24 @@ class AvailabilityTable extends Component {
   handleDateChange = (event) = (date, id) => {
     const rows = this.state.rows;
     rows[id].date = date;
-    rows[id].dateValid = rows[id].date > this.state.twoDaysFuture;
+    rows[id].dateValid = rows[id].date >= this.state.twoDaysFuture;
     this.setState({rows: rows});
   }
 
   handleSubmit = () => {
     var times = [];
     for (const row of this.state.rows) {
+
+      // Validate the input, and show an error message if its invalid
+      if (!row.dateValid || !row.timeValid) {
+        const title = "Theres an issue with your availability!";
+        const description = "It looks like the problem is with the the " + 
+                            (row.dateValid ? "time" : "date") +
+                            " on row " + (this.state.rows.indexOf(row) + 1) + ".";
+        Swal.fire(title, description, "error");
+        return;
+      }
+
       const start = new Date(row.date.getFullYear(),
                              row.date.getMonth(),
                              row.date.getDate(),
