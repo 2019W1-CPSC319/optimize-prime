@@ -113,6 +113,18 @@ router.put('/candidate/:id', (req, res) => {
 
 // ***************** Candidate AVAILABILITY Endpoints *******************
 
+router.post('/availability', (req, res) => {
+  const availability = req.body;
+  const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES (?, ?, ?)';
+  const sqlcmd = connection.format(sql, [availability.candidateId, availability.starrTime, availability.endTime]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
 
 // ***************** INTERVIEWERS Endpoints *******************
 
