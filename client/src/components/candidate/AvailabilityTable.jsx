@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles"
 // Material UI
 import {
         Table, TableBody, TableHead, TableCell, TableRow,
-        Select, MenuItem, Button
+        Select, MenuItem, Button, FormControl, FormHelperText
        } from "@material-ui/core"
 import {
         MuiPickersUtilsProvider,
@@ -115,7 +115,7 @@ class AvailabilityTable extends Component {
   }
 
   createRow(id, date, from, to) {
-    return {id, date, from, to};
+    return {id, date, from, to, dateValid: true, timeValid: true};
   }
 
   /**
@@ -130,6 +130,7 @@ class AvailabilityTable extends Component {
         } else {
           row.to = event.target.value;
         }
+        row.timeValid = row.from < row.to;
       }
     }
     this.setState(rows);
@@ -196,14 +197,20 @@ class AvailabilityTable extends Component {
                             </MuiPickersUtilsProvider>
                           </TableCell>
                           <TableCell>
-                            <Select className={classes.timeSelector} value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
-                              {times}
-                            </Select>
+                            <FormControl error={!row.timeValid}>
+                              <Select className={classes.timeSelector} value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
+                                {times}
+                              </Select>
+                              {!row.timeValid && <FormHelperText>Start time must be before end time!</FormHelperText>}
+                            </FormControl>
                           </TableCell>
                           <TableCell>
-                            <Select className={classes.timeSelector} value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
-                              {times}
-                            </Select>
+                            <FormControl error={!row.timeValid}>
+                              <Select className={classes.timeSelector} value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
+                                {times}
+                              </Select>
+                              {!row.timeValid && <FormHelperText>End time must be after start time!</FormHelperText>}
+                            </FormControl>
                           </TableCell>
                           <TableCell>
                               <Button variant="outlined" color="primary" onClick={() => {this.handleRemoveRow(row.id)}}>
