@@ -59,8 +59,9 @@ class AddAvailability extends Component {
   handleSubmit = (times) => {
     // Add on the candidate name to the times
     const availability = {
-      candidate: this.props.candidate.uuid,
-      times: times
+      uuid: this.props.candidate.uuid,
+      startTime: times[0].start.toISOString().slice(0, 19).replace('T', ' '),
+      endTime: times[0].end.toISOString().slice(0, 19).replace('T', ' ')
     };
     this.props.sendAvailability(availability);
   }

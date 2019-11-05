@@ -41,8 +41,13 @@ export const fetchSpecificCandidate = (id) => async (dispatch) => {
 
 export const sendAvailability = (availability) => async (dispatch) => {
   try {
-    await axios.post('/schedule/availability', {availability});
-    return dispatch(sendAvailabilitySuccess);
+    let response = await axios.post('/schedule/availability', availability);
+    if (response.status == 200) {
+      console.log("Availablity posted successfully")
+      return dispatch(sendAvailabilitySuccess);
+    } else {
+      console.error("Failed to post availability to endpoint, status = " + response.status)
+    }
   } catch (error) {
     console.log(error);
   }
