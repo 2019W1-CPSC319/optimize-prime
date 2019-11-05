@@ -57,18 +57,33 @@ router.get('/candidates', async (req, res) => {
   });
 });
 
+/**
+ * Get a candidate's firstname, for the candidate availabilty page.
+ * 
+ * This should be the only method that can be used without authentication.
+ */
+router.get('/candidate/name/:uuid', (req, res) => {
+  const { uuid } = req.params;
+  const sql = 'SELECT firstName FROM Candidate WHERE uuid = ?';
+  const sqlcmd = connection.format(sql, [uuid]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    // Just send the UUID and the first name
+    res.send([{uuid: uuid, firstName: result[0].firstName}]);
+  });
+});
 
 // get a specific candidate
 router.get('/candidate/:uuid', (req, res) => {
   const { uuid } = req.params;
-  console.log(req.params)
   const sql = 'SELECT * FROM Candidate WHERE uuid = ?';
   const sqlcmd = connection.format(sql, [uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
     }
-    console.log(result);
     res.send(result);
   });
 });
@@ -126,7 +141,6 @@ router.post('/availability', (req, res) => {
     if (err) {
       throw err;
     }
-    console.log(result);
     candidateId = result[0].id;
 
     const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES (?, ?, ?)';
