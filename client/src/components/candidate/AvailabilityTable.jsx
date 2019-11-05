@@ -89,10 +89,16 @@ class AvailabilityTable extends Component {
   constructor(props) {
     super(props);
 
+    // Used for date validation
+    const twoDaysFuture = new Date();
+    twoDaysFuture.setHours(0, 0, 0, 0);
+    twoDaysFuture.setDate(twoDaysFuture.getDate() + 2);
+
     this.state = {
       indexctr: 1,
       rows: [this.createRow(0, new Date(), 9, 17)],
-      submitHandler: props.submitHandler
+      submitHandler: props.submitHandler,
+      twoDaysFuture: twoDaysFuture
     };
   }
 
@@ -142,6 +148,7 @@ class AvailabilityTable extends Component {
   handleDateChange = (event) = (date, id) => {
     const rows = this.state.rows;
     rows[id].date = date;
+    rows[id].dateValid = rows[id].date > this.state.twoDaysFuture;
     this.setState({rows: rows});
   }
 
@@ -180,21 +187,25 @@ class AvailabilityTable extends Component {
                       {this.state.rows.map(row => (
                         <TableRow key={row.id}>
                           <TableCell>
-                            <MuiPickersUtilsProvider utils={DateFnsUtils} className={classes.datePicker}>
-                              <KeyboardDatePicker
-                                  disableToolbar
-                                  variant="inline"
-                                  format="MM/dd/yyyy"
-                                  minDate={new Date()}
-                                  margin="none"
-                                  id="date-picker-inline"
-                                  value={row.date}
-                                  onChange={(date) => this.handleDateChange(date, row.id)}
-                                  KeyboardButtonProps={{
-                                      'aria-label': 'change date',
-                                  }}
-                                />
-                            </MuiPickersUtilsProvider>
+                            <FormControl error={!row.dateValid}>
+                              <MuiPickersUtilsProvider utils={DateFnsUtils} className={classes.datePicker}>
+                                <KeyboardDatePicker
+                                    disableToolbar
+                                    variant="inline"
+                                    format="MM/dd/yyyy"
+                                    minDate={new Date()}
+                                    error={!row.dateValid}
+                                    margin="none"
+                                    id="date-picker-inline"
+                                    value={row.date}
+                                    onChange={(date) => this.handleDateChange(date, row.id)}
+                                    KeyboardButtonProps={{
+                                        'aria-label': 'change date',
+                                    }}
+                                  />
+                              </MuiPickersUtilsProvider>
+                              {!row.dateValid && <FormHelperText>Please gives dates at least 2 days in advance!</FormHelperText>}
+                            </FormControl>
                           </TableCell>
                           <TableCell>
                             <FormControl error={!row.timeValid}>
