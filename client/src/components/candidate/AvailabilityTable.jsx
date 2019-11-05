@@ -146,14 +146,14 @@ class AvailabilityTable extends Component {
   handleSubmit = () => {
     var times = [];
     for (const row of this.state.rows) {
-      const start = new Date(row.date.getYear(),
+      const start = new Date(row.date.getFullYear(),
                              row.date.getMonth(),
-                             row.date.getDay(),
+                             row.date.getDate(),
                              row.from,
                              (row.from % 1) * 60)
-      const end = new Date(row.date.getYear(),
+      const end = new Date(row.date.getFullYear(),
                            row.date.getMonth(),
-                           row.date.getDay(),
+                           row.date.getDate(),
                            row.to,
                            (row.to% 1) * 60)
       times.push({start: start, end: end});
