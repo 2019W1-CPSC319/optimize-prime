@@ -17,8 +17,6 @@ import AddIcon from "@material-ui/icons/Add"
 import DateFnsUtils from '@date-io/date-fns';
 import 'date-fns';
 
-import "./AvailabilityTable.css"
-
 const FIELD_FROM = 1;
 const FIELD_TO = 2;
 
@@ -77,6 +75,12 @@ const styles = {
   submitBtn: {
     borderRadius: "4px",
     margin: "30px 30px",
+  },
+  timeSelector: {
+    minWidth: "120px"
+  },
+  datePicker: {
+    minWidth: "120px"
   }
 }
 
@@ -178,33 +182,29 @@ class AvailabilityTable extends Component {
                       {this.state.rows.map(row => (
                         <TableRow>
                           <TableCell>
-                          <MuiPickersUtilsProvider utils={DateFnsUtils} className="date-picker">
-                           {/* <Grid container > */}
-                               <KeyboardDatePicker
-                                   disableToolbar
-                                   variant="inline"
-                                   format="MM/dd/yyyy"
-                                   minDate={new Date()}
-                                   margin="none"
-                                   id="date-picker-inline"
-                                  //  label="Select your availability"
-                                   value={row.date}
-                                   onChange={(date) => this.handleDateChange(date, row.id)}
-                                   KeyboardButtonProps={{
-                                       'aria-label': 'change date',
-                                   }}
-                               />
-                           {/* </Grid> */}
+                          <MuiPickersUtilsProvider utils={DateFnsUtils} className={classes.datePicker}>
+                            <KeyboardDatePicker
+                                disableToolbar
+                                variant="inline"
+                                format="MM/dd/yyyy"
+                                minDate={new Date()}
+                                margin="none"
+                                id="date-picker-inline"
+                                value={row.date}
+                                onChange={(date) => this.handleDateChange(date, row.id)}
+                                KeyboardButtonProps={{
+                                    'aria-label': 'change date',
+                                }}
+                              />
                        </MuiPickersUtilsProvider>
                           </TableCell>
                           <TableCell>
-                            {/* <Select className="selector" onChange={this.handleSelectorChange}inputProps={{id: 'start', name: "Start"}}> */}
-                            <Select className="selector" value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
+                            <Select className={classes.timeSelector} value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
                               {times}
                             </Select>
                           </TableCell>
                           <TableCell>
-                            <Select className="selector" value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
+                            <Select className={classes.timeSelector} value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
                               {times}
                             </Select>
                           </TableCell>
