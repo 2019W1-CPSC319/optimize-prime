@@ -46,6 +46,7 @@ class AddAvailability extends Component {
     super(props);
     this.state = {
       name: 'John Doe',
+      success: false
     };
   }
 
@@ -58,7 +59,7 @@ class AddAvailability extends Component {
   handleSubmit = (times) => {
     // Add on the candidate name to the times
     const availability = {
-      candidate: this.props.candidate,
+      candidate: this.props.candidate.uuid,
       times: times
     };
     this.props.sendAvailability(availability);
@@ -70,7 +71,7 @@ class AddAvailability extends Component {
     if(!this.props.candidate) {
       return <div>Loading</div>
     }
-    if(this.props.success) {
+    if(this.state.success) {
       Swal.fire({
         type: "success",
         title: "Your availability has been submitted!",
@@ -78,7 +79,6 @@ class AddAvailability extends Component {
         showConfirmButton: false,
         timer: 10000
       });
-      this.props.success = false;
     }
     return (
       <div className={classes.wrapper}>
