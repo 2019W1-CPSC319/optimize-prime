@@ -155,88 +155,87 @@ router.put('/interviewer/:id', (req, res) => {
 router.post('/meeting', async (req, res) => {
 
   // candidate ID       (will get from req.body)
-  // const id = 1;
-
-  // let startTime;
-  // let endTime;
-
-  // query the database to get the candidates availability (this will be useed as the time constratint)
-
-  // const sql = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.candidateID = a.candidateID WHERE id = ?';
-  // const sqlcmd = connection.format(sql, [id]);
-  // connection.query(sqlcmd, (err, result) => {
-  //   if (err) {
-  //     throw err;
-  //   }
-
-  //   // extract start and end time
-  //   startTime = result.startTime;
-  //   endTime = result.endTime;
-
-  // });
-
-  const attendees = [
-    {
-      Type: "Required",
-      EmailAddress: {
-        Address: "stefanmilosevic@optimizeprime.onmicrosoft.com"
-      }
-    }
-  ]
-
-  const startTime = "2019-11-03T09:00:00";
-  const endTime = "2019-11-03T10:00:00";
-  const timeZone = "Pacific Standard Time";
-
+  const id = 1;
   const meetingDuration = "PT1H";
-
-  // should add locationConstraint
-
+  const { requiredInterviewers, optionalInterviewers } = req.body;
   try {
-    const response = await axios({
-      method: 'post',
-      url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
-      headers: {
-        Authorization: `Bearer ${req.user.accessToken}`,
-      },
-      data:
-      {
-        "attendees": attendees,
-        "timeConstraint": {
-          "timeslots": [
-            {
-              "start": {
-                "dateTime": startTime,
-                "timeZone": timeZone
-              },
-              "end": {
-                "dateTime": endTime,
-                "timeZone": timeZone
-              }
-            }
-          ]
+
+    // query the database to get the candidates availability (this will be useed as the time constratint)
+    const sql = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.id = ? ORDER BY a.id DESC';
+    const sqlcmd = connection.format(sql, [id]);
+
+    connection.query(sqlcmd, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      if (result.length === 0) {
+        res.send("No candidate availability found");
+      }
+
+      const timeZone = "Pacific Standard Time";
+      // build timeslots from candidate availability
+      const timeslots = result.map(time => ({
+        start: {
+          dateTime: time.startTime,
+          timeZone,
         },
-        meetingDuration: meetingDuration
+        end: {
+          dateTime: time.endTime,
+          timeZone,
+        }
+      }));
+      const requiredAttendees = requiredInterviewers.map(interviewer => ({
+        type: "Required",
+        emailAddress: {
+          address: interviewer.email
+        }
+      }));
+
+      const optionalAttendees = optionalInterviewers.map(interviewer => ({
+        type: "Optional",
+        emailAddress: {
+          address: interviewer.email
+        }
+      }));
+
+      const attendees = requiredAttendees.concat(optionalAttendees);
+
+      // should add locationConstraint
+
+      const response = await axios({
+        method: 'post',
+        url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+        headers: {
+          Authorization: `Bearer ${req.user.accessToken}`,
+        },
+        data:
+        {
+          "attendees": attendees,
+          "timeConstraint": { timeslots },
+          meetingDuration: meetingDuration
+        }
+      });
+      // console.log(response);
+
+      const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
+
+      if (meetingTimeSuggestions.length === 0) {
+        res.send("No Meeting times are availble")
       }
+
+      let possibleMeetings = [];
+      for (meeting of meetingTimeSuggestions) {
+        const meetingTimeSlot = meeting.meetingTimeSlot;
+        const obj = {
+          start: meetingTimeSlot.start,
+          end: meetingTimeSlot.end,
+          room: meeeting.locations[0]
+        }
+        possibleMeetings.push(obj);
+      }
+      res.send(possibleMeetings);
+
     });
-    // console.log(response);
-
-    const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
-
-    if (meetingTimeSuggestions.length === 0) {
-      res.send("No Meeting times are availble")
-    }
-
-    let possibleMeetings = [];
-    for (meeting of meetingTimeSuggestions) {
-      const meetingTimeSlot = meeting.meetingTimeSlot;
-      const obj = {
-        start: meetingTimeSlot.start,
-        end: meetingTimeSlot.end
-      }
-      possibleMeetings.push(obj);
-    }
-    res.send(possibleMeetings);
   } catch (error) {
     console.log(error);
   }
