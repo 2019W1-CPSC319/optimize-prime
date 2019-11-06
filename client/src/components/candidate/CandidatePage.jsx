@@ -58,7 +58,7 @@ class AddAvailability extends Component {
 
   handleSubmit = (times) => {
     // Add on the candidate name to the times
-    console.log(times);
+
     const availability = times.map(time => ({
       startTime: time.start.toISOString().slice(0, 19).replace('T', ' '),
       endTime: time.end.toISOString().slice(0, 19).replace('T', ' ')

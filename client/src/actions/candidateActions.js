@@ -51,7 +51,6 @@ export const fetchSpecificCandidate = (uuid) => async (dispatch) => {
 };
 
 export const sendAvailability = (availability, uuid) => async (dispatch) => {
-  console.log(availability, uuid);
   try {
     const response = await axios.post('/schedule/availability', { availability, uuid });
     if (response.status === 200) {
