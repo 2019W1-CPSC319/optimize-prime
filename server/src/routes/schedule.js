@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const connection = require('../init/setupMySql');
+const notAuthMiddleware = require('../utils/notAuthMiddleware');
+
 
 // ***************** ROOMS Endpoints *******************
 
@@ -59,7 +61,7 @@ router.get('/candidates', async (req, res) => {
 
 /**
  * Get a candidate's firstname, for the candidate availabilty page.
- * 
+ *
  * This should be the only method that can be used without authentication.
  */
 router.get('/candidate/name/:uuid', (req, res) => {
@@ -68,21 +70,24 @@ router.get('/candidate/name/:uuid', (req, res) => {
   const sqlcmd = connection.format(sql, [uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      return res.status(400).send({ message: 'Internal server Error.' });
+    }
+    if (result.length === 0) {
+      return res.status(204).send({ message: 'No candidate' });
     }
     // Just send the UUID and the first name
-    res.send([{uuid: uuid, firstName: result[0].firstName}]);
+    return res.send([{ uuid, firstName: result[0].firstName }]);
   });
 });
 
 // get a specific candidate
-router.get('/candidate/:uuid', (req, res) => {
+router.get('/candidate/:uuid', notAuthMiddleware, (req, res) => {
   const { uuid } = req.params;
   const sql = 'SELECT * FROM Candidate WHERE uuid = ?';
   const sqlcmd = connection.format(sql, [uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      return res.status(400).send({ message: 'Internal server error.' });
     }
     res.send(result);
   });
@@ -91,7 +96,7 @@ router.get('/candidate/:uuid', (req, res) => {
 
 // add a new user in either the candidates table or interview table based on the selected type
 router.post('/newuser', (req, res) => {
-  const user = req.body
+  const user = req.body;
   const type = user.Role;
   // status Active as default when adding
   const status = 'A';
@@ -131,27 +136,30 @@ router.put('/candidate/:id', (req, res) => {
 // ***************** Candidate AVAILABILITY Endpoints *******************
 
 router.post('/availability', (req, res) => {
-  const availability = req.body;
-
-  const uuid = availability.uuid;
-  const sqlSelect = 'SELECT * FROM Candidate WHERE uuid = ?';
-  const sqlSelectcmd = connection.format(sqlSelect, [uuid]);
-  let candidateId;
-  connection.query(sqlSelectcmd, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    candidateId = result[0].id;
-
-    const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES (?, ?, ?)';
-    const sqlcmd = connection.format(sql, [candidateId, availability.startTime, availability.endTime]);
-    connection.query(sqlcmd, (err, result) => {
+  try {
+    const { availability, uuid } = req.body;
+    const sqlSelect = 'SELECT * FROM Candidate WHERE uuid = ?';
+    const sqlSelectcmd = connection.format(sqlSelect, [uuid]);
+    let candidateId;
+    connection.query(sqlSelectcmd, (err, result) => {
       if (err) {
-        throw err;
+        return res.status(400).send({ message: 'Internal Server error' });
       }
-      res.send(result);
+      candidateId = result[0].id;
+
+      const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES ?';
+      const values = [availability.map((time) => [candidateId, time.startTime, time.endTime])];
+      const sqlcmd = connection.format(sql, values);
+      connection.query(sqlcmd, (err, result) => {
+        if (err) {
+          return res.status(400).send({ message: 'Internal Server error' });
+        }
+        res.send(result);
+      });
     });
-  });
+  } catch (error) {
+    res.status(error.statusCode).send({ message: error.message });
+  }
 });
 
 
