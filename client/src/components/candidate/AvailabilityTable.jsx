@@ -106,12 +106,12 @@ class AvailabilityTable extends Component {
 
   getDateAsWeekString = (date) => {
     const day = ["Sunday",
+                 "Monday",
                  "Tuesday",
                  "Wednesday",
                  "Thursday",
                  "Friday",
-                 "Saturday",
-                 "Monday"][date.getDay()];
+                 "Saturday"][date.getDay()];
     const month = ["January",
                    "February",
                    "March",
@@ -124,7 +124,12 @@ class AvailabilityTable extends Component {
                    "October",
                    "November",
                    "December"][date.getMonth()]
-    return day + ", " + date.getDate() + " " + month;
+    return day + ", " + date.getDate() + " " + month + ".";
+  }
+
+  getBlockLengthAsString = (row) => {
+    const difference = row.to - row.from;
+    return Math.floor(difference) + " hours, " + (difference % 1 * 60) + " minutes long."
   }
 
   handleAddRow = () => {
@@ -250,7 +255,9 @@ class AvailabilityTable extends Component {
                               <Select className={classes.timeSelector} value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
                                 {times}
                               </Select>
-                              {!row.timeValid && <FormHelperText>Start time must be before end time!</FormHelperText>}
+                              <FormHelperText>
+                                {row.timeValid ? "All times are in Pacific Time." : "Start time must be before end time!"}
+                              </FormHelperText>
                             </FormControl>
                           </TableCell>
                           <TableCell>
@@ -258,7 +265,9 @@ class AvailabilityTable extends Component {
                               <Select className={classes.timeSelector} value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
                                 {times}
                               </Select>
-                              {!row.timeValid && <FormHelperText>End time must be after start time!</FormHelperText>}
+                              <FormHelperText>
+                                {row.timeValid ? this.getBlockLengthAsString(row) : "End time must be before start time!"}
+                              </FormHelperText>
                             </FormControl>
                           </TableCell>
                           <TableCell>
