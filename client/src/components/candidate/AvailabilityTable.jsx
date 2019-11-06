@@ -182,6 +182,16 @@ class AvailabilityTable extends Component {
     this.setState({rows: rows});
   }
 
+  /**
+   * WARNING ABOUT TIMEZONES!
+   * ------------------------------
+   * It is currently assumed that all users will be on a system set to pacific
+   * time. If a user was to select their availability from a different time
+   * zone it would give their availability in that time zone, not in pacific
+   * time which the office was in. 
+   * Eg if you submitted 9am-5pm from eastern time it would be converted to
+   * 6am-2pm in pacific time and then used by the system.
+   */
   handleSubmit = () => {
     var times = [];
     for (const row of this.state.rows) {
@@ -256,7 +266,7 @@ class AvailabilityTable extends Component {
                                 {times}
                               </Select>
                               <FormHelperText>
-                                {row.timeValid ? "All times are in Pacific Time." : "Start time must be before end time!"}
+                                {row.timeValid ? "" : "Start time must be before end time!"}
                               </FormHelperText>
                             </FormControl>
                           </TableCell>
