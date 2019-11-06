@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles"
 // Material UI
 import {
         Table, TableBody, TableHead, TableCell, TableRow,
-        Select, MenuItem, Button, FormControl, FormHelperText
+        Select, MenuItem, Button, FormControl, FormHelperText, Typography
        } from "@material-ui/core"
 import {
         MuiPickersUtilsProvider,
@@ -102,6 +102,29 @@ class AvailabilityTable extends Component {
       submitHandler: props.submitHandler,
       twoDaysFuture: twoDaysFuture
     };
+  }
+
+  getDateAsWeekString = (date) => {
+    const day = ["Sunday",
+                 "Tuesday",
+                 "Wednesday",
+                 "Thursday",
+                 "Friday",
+                 "Saturday",
+                 "Monday"][date.getDay()];
+    const month = ["January",
+                   "February",
+                   "March",
+                   "April",
+                   "May",
+                   "June",
+                   "July",
+                   "August",
+                   "September",
+                   "October",
+                   "November",
+                   "December"][date.getMonth()]
+    return day + ", " + date.getDate() + " " + month;
   }
 
   handleAddRow = () => {
@@ -217,7 +240,9 @@ class AvailabilityTable extends Component {
                                     }}
                                   />
                               </MuiPickersUtilsProvider>
-                              {!row.dateValid && <FormHelperText>Please gives dates at least 2 days in advance!</FormHelperText>}
+                              <FormHelperText>
+                                {row.dateValid ? this.getDateAsWeekString(row.date) : "Please gives dates at least 2 days in advance!"}
+                              </FormHelperText>
                             </FormControl>
                           </TableCell>
                           <TableCell>
