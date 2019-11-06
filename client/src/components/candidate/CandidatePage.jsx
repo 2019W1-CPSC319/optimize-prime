@@ -58,21 +58,27 @@ class AddAvailability extends Component {
 
   handleSubmit = (times) => {
     // Add on the candidate name to the times
-    const availability = {
-      uuid: this.props.candidate.uuid,
-      startTime: times[0].start.toISOString().slice(0, 19).replace('T', ' '),
-      endTime: times[0].end.toISOString().slice(0, 19).replace('T', ' ')
-    };
-    this.props.sendAvailability(availability);
+
+    const availability = times.map(time => ({
+      startTime: time.start.toISOString().slice(0, 19).replace('T', ' '),
+      endTime: time.end.toISOString().slice(0, 19).replace('T', ' ')
+    }))
+    
+    this.props.sendAvailability(availability, this.props.candidate.uuid);
   }
 
   render() {
     const { classes, candidate } = this.props;
     const { name } = this.state;
-    if(!this.props.candidate) {
+    if(this.props.loading) {
       return <div>Loading</div>
     }
-    if(this.state.success) {
+    if(!this.props.candidate) {
+      return <div>
+        No content
+      </div>
+    }
+    if(this.props.success) {
       Swal.fire({
         type: "success",
         title: "Your availability has been submitted!",
@@ -106,12 +112,13 @@ class AddAvailability extends Component {
 
 const mapStateToProps = (state, ownProps) => ({
   candidate: candidateSelectors.getCandidateById(state, ownProps.id),
-  success: state.success
+  success: state.candidates.success,
+  loading: !!state.candidates.loading
 })
 
 const mapDispatchToProps = (dispatch) => ({
   fetchCandidate: (id) => dispatch(candidateActions.fetchSpecificCandidate(id)),
-  sendAvailability: (id) => dispatch(candidateActions.sendAvailability(id))
+  sendAvailability: (availability, uuid) => dispatch(candidateActions.sendAvailability(availability, uuid))
 })
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AddAvailability));

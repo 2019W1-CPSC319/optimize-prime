@@ -1,6 +1,11 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
 
+const setCandidateLoading = (flag = true) => ({
+  type: 'INIT_CANDIDATE_REQUEST',
+  payload: flag,
+});
+
 const fetchCandidatesSuccess = (candidates) => (
   {
     type: 'FETCH_CANDIDATES_SUCCESS',
@@ -16,8 +21,13 @@ const fetchCandidatesFailure = (error) => (
 );
 
 const sendAvailabilitySuccess = {
-    type: 'SEND_AVAILABILITY_SUCCESS'
-}
+  type: 'SEND_AVAILABILITY_SUCCESS',
+};
+
+const sendAvailabilityFailure = (message) => ({
+  type: 'SEND_AVIALABILITY_FAILURE',
+  payload: message,
+});
 
 export const fetchCandidates = () => async (dispatch) => {
   try {
@@ -30,6 +40,7 @@ export const fetchCandidates = () => async (dispatch) => {
 
 export const fetchSpecificCandidate = (uuid) => async (dispatch) => {
   try {
+    dispatch(setCandidateLoading());
     const response = await axios({
       url: `/schedule/candidate/name/${uuid}`,
     });
@@ -39,16 +50,14 @@ export const fetchSpecificCandidate = (uuid) => async (dispatch) => {
   }
 };
 
-export const sendAvailability = (availability) => async (dispatch) => {
+export const sendAvailability = (availability, uuid) => async (dispatch) => {
   try {
-    let response = await axios.post('/schedule/availability', availability);
-    if (response.status == 200) {
-      console.log("Availablity posted successfully")
+    const response = await axios.post('/schedule/availability', { availability, uuid });
+    if (response.status === 200) {
+      console.log('Availablity posted successfully');
       return dispatch(sendAvailabilitySuccess);
-    } else {
-      console.error("Failed to post availability to endpoint, status = " + response.status)
     }
   } catch (error) {
-    console.log(error);
+    return dispatch(sendAvailabilityFailure(error.response.data.message));
   }
-}
+};

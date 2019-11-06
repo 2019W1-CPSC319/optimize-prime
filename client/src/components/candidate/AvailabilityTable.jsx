@@ -145,7 +145,7 @@ class AvailabilityTable extends Component {
   }
 
   /**
-   * Hadler for submit button
+   * Handler for submit button
    */
   handleDateChange = (event) = (date, id) => {
     const rows = this.state.rows;
@@ -180,6 +180,7 @@ class AvailabilityTable extends Component {
                            (row.to% 1) * 60)
       times.push({start: start, end: end});
     }
+    console.log(times);
     this.state.submitHandler(times);
   }
 
