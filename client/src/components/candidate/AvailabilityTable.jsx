@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles"
 // Material UI
 import {
         Table, TableBody, TableHead, TableCell, TableRow,
-        Select, MenuItem, Button, FormControl, FormHelperText
+        Select, MenuItem, Button, FormControl, FormHelperText, Typography
        } from "@material-ui/core"
 import {
         MuiPickersUtilsProvider,
@@ -104,6 +104,34 @@ class AvailabilityTable extends Component {
     };
   }
 
+  getDateAsWeekString = (date) => {
+    const day = ["Sunday",
+                 "Monday",
+                 "Tuesday",
+                 "Wednesday",
+                 "Thursday",
+                 "Friday",
+                 "Saturday"][date.getDay()];
+    const month = ["January",
+                   "February",
+                   "March",
+                   "April",
+                   "May",
+                   "June",
+                   "July",
+                   "August",
+                   "September",
+                   "October",
+                   "November",
+                   "December"][date.getMonth()]
+    return day + ", " + date.getDate() + " " + month + ".";
+  }
+
+  getBlockLengthAsString = (row) => {
+    const difference = row.to - row.from;
+    return Math.floor(difference) + " hours, " + (difference % 1 * 60) + " minutes long."
+  }
+
   handleAddRow = () => {
     // Adds a row to the table
     const row = this.createRow(this.state.indexctr, this.state.twoDaysFuture, 9, 17);
@@ -154,6 +182,16 @@ class AvailabilityTable extends Component {
     this.setState({rows: rows});
   }
 
+  /**
+   * WARNING ABOUT TIMEZONES!
+   * ------------------------------
+   * It is currently assumed that all users will be on a system set to pacific
+   * time. If a user was to select their availability from a different time
+   * zone it would give their availability in that time zone, not in pacific
+   * time which the office was in. 
+   * Eg if you submitted 9am-5pm from eastern time it would be converted to
+   * 6am-2pm in pacific time and then used by the system.
+   */
   handleSubmit = () => {
     var times = [];
     for (const row of this.state.rows) {
@@ -218,7 +256,9 @@ class AvailabilityTable extends Component {
                                     }}
                                   />
                               </MuiPickersUtilsProvider>
-                              {!row.dateValid && <FormHelperText>Please gives dates at least 2 days in advance!</FormHelperText>}
+                              <FormHelperText>
+                                {row.dateValid ? this.getDateAsWeekString(row.date) : "Please gives dates at least 2 days in advance!"}
+                              </FormHelperText>
                             </FormControl>
                           </TableCell>
                           <TableCell>
@@ -226,7 +266,9 @@ class AvailabilityTable extends Component {
                               <Select className={classes.timeSelector} value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
                                 {times}
                               </Select>
-                              {!row.timeValid && <FormHelperText>Start time must be before end time!</FormHelperText>}
+                              <FormHelperText>
+                                {row.timeValid ? "" : "Start time must be before end time!"}
+                              </FormHelperText>
                             </FormControl>
                           </TableCell>
                           <TableCell>
@@ -234,7 +276,9 @@ class AvailabilityTable extends Component {
                               <Select className={classes.timeSelector} value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
                                 {times}
                               </Select>
-                              {!row.timeValid && <FormHelperText>End time must be after start time!</FormHelperText>}
+                              <FormHelperText>
+                                {row.timeValid ? this.getBlockLengthAsString(row) : "End time must be before start time!"}
+                              </FormHelperText>
                             </FormControl>
                           </TableCell>
                           <TableCell>
