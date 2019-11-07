@@ -72,7 +72,7 @@ router.get('/candidate/name/:uuid', (req, res) => {
   const sqlcmd = connection.format(sql, [uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      return res.status(400).send({ message: 'Internal server Error.' });
+      return res.status(500).send({ message: 'Internal server Error.' });
     }
     if (result.length === 0) {
       return res.status(204).send({ message: 'No candidate' });
@@ -89,7 +89,7 @@ router.get('/candidate/:uuid', notAuthMiddleware, (req, res) => {
   const sqlcmd = connection.format(sql, [uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      return res.status(400).send({ message: 'Internal server error.' });
+      return res.status(500).send({ message: 'Internal server error.' });
     }
     res.send(result);
   });
@@ -144,7 +144,7 @@ router.post('/availability', (req, res) => {
     let candidateId;
     connection.query(sqlSelectcmd, (err, result) => {
       if (err) {
-        return res.status(400).send({ message: 'Internal Server error' });
+        return res.status(500).send({ message: 'Internal Server error' });
       }
       candidateId = result[0].id;
 
@@ -153,7 +153,7 @@ router.post('/availability', (req, res) => {
       const sqlcmd = connection.format(sql, values);
       connection.query(sqlcmd, (err, result) => {
         if (err) {
-          return res.status(400).send({ message: 'Internal Server error' });
+          return res.status(500).send({ message: 'Internal Server error' });
         }
         res.send(result);
       });
