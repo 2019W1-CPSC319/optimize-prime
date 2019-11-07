@@ -7,7 +7,6 @@ const graph = require('../utils/graph');
 
 module.exports = (app) => {
   const users = {};
-
   app.use(expressSession({
     secret: 'session secret',
     resave: false,
