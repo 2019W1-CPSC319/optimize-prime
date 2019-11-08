@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const connection = require('../init/setupMySql');
-const notAuthMiddleware = require('../utils/notAuthMiddleware');
 const uuidv1 = require('uuid/v1');
 const axios = require('axios');
+const connection = require('../init/setupMySql');
+const notAuthMiddleware = require('../utils/notAuthMiddleware');
 
 
 // ***************** ROOMS Endpoints *******************
@@ -109,7 +109,7 @@ router.post('/newuser', (req, res) => {
   let sql = '';
   switch (type) {
     case 'candidate':
-      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';     
+      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';
       break;
     case 'interviewer':
       sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
@@ -123,12 +123,12 @@ router.post('/newuser', (req, res) => {
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
-    
+
     // send an unique link to the candidate to fill out their availability
-    if (type === "candidate") {
+    if (type === 'candidate') {
       try {
-        const subject = "Availability"
-        const body = "Hi " + user.firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate/" + uuid;
+        const subject = 'Availability';
+        const body = `Hi ${user.firstName},` + '\nPlease fill out your availability by going here: ' + `https://optimize-prime.herokuapp.com/candidate?key=${uuid}`;
         const response = axios({
           method: 'post',
           url: 'https://graph.microsoft.com/v1.0/me/sendMail',
@@ -137,7 +137,7 @@ router.post('/newuser', (req, res) => {
           },
           data: {
             message: {
-              subject: subject,
+              subject,
               body: {
                 contentType: 'text',
                 content: body,
