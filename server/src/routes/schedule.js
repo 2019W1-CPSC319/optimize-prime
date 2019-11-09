@@ -1,5 +1,7 @@
 const router = require('express').Router();
+const axios = require('axios');
 const connection = require('../init/setupMySql');
+const notAuthMiddleware = require('../utils/notAuthMiddleware');
 
 // ***************** ROOMS Endpoints *******************
 
@@ -138,6 +140,48 @@ router.put('/interviewer/delete/:id', (req, res) => {
     }
     res.send(result);
   });
+});
+
+router.post('/createevent', notAuthMiddleware, async (req, res) => {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: 'https://graph.microsoft.com/v1.0/me/events',
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
+      },
+      data: {
+        subject: "Let's go for lunch",
+        body: {
+          contentType: 'HTML',
+          content: 'Does late morning work for you?',
+        },
+        start: {
+          dateTime: '2019-11-03T12:00:00',
+          timeZone: 'Pacific Standard Time',
+        },
+        end: {
+          dateTime: '2019-11-03T14:00:00',
+          timeZone: 'Pacific Standard Time',
+        },
+        location: {
+          displayName: "Harry's Bar",
+        },
+        attendees: [
+          {
+            emailAddress: {
+              address: 'candicepang@optimizeprime.onmicrosoft.com',
+              name: 'Candice Pang',
+            },
+            type: 'required',
+          },
+        ],
+      },
+    });
+    res.send(response.data);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = router;
