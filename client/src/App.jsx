@@ -9,6 +9,7 @@ import LoginPage from './components/authentication/LoginPage';
 import CandidatePage from './components/candidate/AddAvailability';
 import OverviewPage from './components/dashboard/OverviewPage';
 import CalendarPage from './components/calendar/CalendarPage';
+import RoomPage from './components/room/RoomPage';
 import DirectoryPage from './components/directory/DirectoryPage';
 import SettingsPage from './components/settings/SettingsPage';
 
@@ -19,6 +20,7 @@ const App = props => (
       <Route exact path="/candidate" render={() => <CandidatePage {...props} />} />
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
       <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
+      <PrivateRoute exact path="/room" pageProps={props} render={() => <RoomPage {...props} />} />
       <PrivateRoute exact path="/directory" pageProps={props} render={() => <DirectoryPage {...props} />} />
       <PrivateRoute exact path="/settings" pageProps={props} render={() => <SettingsPage {...props} />} />
     </Switch>
@@ -29,6 +31,7 @@ const mapStateToProps = state => ({
   user: state.user,
   candidates: state.directory.candidates,
   interviewers: state.directory.interviewers,
+  rooms: state.rooms.rooms,
 });
 
 const mapDispatchToProps = dispatch => ({

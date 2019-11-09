@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const axios = require('axios');
+const uuidv1 = require('uuid/v1');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
 
@@ -7,7 +8,7 @@ const notAuthMiddleware = require('../utils/notAuthMiddleware');
 
 // get all rooms
 router.get('/rooms', (req, res) => {
-  const sql = 'SELECT * FROM Rooms';
+  const sql = 'SELECT * FROM Rooms WHERE status="A"';
   connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -16,19 +17,24 @@ router.get('/rooms', (req, res) => {
   });
 });
 
-
 // add a new room, to the rooms table.
-router.post('/room', (req, res) => {
+router.post('/room', async (req, res) => {
   const room = req.body;
-  // the room is active by default
-  const status = 'A';
-  const sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
-  const sqlcmd = connection.format(sql, [room.name, room.seats, status]);
-  connection.query(sqlcmd, (err, result) => {
+  let sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
+  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A']);
+  connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
       throw err;
     }
-    res.send(result);
+    sql = 'SELECT * FROM Rooms WHERE id=?';
+    sqlcmd = connection.format(sql, [addedRoom.insertId]);
+    connection.query(sqlcmd, (err, savedRoom) => {
+      if (err) {
+        throw err;
+      }
+      // savedRoom is the room that has just been added which consists of id, name, seats, and status attributes
+      res.send(savedRoom[0]);
+    });
   });
 });
 
@@ -58,7 +64,6 @@ router.get('/candidates', async (req, res) => {
   });
 });
 
-
 // get a specific candidate
 router.get('/candidate/:id', (req, res) => {
   const { id } = req.params;
@@ -72,33 +77,66 @@ router.get('/candidate/:id', (req, res) => {
   });
 });
 
-
 // add a new user in either the candidates table or interview table based on the selected type
 router.post('/newuser', (req, res) => {
   const user = req.body;
   const type = user.role;
   // status Active as default when adding
   const status = 'A';
+  const uuid = uuidv1();
   let sql = '';
   switch (type) {
     case 'candidate':
-      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
+      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';
       break;
     case 'interviewer':
       sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
       break;
     default: return;
   }
-  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status]);
+  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
+
+    // send an unique link to the candidate to fill out their availability
+    if (type === 'candidate') {
+      try {
+        const subject = 'Availability';
+        const body = 'Hi ' + user.firstName + ',' + '\nPlease fill out your availability by going here: ' + 'https://optimize-prime.herokuapp.com/candidate/' + uuid;
+        const response = axios({
+          method: 'post',
+          url: 'https://graph.microsoft.com/v1.0/me/sendMail',
+          headers: {
+            Authorization: `Bearer ${req.user.accessToken}`,
+          },
+          data: {
+            message: {
+              subject,
+              body: {
+                contentType: 'text',
+                content: body,
+              },
+              toRecipients: [
+                {
+                  emailAddress: {
+                    address: user.email,
+                  },
+                },
+              ],
+            },
+          },
+        });
+        res.send(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   });
 });
-
 
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/delete/:id', (req, res) => {
@@ -113,10 +151,10 @@ router.put('/candidate/delete/:id', (req, res) => {
   });
 });
 
-// ***************** Candidate AVAILABILITY Endpoints *******************
+// ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
 
-// ***************** INTERVIEWERS Endpoints *******************
+// ***************** INTERVIEWERS Endpoints *****************************
 
 // get all interviewers
 router.get('/interviewers', (req, res) => {

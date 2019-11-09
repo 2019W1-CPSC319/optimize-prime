@@ -16,19 +16,23 @@
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
+    "moment": "^2.24.0",
     "mysql": "^2.17.1",
     "node-forge": "^0.9.1",
     "parcel-bundler": "^1.12.4",
     "passport": "^0.4.0",
     "passport-azure-ad": "^4.1.0",
-    "react": "^16.10.2",
+    "prop-types": "^15.7.2",
+    "react": "^16.11.0",
     "react-dom": "^16.10.2",
+    "react-moment": "^0.9.6",
     "react-redux": "^7.1.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "sweetalert2": "^8.18.4",
+    "uuid": "^3.3.3",
     "winston": "^3.2.1"
   },
   "scripts": {
@@ -36,7 +40,8 @@
     "start:client": "rimraf ./cache && rimraf ./dist/client && parcel ./client/public/index.html --port 3010 --hmr-port 3011 --out-dir ./dist/client",
     "build": "rimraf ./dist/client && parcel build ./client/public/index.html --out-dir ./dist/client",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "node server/src/start.js"
   },
   "eslintConfig": {
     "extends": "react-app"
