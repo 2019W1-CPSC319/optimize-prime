@@ -86,7 +86,7 @@ const createEventSuccess = () => (
 export const createEvent = () => async (dispatch) => {
   try {
     dispatch(initRequest());
-    await axios.post('/user/createevent');
+    await axios.post('/schedule/createevent');
     dispatch(createEventSuccess());
   } catch (error) {
     console.log(error);
