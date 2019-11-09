@@ -60,14 +60,6 @@ class OptionsDialog extends Component {
         };
     }
 
-    async componentDidMount() {
-        const { actions } = this.props;
-
-        if (!this.props.candidates || !this.props.interviewers) {
-            await actions.getUsers();
-        }
-    }
-
     updateRequiredInterviewers = (event) => {
         this.setState({ required: event.target.value });
     }

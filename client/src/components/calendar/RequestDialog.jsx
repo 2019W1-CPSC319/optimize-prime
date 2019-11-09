@@ -75,14 +75,6 @@ class RequestDialog extends Component {
     super(props);
   }
 
-  async componentDidMount() {
-    const { actions } = this.props;
-
-    if (!this.props.candidates || !this.props.interviewers) {
-      await actions.getUsers();
-    }
-  }
-
   Autosuggest = () => {
     return (
       <Paper style={{ padding: '0' }} square>

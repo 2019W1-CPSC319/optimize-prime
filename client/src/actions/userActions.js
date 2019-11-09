@@ -105,13 +105,6 @@ const findMeetingTimesFailure = (error) => (
 export const findMeetingTimes = (data) => async (dispatch) => {
   try {
     const { candidate, required, optional, meetingDuration } = data;
-    // const id = 3;
-    // const meetingDuration = "PT1H";
-    // const requiredInterviewers = [{
-    //   email: "aliceykim0828@gmail.com"
-    // }];
-    // const optionalInterviewers = [];
-    debugger;
 
     const response = await axios.post('/schedule/meeting', {
       candidate,
@@ -119,6 +112,7 @@ export const findMeetingTimes = (data) => async (dispatch) => {
       required,
       optional,
     });
+
     return dispatch(findMeetingTimesSuccess(response));
   } catch (error) {
     return dispatch(findMeetingTimesFailure(error));

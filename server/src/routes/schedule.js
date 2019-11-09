@@ -166,7 +166,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
       const timeZone = "Pacific Standard Time";
 
       const timeConstraint = {
-        activityDomain: 'work',
+        activityDomain: "work",
         timeSlots: result.map(time => ({
           start: {
             dateTime: time.startTime,
@@ -180,14 +180,15 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
       };
 
       const requiredAttendees = required.map(interviewer => ({
-        type: "Required",
+        type: "required",
         emailAddress: {
+          name: interviewer.lastName + ', ' + interviewer.firstName,
           address: interviewer.email
         }
       }));
 
       const optionalAttendees = optional.map(interviewer => ({
-        type: "Optional",
+        type: "optional",
         emailAddress: {
           address: interviewer.email
         }
@@ -196,13 +197,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
       const attendees = requiredAttendees.concat(optionalAttendees);
 
       // should add locationConstraint
-
-      console.log(JSON.stringify({
-        attendees,
-        timeConstraint,
-        meetingDuration,
-        isOrganizerOptional: true,
-      }));
 
       const response = await axios({
         method: 'post',
@@ -214,13 +208,12 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           attendees,
           timeConstraint,
           meetingDuration,
-          isOrganizerOptional: true,
         }
       });
 
       const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
 
-      console.log(meetingTimeSuggestions);
+      console.log(JSON.stringify(meetingTimeSuggestions));
 
       if (meetingTimeSuggestions.length === 0) {
         res.send([]);

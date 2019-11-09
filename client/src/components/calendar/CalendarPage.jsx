@@ -181,12 +181,10 @@ class CalendarPage extends React.Component {
     )
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const { actions } = this.props;
-
-    if (!this.props.candidates || !this.props.interviewers) {
-      await actions.getUsers();
-    }
+    actions.getUsers('candidate');
+    actions.getUsers('interviewer');
   }
 
   render() {
