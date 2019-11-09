@@ -147,10 +147,10 @@ router.put('/interviewer/delete/:id', (req, res) => {
 router.post('/meeting', notAuthMiddleware, async (req, res) => {
   // const id = 1;
   // const meetingDuration = "PT1H";
-  const { id, meetingDuration, requiredInterviewers, optionalInterviewers } = req.body;
+  const { candidate, meetingDuration, required, optional } = req.body;
   // query the database to get the candidates availability (this will be useed as the time constratint)
-  const sql = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.id = ? ORDER BY a.id DESC';
-  const sqlcmd = connection.format(sql, [id]);
+  const sql = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.email = ? ORDER BY a.id DESC';
+  const sqlcmd = connection.format(sql, [candidate]);
 
   connection.query(sqlcmd, async (err, result) => {
     if (err) {
@@ -179,14 +179,14 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         }))
       };
 
-      const requiredAttendees = requiredInterviewers.map(interviewer => ({
+      const requiredAttendees = required.map(interviewer => ({
         type: "Required",
         emailAddress: {
           address: interviewer.email
         }
       }));
 
-      const optionalAttendees = optionalInterviewers.map(interviewer => ({
+      const optionalAttendees = optional.map(interviewer => ({
         type: "Optional",
         emailAddress: {
           address: interviewer.email
@@ -197,12 +197,12 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
       // should add locationConstraint
 
-      console.log({
+      console.log(JSON.stringify({
         attendees,
         timeConstraint,
         meetingDuration,
         isOrganizerOptional: true,
-      });
+      }));
 
       const response = await axios({
         method: 'post',

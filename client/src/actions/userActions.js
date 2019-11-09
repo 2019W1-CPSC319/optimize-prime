@@ -102,20 +102,22 @@ const findMeetingTimesFailure = (error) => (
   }
 );
 
-export const findMeetingTimes = () => async (dispatch) => {
+export const findMeetingTimes = (data) => async (dispatch) => {
   try {
-    const id = 3;
-    const meetingDuration = "PT1H";
-    const requiredInterviewers = [{
-      email: "aliceykim0828@gmail.com"
-    }];
-    const optionalInterviewers = [];
+    const { candidate, required, optional, meetingDuration } = data;
+    // const id = 3;
+    // const meetingDuration = "PT1H";
+    // const requiredInterviewers = [{
+    //   email: "aliceykim0828@gmail.com"
+    // }];
+    // const optionalInterviewers = [];
+    debugger;
 
     const response = await axios.post('/schedule/meeting', {
-      id,
+      candidate,
       meetingDuration,
-      requiredInterviewers,
-      optionalInterviewers
+      required,
+      optional,
     });
     return dispatch(findMeetingTimesSuccess(response));
   } catch (error) {

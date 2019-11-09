@@ -64,6 +64,19 @@ class CalendarPage extends React.Component {
     };
   }
 
+  getInterviewDuration = () => {
+    switch (this.state.durations[this.state.selected].minutes) {
+      case 30:
+        return 'PT30MIN';
+      case 45:
+        return 'PT45MIN';
+      case 60:
+        return 'PT1H';
+      case 90:
+        return 'PT1H30MIN';
+    }
+  }
+
   handleOpen = () => {
     this.setState({ reqOpen: true });
     this.setState({ optOpen: false });
@@ -83,7 +96,7 @@ class CalendarPage extends React.Component {
   }
 
   updateCandidate = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     this.setState({ candidate: event.target.value });
   }
 
@@ -93,19 +106,24 @@ class CalendarPage extends React.Component {
   }
 
   updateRequiredInterviewers = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     this.setState({ required: event.target.value });
   }
 
   updateOptionalInterviewers = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     this.setState({ optional: event.target.value });
   }
 
   handleNext = async () => {
     const { actions } = this.props;
     try {
-      await actions.findMeetingTimes();
+      await actions.findMeetingTimes({
+        candidate: this.state.candidate,
+        required: this.state.required,
+        optional: this.state.optional,
+        meetingDuration: this.getInterviewDuration(),
+      });
       this.setState({ reqOpen: false });
       this.setState({ optOpen: true });
     } catch (err) {
@@ -163,21 +181,13 @@ class CalendarPage extends React.Component {
     )
   }
 
-  // async componentDidMount() {
-  //   try {
-  //     // Get the user's access token
-  //     var accessToken = await window.msal.acquireTokenSilent({
-  //       scopes: config.scopes
-  //     });
-  //     // Get the user's events
-  //     var events = await getEvents(accessToken);
-  //     // Update the array of events in state
-  //     this.setState({ events: events.value });
-  //   }
-  //   catch (err) {
-  //     this.props.showError('ERROR', JSON.stringify(err));
-  //   }
-  // }
+  async componentDidMount() {
+    const { actions } = this.props;
+
+    if (!this.props.candidates || !this.props.interviewers) {
+      await actions.getUsers();
+    }
+  }
 
   render() {
     return (
@@ -224,6 +234,7 @@ class CalendarPage extends React.Component {
           updateRequiredInterviewers={this.updateRequiredInterviewers}
           updateOptionalInterviewers={this.updateOptionalInterviewers}
           handleSelectInterviewDuration={this.handleSelectInterviewDuration}
+          {...this.props}
           {...this.state}
         ></RequestDialog>
         <OptionsDialog

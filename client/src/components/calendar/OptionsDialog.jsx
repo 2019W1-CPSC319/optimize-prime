@@ -60,8 +60,12 @@ class OptionsDialog extends Component {
         };
     }
 
-    getInterviewDuration = () => {
-        return this.props.durations[this.props.selected].minutes;
+    async componentDidMount() {
+        const { actions } = this.props;
+
+        if (!this.props.candidates || !this.props.interviewers) {
+            await actions.getUsers();
+        }
     }
 
     updateRequiredInterviewers = (event) => {
@@ -104,7 +108,7 @@ class OptionsDialog extends Component {
         const { classes } = this.props;
 
         console.log(this.props);
-        if (this.props.meetingSuggestions && this.props.meetingSuggestions.data.length > 0) {
+        if (Array.isArray(this.props.meetingSuggestions.data) && this.props.meetingSuggestions.data.length > 0) {
             return (
                 <List dense>
                     {this.props.meetingSuggestions.data.map(option => {
@@ -157,8 +161,14 @@ class OptionsDialog extends Component {
         } else {
             return (
                 <Box style={{ padding: '50px' }}>
-                    <Typography style={{ textAlign: 'center' }}>No options available</Typography>
-                    <Button color='primary' style={{ display: 'block', margin: 'auto' }}>Go back</Button>
+                    <Typography style={{ textAlign: 'center' }}>
+                        {Array.isArray(this.props.meetingSuggestions.data) ? 'No options available' : this.props.meetingSuggestions.data}
+                    </Typography>
+                    <Button
+                        color='primary'
+                        style={{ display: 'block', margin: 'auto' }}
+                        onClick={this.props.handleOpen}
+                    >Go back</Button>
                 </Box>
             );
         }
@@ -202,7 +212,7 @@ class OptionsDialog extends Component {
                         Select an interview slot to schedule an interview.
                         Upon submission, emails will be sent out to the candidate and interviewers.
                     </DialogContentText>
-                    {this.createOptions()}
+                    {this.props.meetingSuggestions && this.createOptions()}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.props.handleOpen} color="primary">Back</Button>
