@@ -62,14 +62,6 @@ const MenuProps = {
   },
 };
 
-// const employees = [
-//   { email: 'jerry.jim@ubc.ca' },
-// ];
-
-const candidates = [
-  'alice.kim@gmail.com',
-];
-
 class RequestDialog extends Component {
   constructor(props) {
     super(props);
@@ -79,13 +71,13 @@ class RequestDialog extends Component {
     return (
       <Paper style={{ padding: '0' }} square>
         <List style={{ padding: '0' }} dense>
-          {candidates.map((name, i) => {
+          {this.props.candidates.map((candidate, i) => {
             const input = this.props.candidate.toLowerCase();
             return (
               input !== ''
-              && name.toLowerCase().includes(input)
-              && name.toLowerCase() !== input
-              && <ListItem key={i}><Button value={name} onClick={this.props.updateCandidateAutosuggested}>{name}</Button></ListItem>
+              && candidate.email.toLowerCase().includes(input)
+              && candidate.email.toLowerCase() !== input
+              && <ListItem key={i}><Button value={candidate.email} onClick={this.props.updateCandidateAutosuggested}>{candidate.email}</Button></ListItem>
             )
           })}
         </List>
