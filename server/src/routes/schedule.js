@@ -1,5 +1,7 @@
 const router = require('express').Router();
+const axios = require('axios');
 const connection = require('../init/setupMySql');
+const notAuthMiddleware = require('../utils/notAuthMiddleware');
 
 // get all rooms
 router.get('/rooms', (req, res) => {
@@ -137,6 +139,107 @@ router.put('/interviewer/delete/:id', (req, res) => {
       throw err;
     }
     res.send(result);
+  });
+});
+
+// find all the possible meeting times, given the following constraints/information: 
+// attendess, timeConstraints, meetingDuration, locationConstraints
+router.post('/meeting', notAuthMiddleware, async (req, res) => {
+  // const id = 1;
+  // const meetingDuration = "PT1H";
+  const { id, meetingDuration, requiredInterviewers, optionalInterviewers } = req.body;
+  // query the database to get the candidates availability (this will be useed as the time constratint)
+  const sql = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.id = ? ORDER BY a.id DESC';
+  const sqlcmd = connection.format(sql, [id]);
+
+  connection.query(sqlcmd, async (err, result) => {
+    if (err) {
+      throw err;
+    }
+
+    console.log(result);
+
+    if (result.length === 0) {
+      res.send("No candidate availability found");
+    }
+    try {
+      const timeZone = "Pacific Standard Time";
+
+      const timeConstraint = {
+        activityDomain: 'work',
+        timeSlots: result.map(time => ({
+          start: {
+            dateTime: time.startTime,
+            timeZone,
+          },
+          end: {
+            dateTime: time.endTime,
+            timeZone,
+          }
+        }))
+      };
+
+      const requiredAttendees = requiredInterviewers.map(interviewer => ({
+        type: "Required",
+        emailAddress: {
+          address: interviewer.email
+        }
+      }));
+
+      const optionalAttendees = optionalInterviewers.map(interviewer => ({
+        type: "Optional",
+        emailAddress: {
+          address: interviewer.email
+        }
+      }));
+
+      const attendees = requiredAttendees.concat(optionalAttendees);
+
+      // should add locationConstraint
+
+      console.log({
+        attendees,
+        timeConstraint,
+        meetingDuration,
+        isOrganizerOptional: true,
+      });
+
+      const response = await axios({
+        method: 'post',
+        url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+        headers: {
+          Authorization: `Bearer ${req.user.accessToken}`,
+        },
+        data: {
+          attendees,
+          timeConstraint,
+          meetingDuration,
+          isOrganizerOptional: true,
+        }
+      });
+
+      const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
+
+      console.log(meetingTimeSuggestions);
+
+      if (meetingTimeSuggestions.length === 0) {
+        res.send([]);
+      } else {
+        let possibleMeetings = [];
+        for (meeting of meetingTimeSuggestions) {
+          for (room of meeting.locations) {
+            possibleMeetings.push({
+              start: meeting.meetingTimeSlot.start,
+              end: meeting.meetingTimeSlot.end,
+              room,
+            });
+          }
+        }
+        res.send(possibleMeetings);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   });
 });
 

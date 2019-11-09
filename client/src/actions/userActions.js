@@ -76,14 +76,49 @@ export const sendEmail = (subject, body) => async (dispatch) => {
   }
 };
 
+// export const findMeetingTimes = () => async (dispatch) => {
+//   try {
+//     dispatch(initRequest());
+//     const response = await axios.get('/user/findMeetingTimes');
+//     const profile = response.data;
+//     return dispatch(fetchUserSuccess(profile));
+//   } catch (error) {
+//     console.log(error);
+//     return dispatch(fetchUserFailure(error));
+//   }
+// };
+
+const findMeetingTimesSuccess = (meetingSuggestions = []) => (
+  {
+    type: 'FIND_MEETING_TIMES_SUCCESS',
+    payload: meetingSuggestions,
+  }
+);
+
+const findMeetingTimesFailure = (error) => (
+  {
+    type: 'FIND_MEETING_TIMES_FAILURE',
+    payload: error,
+  }
+);
+
 export const findMeetingTimes = () => async (dispatch) => {
   try {
-    dispatch(initRequest());
-    const response = await axios.get('/user/findMeetingTimes');
-    const profile = response.data;
-    return dispatch(fetchUserSuccess(profile));
+    const id = 3;
+    const meetingDuration = "PT1H";
+    const requiredInterviewers = [{
+      email: "aliceykim0828@gmail.com"
+    }];
+    const optionalInterviewers = [];
+
+    const response = await axios.post('/schedule/meeting', {
+      id,
+      meetingDuration,
+      requiredInterviewers,
+      optionalInterviewers
+    });
+    return dispatch(findMeetingTimesSuccess(response));
   } catch (error) {
-    console.log(error);
-    return dispatch(fetchUserFailure(error));
+    return dispatch(findMeetingTimesFailure(error));
   }
 };

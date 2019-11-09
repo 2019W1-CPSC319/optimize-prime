@@ -51,7 +51,6 @@ class CalendarPage extends React.Component {
       required: [],
       optional: [],
       selected: 0,
-      // selectedOpt: 0,
       selectedOption: 0,
       background: ['#280e3a', '#fff', '#fff', '#fff'],
       color: ['#fff', '#000', '#000', '#000'],
@@ -103,12 +102,15 @@ class CalendarPage extends React.Component {
     this.setState({ optional: event.target.value });
   }
 
-  handleNext = () => {
-    // axios.get('http://localhost:8080/blocks/' + this.state.candidate)
-    //   // .then(res => res.text())
-    //   .then(res => this.setState({ candidates: res.data }));
-    this.setState({ reqOpen: false });
-    this.setState({ optOpen: true });
+  handleNext = async () => {
+    const { actions } = this.props;
+    try {
+      await actions.findMeetingTimes();
+      this.setState({ reqOpen: false });
+      this.setState({ optOpen: true });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   handleSave = () => {
@@ -228,6 +230,7 @@ class CalendarPage extends React.Component {
           handleOpen={this.handleOpen}
           handleSave={this.handleSave}
           handleSelectOption={this.handleSelectOption}
+          {...this.props}
           {...this.state}
         ></OptionsDialog>
         {this.showSnackbarOnSuccess()}

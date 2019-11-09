@@ -50,33 +50,33 @@ router.post('/sendemail', notAuthMiddleware, async (req, res) => {
   }
 });
 
-router.get('/findMeetingTimes', notAuthMiddleware, async (req, res) => {
-  // attendee: { type: "(required|optional|resource)", emailAddress: { "@odata.type": "@." } }
+// router.get('/findMeetingTimes', notAuthMiddleware, async (req, res) => {
+//   // attendee: { type: "(required|optional|resource)", emailAddress: { "@odata.type": "@." } }
 
-  try {
-    const response = await axios({
-      url: 'https://graph.microsoft.com/v1.0/users/me/findMeetingTimes',
-      headers: {
-        Authorization: `Bearer ${req.user.accessToken}`,
-      },
-      data: {
-        attendees: req.body.attendees,
-        isOrganizerOptional: true,
-        locationConstraint: {
-          isRequired: false,
-          locations: [],
-          suggestLocation: true,
-        },
-        meetingDuration: req.body.meetingDuration,
-        timeConstraint: ,
+//   try {
+//     const response = await axios({
+//       url: 'https://graph.microsoft.com/v1.0/users/me/findMeetingTimes',
+//       headers: {
+//         Authorization: `Bearer ${req.user.accessToken}`,
+//       },
+//       data: {
+//         attendees: req.body.attendees,
+//         isOrganizerOptional: true,
+//         locationConstraint: {
+//           isRequired: false,
+//           locations: [],
+//           suggestLocation: true,
+//         },
+//         meetingDuration: req.body.meetingDuration,
+//         timeConstraint: [],
 
-      },
-    });
+//       },
+//     });
 
-    res.send(response.data);
-  } catch (err) {
-    res.status(err.response.status).send(err.message);
-  }
-});
+//     res.send(response.data);
+//   } catch (err) {
+//     res.status(err.response.status).send(err.message);
+//   }
+// });
 
 module.exports = router;
