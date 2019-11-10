@@ -99,40 +99,6 @@ router.post('/newuser', (req, res) => {
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
-
-    // send an unique link to the candidate to fill out their availability
-    if (type === "candidate") {
-      try {
-        const subject = "Availability"
-        const body = "Hi " + user.firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate/" + uuid;
-        const response = axios({
-          method: 'post',
-          url: 'https://graph.microsoft.com/v1.0/me/sendMail',
-          headers: {
-            Authorization: `Bearer ${req.user.accessToken}`,
-          },
-          data: {
-            message: {
-              subject: subject,
-              body: {
-                contentType: 'text',
-                content: body,
-              },
-              toRecipients: [
-                {
-                  emailAddress: {
-                    address: user.email,
-                  },
-                },
-              ],
-            },
-          },
-        });
-        res.send(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
   });
 });
 
@@ -148,6 +114,52 @@ router.put('/candidate/delete/:id', (req, res) => {
     res.send(result);
   });
 });
+
+router.post('/sendEmail', (req, res) => {
+  const { firstName, email } = req.body;
+  const sqlcmd = connection.format('SELECT uuid from Candidate WHERE Email = ?', [email]);
+  connection.query(sqlcmd, async (err, result) => {
+    if (err) {
+      throw err;
+    }
+
+    console.log(result);
+
+    const uuid = 'b18334a0-01d1-11ea-9258-a3aabd009024';
+
+    try {
+      const subject = "Availability";
+      const body = "Hi " + firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate?key=" + uuid;
+      const response = await axios({
+        method: 'post',
+        url: 'https://graph.microsoft.com/v1.0/me/sendMail',
+        headers: {
+          Authorization: `Bearer ${req.user.accessToken}`,
+        },
+        data: {
+          message: {
+            subject: subject,
+            body: {
+              contentType: 'text',
+              content: body,
+            },
+            toRecipients: [
+              {
+                emailAddress: {
+                  address: email,
+                },
+              },
+            ],
+          },
+        },
+      });
+      res.send(response.data);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Internal server Error.' });
+    }
+  });
+})
 
 // ***************** CANDIDATE AVAILABILITY Endpoints *******************
 

@@ -99,7 +99,7 @@ class DirectoryPage extends Component {
             'success'
           );
         }
-      })
+      });
     } else {
       this.setState({
         mode,

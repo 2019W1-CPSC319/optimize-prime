@@ -34,7 +34,7 @@ router.get('/events', notAuthMiddleware, async (req, res) => {
   }
 });
 
-router.post('/sendemail', notAuthMiddleware, async (req, res) => {
+router.post('/sendEmail', notAuthMiddleware, async (req, res) => {
   try {
     const response = await axios({
       method: 'post',
