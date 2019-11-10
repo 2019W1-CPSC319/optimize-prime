@@ -67,6 +67,7 @@ class RoomDialog extends Component {
                     <DialogContentText>
                         To add a new room, provide all the required fields.
                     </DialogContentText>
+
                     <FormControl
                         fullWidth
                         variant="outlined">
