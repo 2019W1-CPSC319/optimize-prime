@@ -6,7 +6,7 @@ import rooms from './RoomReducer';
 const RootReducer = combineReducers({
   user,
   directory,
-  rooms,
+  rooms
 });
 
 export default RootReducer;

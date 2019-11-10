@@ -58,32 +58,55 @@ export const fetchUser = () => async (dispatch) => {
   }
 };
 
-const sendEmailSuccess = () => (
+const sendEmailSuccess = (response) => (
   {
     type: 'EMAIL_SEND_SUCCESS',
+    payload: response
   }
 );
 
-export const sendEmail = (subject, body) => async (dispatch) => {
+const sendEmailFailure = (error) => (
+  {
+    type: 'EMAIL_SEND_FAILURE',
+    payload: error
+  }
+);
+
+export const sendEmail = (user) => async (dispatch) => {
   try {
     dispatch(initRequest());
-    await axios.post('/user/sendemail', {
-      subject, body,
-    });
-    dispatch(sendEmailSuccess());
+    const response = await axios.post('/schedule/sendemail', user);
+    return dispatch(sendEmailSuccess(response));
   } catch (error) {
-    console.log(error);
+    return dispatch(sendEmailFailure(error));
   }
 };
 
-export const findMeetingTimes = () => async (dispatch) => {
+const findMeetingTimesSuccess = (meetingSuggestions = []) => (
+  {
+    type: 'FIND_MEETING_TIMES_SUCCESS',
+    payload: meetingSuggestions,
+  }
+);
+
+const findMeetingTimesFailure = (error) => (
+  {
+    type: 'FIND_MEETING_TIMES_FAILURE',
+    payload: error,
+  }
+);
+
+export const findMeetingTimes = (data) => async (dispatch) => {
   try {
-    dispatch(initRequest());
-    const response = await axios.get('/user/findMeetingTimes');
-    const profile = response.data;
-    return dispatch(fetchUserSuccess(profile));
+    const { candidate, required, optional, meetingDuration } = data;
+    const response = await axios.post('/schedule/meeting', {
+      candidate,
+      meetingDuration,
+      required,
+      optional,
+    });
+    return dispatch(findMeetingTimesSuccess(response));
   } catch (error) {
-    console.log(error);
-    return dispatch(fetchUserFailure(error));
+    return dispatch(findMeetingTimesFailure(error));
   }
 };
