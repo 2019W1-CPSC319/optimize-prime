@@ -248,16 +248,15 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           let locations = [{}];
           if (result.length > 0) {
             locations = result.map(room => ({
-              displayName: room.name
+              displayName: room.name,
+              locationEmailAddress: room.email 
             }))
           }
-
-          // should add locationConstraint
 
           const data = {
             attendees,
             timeConstraint,
-            maxCandidates: 100,
+            maxCandidates: 30,
             meetingDuration,
             locationConstraint: {
               isRequired: "true",
