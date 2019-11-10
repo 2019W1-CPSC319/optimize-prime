@@ -209,12 +209,12 @@ class AvailabilityTable extends Component {
       const start = new Date(row.date.getFullYear(),
                              row.date.getMonth(),
                              row.date.getDate(),
-                             row.from,
+                             row.from - 8,
                              (row.from % 1) * 60)
       const end = new Date(row.date.getFullYear(),
                            row.date.getMonth(),
                            row.date.getDate(),
-                           row.to,
+                           row.to - 8,
                            (row.to% 1) * 60)
       times.push({start: start, end: end});
     }
