@@ -276,7 +276,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
             data
           });
 
-          const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
+          const meetingTimeSuggestions = (response.data && response.data.meetingTimeSuggestions) || [];
 
           console.log(JSON.stringify(meetingTimeSuggestions));
 
