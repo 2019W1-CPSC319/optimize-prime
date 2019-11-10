@@ -308,4 +308,17 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
   });
 });
 
+// ************* Get meeting rooms from outlook *************** //
+
+router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
+  const response = await axios({
+    method: 'get',
+    url: 'https://graph.microsoft.com/beta/me/findRooms',
+    headers: {
+      Authorization: `Bearer ${req.user.accessToken}`,
+    }
+  });
+  res.send(response.data && response.data.value);
+});
+
 module.exports = router;
