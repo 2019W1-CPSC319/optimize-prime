@@ -67,18 +67,6 @@ class RoomDialog extends Component {
                     <DialogContentText>
                         To add a new room, provide all the required fields.
                     </DialogContentText>
-                    {/* <TextField
-                        required
-                        autoFocus={true}
-                        id="name"
-                        label="Room Name"
-                        name="name"
-                        value={this.props.name}
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.props.handleChangeRoomName}
-                        fullWidth
-                    /> */}
                     <FormControl
                         fullWidth
                         variant="outlined">
@@ -87,20 +75,9 @@ class RoomDialog extends Component {
                             className={classes.inputlabel}>
                             Available room(s)</InputLabel>
                         <Select
-                            // multiple
                             value={this.props.name}
                             onChange={this.props.handleChangeRoomName}
                             input={<Input id="select-chip" disableUnderline={true} />}
-                            // renderValue={selected => (
-                            //     <div className={classes.chips}>
-                            //         {selected.map(value => (
-                            //             <Chip
-                            //                 key={value}
-                            //                 label={value}
-                            //                 className={classes.chip} />
-                            //         ))}
-                            //     </div>
-                            // )}
                             renderValue={selected => (
                                 <Chip key={selected} label={selected} className={classes.chip} />
                             )}
