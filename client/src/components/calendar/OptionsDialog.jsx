@@ -120,9 +120,9 @@ class OptionsDialog extends Component {
                                     id={labelId}
                                     primary={
                                         <Box>
-                                            <Box fontWeight='fontWeightBold'><Moment format='ll' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Box>
-                                            <Typography>Starts at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Typography>
-                                            <Typography>Ends at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.end.dateTime}</Moment></Typography>
+                                            <Box fontWeight='fontWeightBold'><Moment subtract={{ hours: 8 }} format='ll' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Box>
+                                            <Typography>Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Typography>
+                                            <Typography>Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.end.dateTime}</Moment></Typography>
                                         </Box>
                                     }
                                     secondary={option.room.displayName} />

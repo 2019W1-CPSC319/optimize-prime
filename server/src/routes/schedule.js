@@ -194,115 +194,106 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
     if (result.length === 0) {
       res.send("No candidate availability found");
-    } else {
-      try {
-        const timeZone = "UTC";
+    }
+    try {
+      const timeZone = "Pacific Standard Time";
 
-        const timeConstraint = {
-          activityDomain: "work",
-          timeSlots: result.map(time => ({
-            start: {
-              dateTime: time.startTime,
-              timeZone,
-            },
-            end: {
-              dateTime: time.endTime,
-              timeZone,
-            }
+      const timeConstraint = {
+        activityDomain: "work",
+        timeSlots: result.map(time => ({
+          start: {
+            dateTime: time.startTime,
+            timeZone,
+          },
+          end: {
+            dateTime: time.endTime,
+            timeZone,
+          }
+        }))
+      };
+
+      const requiredAttendees = required.map(interviewer => ({
+        type: "required",
+        emailAddress: {
+          address: interviewer.email
+        }
+      }));
+
+      const optionalAttendees = optional.map(interviewer => ({
+        type: "optional",
+        emailAddress: {
+          address: interviewer.email
+        }
+      }));
+
+      const attendees = requiredAttendees.concat(optionalAttendees);
+
+      const sqlcmd = 'SELECT * FROM Rooms WHERE status="A"';
+      connection.query(sqlcmd, async (err, result) => {
+        if (err) {
+          throw err;
+        }
+        let locations = [{}];
+        if (result.length > 0) {
+          locations = result.map(room => ({
+            displayName: room.name
           }))
-        };
+        }
 
-        const requiredAttendees = required.map(interviewer => ({
-          type: "required",
-          emailAddress: {
-            address: interviewer.email
-          }
-        }));
-
-        const optionalAttendees = optional.map(interviewer => ({
-          type: "optional",
-          emailAddress: {
-            address: interviewer.email
-          }
-        }));
-
-        const attendees = requiredAttendees.concat(optionalAttendees);
+        // should add locationConstraint
 
         const data = {
           attendees,
           timeConstraint,
+          maxCandidates: 100,
           meetingDuration,
           isOrganizerOptional: "false",
           locationConstraint: {
-            isRequired: "false",
+            isRequired: "true",
             suggestLocation: "false",
-            locations: [
-              {
-                resolveAvailability: "false",
-                displayName: "Room 1"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 2"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 3"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 4"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 5"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 6"
-              }
-            ]
+            locations: locations
           }
-        };
-
-        console.log(JSON.stringify(data));
-
-        const response = await axios({
-          method: 'post',
-          url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
-          headers: {
-            Authorization: `Bearer ${req.user.accessToken}`,
-          },
-          data
-        });
-
-        const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
-
-        console.log(JSON.stringify(meetingTimeSuggestions));
-
-        if (meetingTimeSuggestions.length === 0) {
-          res.send([]);
-        } else {
-          let possibleMeetings = [];
-          for (meeting of meetingTimeSuggestions) {
-            for (room of meeting.locations) {
-              possibleMeetings.push({
-                start: meeting.meetingTimeSlot.start,
-                end: meeting.meetingTimeSlot.end,
-                room,
-                interviewers:
-                  meeting.organizerAvailability === "free" ?
-                    [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: candidate } } }] :
-                    meeting.attendeeAvailability,
-              });
-            }
-          }
-          res.send(possibleMeetings);
         }
-      } catch (error) {
-        console.log(error);
+
+      console.log(JSON.stringify(data));
+
+      const response = await axios({
+        method: 'post',
+        url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+        headers: {
+          Authorization: `Bearer ${req.user.accessToken}`,
+        },
+        data
+      });
+
+      const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
+
+      console.log(JSON.stringify(meetingTimeSuggestions));
+
+      if (meetingTimeSuggestions.length === 0) {
+        res.send([]);
+      } else {
+        let possibleMeetings = [];
+        for (meeting of meetingTimeSuggestions) {
+          for (room of meeting.locations) {
+            possibleMeetings.push({
+              start: meeting.meetingTimeSlot.start,
+              end: meeting.meetingTimeSlot.end,
+              room,
+              interviewers:
+                meeting.organizerAvailability === "free" ?
+                  [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: candidate } } }] :
+                  meeting.attendeeAvailability,
+            });
+          }
+        }
+        res.send(possibleMeetings);
       }
+    });
+    } catch (error) {
+      console.log(error);
     }
+    
   });
 });
 

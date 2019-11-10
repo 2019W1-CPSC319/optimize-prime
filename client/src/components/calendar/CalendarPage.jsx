@@ -57,9 +57,9 @@ class CalendarPage extends React.Component {
       candidate: '',
       durations: [
         { minutes: 30 },
-        { minutes: 45 },
         { minutes: 60 },
         { minutes: 90 },
+        { minutes: 120 }
       ]
     };
   }
@@ -68,12 +68,12 @@ class CalendarPage extends React.Component {
     switch (this.state.durations[this.state.selected].minutes) {
       case 30:
         return 'PT30M';
-      case 45:
-        return 'PT45M';
       case 60:
         return 'PT1H';
       case 90:
         return 'PT1H30M';
+      case 120:
+        return 'PT2H';
     }
   }
 
