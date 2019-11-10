@@ -181,10 +181,7 @@ router.put('/interviewer/delete/:id', (req, res) => {
 // find all the possible meeting times, given the following constraints/information: 
 // attendess, timeConstraints, meetingDuration, locationConstraints
 router.post('/meeting', notAuthMiddleware, async (req, res) => {
-  // const id = 1;
-  // const meetingDuration = "PT1H";
   const { candidate, meetingDuration, required, optional } = req.body;
-  // query the database to get the candidates availability (this will be useed as the time constratint)
   const sql = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.email = ? ORDER BY a.id DESC';
   const sqlcmd = connection.format(sql, [candidate]);
 
