@@ -156,7 +156,7 @@ router.put('/candidate/delete/:id', (req, res) => {
 
 // get all interviewers
 router.get('/interviewers', (req, res) => {
-  const sql = 'SELECT * FROM Interviewer';
+  const sql = "SELECT * FROM Interviewer WHERE status <> 'D'";
   connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -194,106 +194,106 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
     if (result.length === 0) {
       res.send("No candidate availability found");
-    }
-    try {
-      const timeZone = "Pacific Standard Time";
+    } else {
+      try {
+        const timeZone = "Pacific Standard Time";
 
-      const timeConstraint = {
-        activityDomain: "work",
-        timeSlots: result.map(time => ({
-          start: {
-            dateTime: time.startTime,
-            timeZone,
-          },
-          end: {
-            dateTime: time.endTime,
-            timeZone,
-          }
-        }))
-      };
-
-      const requiredAttendees = required.map(interviewer => ({
-        type: "required",
-        emailAddress: {
-          address: interviewer.email
-        }
-      }));
-
-      const optionalAttendees = optional.map(interviewer => ({
-        type: "optional",
-        emailAddress: {
-          address: interviewer.email
-        }
-      }));
-
-      const attendees = requiredAttendees.concat(optionalAttendees);
-
-      const sqlcmd = 'SELECT * FROM Rooms WHERE status="A"';
-      connection.query(sqlcmd, async (err, result) => {
-        if (err) {
-          throw err;
-        }
-        let locations = [{}];
-        if (result.length > 0) {
-          locations = result.map(room => ({
-            displayName: room.name
+        const timeConstraint = {
+          activityDomain: "work",
+          timeSlots: result.map(time => ({
+            start: {
+              dateTime: time.startTime,
+              timeZone,
+            },
+            end: {
+              dateTime: time.endTime,
+              timeZone,
+            }
           }))
-        }
+        };
 
-        // should add locationConstraint
-
-        const data = {
-          attendees,
-          timeConstraint,
-          maxCandidates: 100,
-          meetingDuration,
-          isOrganizerOptional: "false",
-          locationConstraint: {
-            isRequired: "true",
-            suggestLocation: "false",
-            locations: locations
+        const requiredAttendees = required.map(interviewer => ({
+          type: "required",
+          emailAddress: {
+            address: interviewer.email
           }
-        }
+        }));
 
-      console.log(JSON.stringify(data));
-
-      const response = await axios({
-        method: 'post',
-        url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
-        headers: {
-          Authorization: `Bearer ${req.user.accessToken}`,
-        },
-        data
-      });
-
-      const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
-
-      console.log(JSON.stringify(meetingTimeSuggestions));
-
-      if (meetingTimeSuggestions.length === 0) {
-        res.send([]);
-      } else {
-        let possibleMeetings = [];
-        for (meeting of meetingTimeSuggestions) {
-          for (room of meeting.locations) {
-            possibleMeetings.push({
-              start: meeting.meetingTimeSlot.start,
-              end: meeting.meetingTimeSlot.end,
-              room,
-              interviewers:
-                meeting.organizerAvailability === "free" ?
-                  [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: candidate } } }] :
-                  meeting.attendeeAvailability,
-            });
+        const optionalAttendees = optional.map(interviewer => ({
+          type: "optional",
+          emailAddress: {
+            address: interviewer.email
           }
-        }
-        res.send(possibleMeetings);
+        }));
+
+        const attendees = requiredAttendees.concat(optionalAttendees);
+
+        const sqlcmd = 'SELECT * FROM Rooms WHERE status="A"';
+        connection.query(sqlcmd, async (err, result) => {
+          if (err) {
+            throw err;
+          }
+          let locations = [{}];
+          if (result.length > 0) {
+            locations = result.map(room => ({
+              displayName: room.name
+            }))
+          }
+
+          // should add locationConstraint
+
+          const data = {
+            attendees,
+            timeConstraint,
+            maxCandidates: 100,
+            meetingDuration,
+            isOrganizerOptional: "false",
+            locationConstraint: {
+              isRequired: "true",
+              suggestLocation: "false",
+              locations: locations
+            }
+          }
+
+          console.log(JSON.stringify(data));
+
+          const response = await axios({
+            method: 'post',
+            url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+            headers: {
+              Authorization: `Bearer ${req.user.accessToken}`,
+            },
+            data
+          });
+
+          const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
+
+          console.log(JSON.stringify(meetingTimeSuggestions));
+
+          if (meetingTimeSuggestions.length === 0) {
+            res.send([]);
+          } else {
+            let possibleMeetings = [];
+            for (meeting of meetingTimeSuggestions) {
+              for (room of meeting.locations) {
+                possibleMeetings.push({
+                  start: meeting.meetingTimeSlot.start,
+                  end: meeting.meetingTimeSlot.end,
+                  room,
+                  interviewers:
+                    meeting.organizerAvailability === "free" ?
+                      [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: candidate } } }] :
+                      meeting.attendeeAvailability,
+                });
+              }
+            }
+            res.send(possibleMeetings);
+          }
+        });
+      } catch (error) {
+        console.log(error);
       }
-    });
-    } catch (error) {
-      console.log(error);
     }
-    
   });
 });
 
