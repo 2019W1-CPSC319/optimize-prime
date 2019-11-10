@@ -199,17 +199,17 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
       res.send("No candidate availability found");
     }
     try {
-      const timeZone = "UTC";
+      const timeZone = "Pacific Standard Time";
 
       const timeConstraint = {
         activityDomain: "work",
         timeSlots: result.map(time => ({
           start: {
-            dateTime: time.startTime || new Date().toString(),
+            dateTime: time.startTime,
             timeZone,
           },
           end: {
-            dateTime: time.endTime || new Date().toString(),
+            dateTime: time.endTime,
             timeZone,
           }
         }))
@@ -232,6 +232,18 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
       const attendees = requiredAttendees.concat(optionalAttendees);
 
+      const sqlcmd = 'SELECT * FROM Rooms WHERE status="A"';
+      connection.query(sqlcmd, async (err, result) => {
+        if (err) {
+          throw err;
+        }
+        let locations = [{}];
+        if (result.length > 0 ) {   
+          locations = result.map(room => ({
+            displayName: room.name
+          }))
+        }
+
       // should add locationConstraint
 
       const response = await axios({
@@ -243,39 +255,15 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         data: {
           attendees,
           timeConstraint,
+          maxCandidates: 100,
           meetingDuration,
           locationConstraint: {
-            isRequired: "false",
+            isRequired: "true",
             suggestLocation: "false",
-            locations: [
-              {
-                resolveAvailability: "false",
-                displayName: "Room 1"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 2"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 3"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 4"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 5"
-              },
-              {
-                resolveAvailability: "false",
-                displayName: "Room 6"
-              }
-            ]
+            locations: locations
           }
-        }
-      });
+      }
+    });
 
       const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
 
@@ -297,6 +285,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         }
         res.send(possibleMeetings);
       }
+  });
     } catch (error) {
       console.log(error);
     }
