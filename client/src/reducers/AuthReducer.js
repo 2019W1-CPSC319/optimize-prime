@@ -26,7 +26,14 @@ const AuthReducer = (state = {}, action) => {
     case 'FIND_MEETING_TIMES_SUCCESS':
       return {
         ...state,
+        loading: false,
         meetingSuggestions: action.payload,
+      };
+    case 'EMAIL_SEND_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+        status: action.payload,
       };
     default:
       return state;
