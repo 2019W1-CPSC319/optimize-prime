@@ -239,7 +239,8 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         let locations = [{}];
         if (result.length > 0) {
           locations = result.map(room => ({
-            displayName: room.name
+            displayName: room.name,
+            // locationEmailAddress: "room2@optimizeprime.onmicrosoft.com"
           }))
         }
 
@@ -248,9 +249,8 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         const data = {
           attendees,
           timeConstraint,
-          maxCandidates: 100,
+          maxCandidates: 30,
           meetingDuration,
-          isOrganizerOptional: "false",
           locationConstraint: {
             isRequired: "true",
             suggestLocation: "false",
@@ -298,6 +298,22 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
     }
     
   });
+});
+
+
+
+
+
+// ************* Get meeting rooms from outlook *************** //
+router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
+  const response = await axios({
+    method: 'get',
+    url: 'https://graph.microsoft.com/beta/me/findRooms',
+    headers: {
+      Authorization: `Bearer ${req.user.accessToken}`,
+    }
+  });
+  res.send(response.data && response.data.value);
 });
 
 module.exports = router;
