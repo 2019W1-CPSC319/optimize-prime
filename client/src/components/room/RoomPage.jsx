@@ -108,7 +108,11 @@ export default class RoomPage extends React.Component {
 
     handleChangeRoomSeats = (event) => {
         event.persist();
-        this.setState({ seats: event.target.value });
+        if (event.target.value < 1 || event.target.value > 100) {
+            this.setState({ error: true });
+        } else {
+            this.setState({ error: false, seats: event.target.value });
+        }
     }
 
     showSnackbarOnSuccess = () => {
