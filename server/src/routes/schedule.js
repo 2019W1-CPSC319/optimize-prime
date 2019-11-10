@@ -282,7 +282,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
                   room,
                   interviewers:
                     meeting.organizerAvailability === "free" ?
-                      [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: candidate } } }] :
+                      [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: req.user.username } } }] :
                       meeting.attendeeAvailability,
                 });
               }
