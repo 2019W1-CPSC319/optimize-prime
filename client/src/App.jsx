@@ -32,6 +32,8 @@ const mapStateToProps = state => ({
   candidates: state.directory.candidates,
   interviewers: state.directory.interviewers,
   rooms: state.rooms.rooms,
+  outlookRooms: state.rooms.outlookRooms,
+  meetingSuggestions: state.user.meetingSuggestions,
 });
 
 const mapDispatchToProps = dispatch => ({

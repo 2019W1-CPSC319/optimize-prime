@@ -109,34 +109,63 @@ class UserDialog extends Component {
       role,
     } = this.state;
 
-    try {
-      if (mode === 'add') {
-        await actions.addUser(role, {
-          firstName,
-          lastName,
-          email,
-          phone,
-          role,
+    if (mode === 'add') {
+      await actions.addUser(role, {
+        firstName,
+        lastName,
+        email,
+        phone,
+        role,
+      });
+      if (role.toLowerCase() === 'candidate') {
+        swalWithBootstrapButtons.fire({
+          title: 'A new user profile has been created!',
+          text: "Do you want to send an email to collect candidate\'s availability?",
+          type: 'success',
+          showCancelButton: true,
+          confirmButtonText: 'Send Email',
+          cancelButtonText: 'Cancel',
+          reverseButtons: true
+        }).then(async (result) => {
+          const { value } = result;
+          if (value) {
+            // const { value: tabIndex } = this.state;
+            await actions.sendEmail({
+              firstName,
+              lastName,
+              email,
+              phone,
+              role,
+            });
+            swalWithBootstrapButtons.fire(
+              'Email is sent!',
+              'You\'re all set.',
+              'success'
+            );
+          }
         });
-      } else if (mode === 'edit') {
-        // TODO: edit user action
-        // actions.updateUser({
-        //   firstName,
-        //   lastName,
-        //   email,
-        //   role,
-        // });
+      } else {
+        swalWithBootstrapButtons.fire(
+          'A new user profile has been created!',
+          'You\'re all set.',
+          'success'
+        );
       }
-
-      swalWithBootstrapButtons.fire(
-        mode === 'add' ? 'Added!' : 'Saved',
-        `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
-        'success'
-      );
-    } catch (error) {
-      console.log(error);
+    } else if (mode === 'edit') {
+      // TODO: edit user action
+      // actions.updateUser({
+      //   firstName,
+      //   lastName,
+      //   email,
+      //   role,
+      // });
     }
 
+    // swalWithBootstrapButtons.fire(
+    //   mode === 'add' ? 'Added!' : 'Saved',
+    //   `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
+    //   'success'
+    // )
     // Clear dialog state
     this.setState(this.initializeUserInfoFields());
     onClickCloseDialog();

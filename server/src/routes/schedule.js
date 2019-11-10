@@ -1,10 +1,8 @@
 const router = require('express').Router();
 const axios = require('axios');
-const uuidv1 = require('uuid/v1');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
-
-// ***************** ROOMS Endpoints *******************
+const uuidv1 = require('uuid/v1');
 
 // get all rooms
 router.get('/rooms', (req, res) => {
@@ -20,8 +18,8 @@ router.get('/rooms', (req, res) => {
 // add a new room, to the rooms table.
 router.post('/room', async (req, res) => {
   const room = req.body;
-  let sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
-  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A']);
+  let sql = 'INSERT INTO Rooms(name, seats, status, email) VALUES (?, ?, ?, ?)';
+  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A', room.email]);
   connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
       throw err;
@@ -101,40 +99,6 @@ router.post('/newuser', (req, res) => {
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
-
-    // send an unique link to the candidate to fill out their availability
-    if (type === 'candidate') {
-      try {
-        const subject = 'Availability';
-        const body = 'Hi ' + user.firstName + ',' + '\nPlease fill out your availability by going here: ' + 'https://optimize-prime.herokuapp.com/candidate/' + uuid;
-        const response = axios({
-          method: 'post',
-          url: 'https://graph.microsoft.com/v1.0/me/sendMail',
-          headers: {
-            Authorization: `Bearer ${req.user.accessToken}`,
-          },
-          data: {
-            message: {
-              subject,
-              body: {
-                contentType: 'text',
-                content: body,
-              },
-              toRecipients: [
-                {
-                  emailAddress: {
-                    address: user.email,
-                  },
-                },
-              ],
-            },
-          },
-        });
-        res.send(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
   });
 });
 
@@ -151,6 +115,52 @@ router.put('/candidate/delete/:id', (req, res) => {
   });
 });
 
+router.post('/sendEmail', (req, res) => {
+  const { firstName, email } = req.body;
+  const sqlcmd = connection.format('SELECT uuid from Candidate WHERE Email = ?', [email]);
+  connection.query(sqlcmd, async (err, result) => {
+    if (err) {
+      throw err;
+    }
+
+    console.log(result);
+
+    const uuid = result[0].uuid;
+
+    try {
+      const subject = "Availability";
+      const body = "Hi " + firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate?key=" + uuid;
+      const response = await axios({
+        method: 'post',
+        url: 'https://graph.microsoft.com/v1.0/me/sendMail',
+        headers: {
+          Authorization: `Bearer ${req.user.accessToken}`,
+        },
+        data: {
+          message: {
+            subject: subject,
+            body: {
+              contentType: 'text',
+              content: body,
+            },
+            toRecipients: [
+              {
+                emailAddress: {
+                  address: email,
+                },
+              },
+            ],
+          },
+        },
+      });
+      res.send(response.data);
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({ message: 'Internal server Error.' });
+    }
+  });
+})
+
 // ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
 
@@ -158,7 +168,7 @@ router.put('/candidate/delete/:id', (req, res) => {
 
 // get all interviewers
 router.get('/interviewers', (req, res) => {
-  const sql = 'SELECT * FROM Interviewer';
+  const sql = "SELECT * FROM Interviewer WHERE status <> 'D'";
   connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -180,7 +190,121 @@ router.put('/interviewer/delete/:id', (req, res) => {
   });
 });
 
-router.post('/createevent', notAuthMiddleware, async (req, res) => {
+// find all the possible meeting times, given the following constraints/information:
+// attendess, timeConstraints, meetingDuration, locationConstraints
+router.post('/meeting', notAuthMiddleware, async (req, res) => {
+  const { candidate, meetingDuration, required, optional } = req.body;
+  const sql = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.email = ? ORDER BY a.id DESC';
+  const sqlcmd = connection.format(sql, [candidate]);
+
+  connection.query(sqlcmd, async (err, result) => {
+    if (err) {
+      throw err;
+    }
+
+    console.log(result);
+
+    if (result.length === 0) {
+      res.send("No candidate availability found");
+    } else {
+      try {
+        const timeZone = "Pacific Standard Time";
+
+        const timeConstraint = {
+          activityDomain: "work",
+          timeSlots: result.map(time => ({
+            start: {
+              dateTime: time.startTime,
+              timeZone,
+            },
+            end: {
+              dateTime: time.endTime,
+              timeZone,
+            }
+          }))
+        };
+
+        const requiredAttendees = required.map(interviewer => ({
+          type: "required",
+          emailAddress: {
+            address: interviewer.email
+          }
+        }));
+
+        const optionalAttendees = optional.map(interviewer => ({
+          type: "optional",
+          emailAddress: {
+            address: interviewer.email
+          }
+        }));
+
+        const attendees = requiredAttendees.concat(optionalAttendees);
+
+        const sqlcmd = 'SELECT * FROM Rooms WHERE status="A"';
+        connection.query(sqlcmd, async (err, result) => {
+          if (err) {
+            throw err;
+          }
+          let locations = [{}];
+          if (result.length > 0) {
+            locations = result.map(room => ({
+              displayName: room.name,
+              locationEmailAddress: room.email
+            }))
+          }
+
+          const data = {
+            attendees,
+            timeConstraint,
+            maxCandidates: 30,
+            meetingDuration,
+            locationConstraint: {
+              isRequired: "true",
+              suggestLocation: "false",
+              locations: locations
+            }
+          }
+
+          console.log(JSON.stringify(data));
+
+          const response = await axios({
+            method: 'post',
+            url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+            headers: {
+              Authorization: `Bearer ${req.user.accessToken}`,
+            },
+            data
+          });
+
+          const meetingTimeSuggestions = (response.data && response.data.meetingTimeSuggestions) || [];
+
+          console.log(JSON.stringify(meetingTimeSuggestions));
+
+          if (meetingTimeSuggestions.length === 0) {
+            res.send([]);
+          } else {
+            let possibleMeetings = [];
+            for (meeting of meetingTimeSuggestions) {
+              for (room of meeting.locations) {
+                possibleMeetings.push({
+                  start: meeting.meetingTimeSlot.start,
+                  end: meeting.meetingTimeSlot.end,
+                  room,
+                  interviewers: meeting.attendeeAvailability,
+                });
+              }
+            }
+            res.send(possibleMeetings);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  });
+});
+
+router.post('/event', notAuthMiddleware, async (req, res) => {
   try {
     const response = await axios({
       method: 'post',
@@ -220,6 +344,19 @@ router.post('/createevent', notAuthMiddleware, async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+});
+
+// ************* Get meeting rooms from outlook *************** //
+
+router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
+  const response = await axios({
+    method: 'get',
+    url: 'https://graph.microsoft.com/beta/me/findRooms',
+    headers: {
+      Authorization: `Bearer ${req.user.accessToken}`,
+    }
+  });
+  res.send(response.data && response.data.value);
 });
 
 module.exports = router;
