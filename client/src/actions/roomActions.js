@@ -83,3 +83,29 @@ export const getRooms = () => async (dispatch) => {
     return dispatch(getRoomsFailure(error));
   }
 };
+
+function getOutlookRoomsSuccess(rooms) {
+  return {
+    type: 'GET_OUTLOOK_ROOMS_SUCCESS',
+    rooms,
+  };
+}
+
+function getOutlookRoomsFailure(error) {
+  return {
+    type: 'GET_OUTLOOK_ROOMS_FAILURE',
+    error,
+  };
+}
+
+export const getOutlookRooms = () => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.get('/schedule/outlook/rooms');
+    const rooms = response.data;
+    return dispatch(getOutlookRoomsSuccess(rooms));
+  } catch (error) {
+    console.log(error);
+    return dispatch(getOutlookRoomsFailure(error));
+  }
+};

@@ -18,8 +18,8 @@ router.get('/rooms', (req, res) => {
 // add a new room, to the rooms table.
 router.post('/room', async (req, res) => {
   const room = req.body;
-  let sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
-  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A']);
+  let sql = 'INSERT INTO Rooms(name, seats, status, email) VALUES (?, ?, ?, ?)';
+  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A', room.email]);
   connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
       throw err;
@@ -125,7 +125,7 @@ router.post('/sendEmail', (req, res) => {
 
     console.log(result);
 
-    const uuid = 'b18334a0-01d1-11ea-9258-a3aabd009024';
+    const uuid = result[0].uuid;
 
     try {
       const subject = "Availability";
@@ -290,10 +290,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
                   start: meeting.meetingTimeSlot.start,
                   end: meeting.meetingTimeSlot.end,
                   room,
-                  interviewers:
-                    meeting.organizerAvailability === "free" ?
-                      [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: req.user.username } } }] :
-                      meeting.attendeeAvailability,
+                  interviewers: meeting.attendeeAvailability,
                 });
               }
             }
@@ -307,11 +304,8 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
   });
 });
 
-
-
-
-
 // ************* Get meeting rooms from outlook *************** //
+
 router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
   const response = await axios({
     method: 'get',
