@@ -85,7 +85,7 @@ router.post('/newuser', (req, res) => {
   let sql = '';
   switch (type) {
     case 'candidate':
-      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';     
+      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';
       break;
     case 'interviewer':
       sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
@@ -99,7 +99,7 @@ router.post('/newuser', (req, res) => {
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
-    
+
     // send an unique link to the candidate to fill out their availability
     if (type === "candidate") {
       try {
@@ -218,7 +218,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
       const requiredAttendees = required.map(interviewer => ({
         type: "required",
         emailAddress: {
-          name: interviewer.lastName + ', ' + interviewer.firstName,
           address: interviewer.email
         }
       }));
@@ -238,13 +237,28 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           throw err;
         }
         let locations = [{}];
-        if (result.length > 0 ) {   
+        if (result.length > 0) {
           locations = result.map(room => ({
             displayName: room.name
           }))
         }
 
-      // should add locationConstraint
+        // should add locationConstraint
+
+        const data = {
+          attendees,
+          timeConstraint,
+          maxCandidates: 100,
+          meetingDuration,
+          isOrganizerOptional: "false",
+          locationConstraint: {
+            isRequired: "true",
+            suggestLocation: "false",
+            locations: locations
+          }
+        }
+
+      console.log(JSON.stringify(data));
 
       const response = await axios({
         method: 'post',
@@ -252,18 +266,8 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         headers: {
           Authorization: `Bearer ${req.user.accessToken}`,
         },
-        data: {
-          attendees,
-          timeConstraint,
-          maxCandidates: 100,
-          meetingDuration,
-          locationConstraint: {
-            isRequired: "true",
-            suggestLocation: "false",
-            locations: locations
-          }
-      }
-    });
+        data
+      });
 
       const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
 
@@ -279,16 +283,20 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
               start: meeting.meetingTimeSlot.start,
               end: meeting.meetingTimeSlot.end,
               room,
-              interviewers: meeting.attendeeAvailability,
+              interviewers:
+                meeting.organizerAvailability === "free" ?
+                  [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: candidate } } }] :
+                  meeting.attendeeAvailability,
             });
           }
         }
         res.send(possibleMeetings);
       }
-  });
+    });
     } catch (error) {
       console.log(error);
     }
+    
   });
 });
 
