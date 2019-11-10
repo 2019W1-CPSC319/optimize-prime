@@ -125,7 +125,7 @@ router.post('/sendEmail', (req, res) => {
 
     console.log(result);
 
-    const uuid = 'b18334a0-01d1-11ea-9258-a3aabd009024';
+    const uuid = result[0].uuid;
 
     try {
       const subject = "Availability";
@@ -291,10 +291,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
                   start: meeting.meetingTimeSlot.start,
                   end: meeting.meetingTimeSlot.end,
                   room,
-                  interviewers:
-                    meeting.organizerAvailability === "free" ?
-                      [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: req.user.username } } }] :
-                      meeting.attendeeAvailability,
+                  interviewers: meeting.attendeeAvailability,
                 });
               }
             }
