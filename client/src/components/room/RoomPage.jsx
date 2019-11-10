@@ -56,7 +56,6 @@ export default class RoomPage extends React.Component {
     handleSaveAddRoom = async () => {
         const { actions } = this.props;
         try {
-            debugger;
             let data = {
                 name: this.state.name,
                 email: this.props.outlookRooms.find(room => room.name === this.state.name).address,
