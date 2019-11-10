@@ -56,8 +56,10 @@ export default class RoomPage extends React.Component {
     handleSaveAddRoom = async () => {
         const { actions } = this.props;
         try {
+            debugger;
             let data = {
                 name: this.state.name,
+                email: this.props.outlookRooms.find(room => room.name === this.state.name).address,
                 seats: this.state.seats,
             }
             await actions.addRoom(data);
@@ -106,7 +108,11 @@ export default class RoomPage extends React.Component {
 
     handleChangeRoomSeats = (event) => {
         event.persist();
-        this.setState({ seats: event.target.value });
+        if (event.target.value < 1 || event.target.value > 100) {
+            this.setState({ error: true });
+        } else {
+            this.setState({ error: false, seats: event.target.value });
+        }
     }
 
     showSnackbarOnSuccess = () => {
@@ -141,6 +147,7 @@ export default class RoomPage extends React.Component {
 
         try {
             await actions.getRooms();
+            await actions.getOutlookRooms();
         }
         catch (err) {
             console.error(JSON.stringify(err));
@@ -194,6 +201,7 @@ export default class RoomPage extends React.Component {
                     handleSaveAddRoom={this.handleSaveAddRoom}
                     handleChangeRoomName={this.handleChangeRoomName}
                     handleChangeRoomSeats={this.handleChangeRoomSeats}
+                    {...this.props}
                     {...this.state}
                 />
                 {this.showSnackbarOnSuccess()}

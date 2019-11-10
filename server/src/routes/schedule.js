@@ -18,8 +18,8 @@ router.get('/rooms', (req, res) => {
 // add a new room, to the rooms table.
 router.post('/room', async (req, res) => {
   const room = req.body;
-  let sql = 'INSERT INTO Rooms(name, seats, status) VALUES (?, ?, ?)';
-  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A']);
+  let sql = 'INSERT INTO Rooms(name, seats, status, email) VALUES (?, ?, ?, ?)';
+  let sqlcmd = connection.format(sql, [room.name, room.seats, 'A', room.email]);
   connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
       throw err;
@@ -308,11 +308,8 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
   });
 });
 
-
-
-
-
 // ************* Get meeting rooms from outlook *************** //
+
 router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
   const response = await axios({
     method: 'get',
