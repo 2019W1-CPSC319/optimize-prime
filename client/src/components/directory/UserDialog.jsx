@@ -110,6 +110,26 @@ class UserDialog extends Component {
     } = this.state;
 
     if (mode === 'add') {
+      // swalWithBootstrapButtons.fire({
+      //   title: 'Are you sure?',
+      //   text: "You won't be able to revert this!",
+      //   type: 'warning',
+      //   showCancelButton: true,
+      //   confirmButtonText: 'Yes, delete it!',
+      //   cancelButtonText: 'Cancel',
+      //   reverseButtons: true
+      // }).then(async (result) => {
+      //   const { value } = result;
+      //   if (value) {
+      //     const { value: tabIndex } = this.state;
+      //     await actions.deleteUser(tabs[tabIndex].key, userId);
+      //     swalWithBootstrapButtons.fire(
+      //       'Deleted',
+      //       'The user has been deleted.',
+      //       'success'
+      //     );
+      //   }
+      // });
       await actions.addUser(role, {
         firstName,
         lastName,

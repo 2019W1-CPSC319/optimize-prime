@@ -163,17 +163,17 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
       res.send("No candidate availability found");
     }
     try {
-      const timeZone = "Pacific Standard Time";
+      const timeZone = "UTC";
 
       const timeConstraint = {
         activityDomain: "work",
         timeSlots: result.map(time => ({
           start: {
-            dateTime: time.startTime,
+            dateTime: time.startTime || new Date().toString(),
             timeZone,
           },
           end: {
-            dateTime: time.endTime,
+            dateTime: time.endTime || new Date().toString(),
             timeZone,
           }
         }))
@@ -208,6 +208,36 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           attendees,
           timeConstraint,
           meetingDuration,
+          locationConstraint: {
+            isRequired: "false",
+            suggestLocation: "false",
+            locations: [
+              {
+                resolveAvailability: "false",
+                displayName: "Room 1"
+              },
+              {
+                resolveAvailability: "false",
+                displayName: "Room 2"
+              },
+              {
+                resolveAvailability: "false",
+                displayName: "Room 3"
+              },
+              {
+                resolveAvailability: "false",
+                displayName: "Room 4"
+              },
+              {
+                resolveAvailability: "false",
+                displayName: "Room 5"
+              },
+              {
+                resolveAvailability: "false",
+                displayName: "Room 6"
+              }
+            ]
+          }
         }
       });
 
@@ -225,6 +255,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
               start: meeting.meetingTimeSlot.start,
               end: meeting.meetingTimeSlot.end,
               room,
+              interviewers: meeting.attendeeAvailability,
             });
           }
         }

@@ -76,18 +76,6 @@ export const sendEmail = (subject, body) => async (dispatch) => {
   }
 };
 
-// export const findMeetingTimes = () => async (dispatch) => {
-//   try {
-//     dispatch(initRequest());
-//     const response = await axios.get('/user/findMeetingTimes');
-//     const profile = response.data;
-//     return dispatch(fetchUserSuccess(profile));
-//   } catch (error) {
-//     console.log(error);
-//     return dispatch(fetchUserFailure(error));
-//   }
-// };
-
 const findMeetingTimesSuccess = (meetingSuggestions = []) => (
   {
     type: 'FIND_MEETING_TIMES_SUCCESS',
@@ -105,14 +93,12 @@ const findMeetingTimesFailure = (error) => (
 export const findMeetingTimes = (data) => async (dispatch) => {
   try {
     const { candidate, required, optional, meetingDuration } = data;
-
     const response = await axios.post('/schedule/meeting', {
       candidate,
       meetingDuration,
       required,
       optional,
     });
-
     return dispatch(findMeetingTimesSuccess(response));
   } catch (error) {
     return dispatch(findMeetingTimesFailure(error));

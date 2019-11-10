@@ -67,13 +67,13 @@ class CalendarPage extends React.Component {
   getInterviewDuration = () => {
     switch (this.state.durations[this.state.selected].minutes) {
       case 30:
-        return 'PT30MIN';
+        return 'PT30M';
       case 45:
-        return 'PT45MIN';
+        return 'PT45M';
       case 60:
         return 'PT1H';
       case 90:
-        return 'PT1H30MIN';
+        return 'PT1H30M';
     }
   }
 

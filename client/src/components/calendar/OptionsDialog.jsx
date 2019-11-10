@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Moment from 'react-moment';
+import 'moment-timezone';
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import {
@@ -44,7 +45,7 @@ const GreenRadio = withStyles({
         },
     },
     checked: {},
-})(props => <Radio color="default" {...props} />);
+})(props => <Radio color='default' {...props} />);
 
 class OptionsDialog extends Component {
     constructor(props) {
@@ -99,12 +100,13 @@ class OptionsDialog extends Component {
     createOptions = () => {
         const { classes } = this.props;
 
-        console.log(this.props);
+        console.log(this.props.meetingSuggestions);
+
         if (Array.isArray(this.props.meetingSuggestions.data) && this.props.meetingSuggestions.data.length > 0) {
             return (
                 <List dense>
                     {this.props.meetingSuggestions.data.map(option => {
-                        const hash = `${option.date}-${option.time.start}-${option.time.end}-${option.room}`;
+                        const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
                         const labelId = `radio-list-secondary-label-${hash}`;
                         return (
                             <ListItem key={hash}>
@@ -118,24 +120,23 @@ class OptionsDialog extends Component {
                                     id={labelId}
                                     primary={
                                         <Box>
-                                            <Box fontWeight='fontWeightBold'><Moment format='ll'>{option.date}</Moment></Box>
-                                            <Typography>Starts at <Moment format='h:mm a'>{option.time.start}</Moment></Typography>
-                                            <Typography>Ends at <Moment format='h:mm a'>{option.time.end}</Moment></Typography>
+                                            <Box fontWeight='fontWeightBold'><Moment format='ll' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Box>
+                                            <Typography>Starts at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Typography>
+                                            <Typography>Ends at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.end.dateTime}</Moment></Typography>
                                         </Box>
                                     }
-                                    secondary={option.room} />
+                                    secondary={option.room.displayName} />
                                 <Box component='div' display='flex'>
                                     {option.interviewers.map(
-                                        function (interviewer) {
-                                            console.log('interviewer: ' + JSON.stringify(interviewer))
+                                        interviewer => {
                                             return (
                                                 <Avatar
                                                     key={`${interviewer}-${Math.random() * 1000}`}
                                                     // onMouseEnter={this.handlePopoverOpen}
                                                     // onMouseLeave={this.handlePopoverClose}
-                                                    className={classes.avatar}>{interviewer.split(' ')[1].charAt(0).toUpperCase()}</Avatar>
+                                                    className={classes.avatar}>{interviewer.attendee.emailAddress.address.charAt(0).toUpperCase()}</Avatar>
                                             )
-                                        }, this
+                                        }
                                     )}
                                 </Box>
                                 <ListItemSecondaryAction>
@@ -154,7 +155,7 @@ class OptionsDialog extends Component {
             return (
                 <Box style={{ padding: '50px' }}>
                     <Typography style={{ textAlign: 'center' }}>
-                        {Array.isArray(this.props.meetingSuggestions.data) ? 'No options available' : this.props.meetingSuggestions.data}
+                        {Array.isArray(this.props.meetingSuggestions.data) ? 'No options available' : 'Candidate availability has not been submitted'}
                     </Typography>
                     <Button
                         color='primary'
@@ -171,7 +172,7 @@ class OptionsDialog extends Component {
         const { classes } = this.props;
         return (
             <Popover
-                id="mouse-over-popover"
+                id='mouse-over-popover'
                 className={classes.popover}
                 classes={{
                     paper: classes.paper,
@@ -197,8 +198,8 @@ class OptionsDialog extends Component {
     render() {
         // const { classes } = this.props;
         return (
-            <Dialog open={this.props.optOpen} aria-labelledby="form-options">
-                <DialogTitle id="form-options">Select Interview Slot</DialogTitle>
+            <Dialog open={this.props.optOpen} aria-labelledby='form-options'>
+                <DialogTitle id='form-options'>Select Interview Slot</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Select an interview slot to schedule an interview.
@@ -207,8 +208,8 @@ class OptionsDialog extends Component {
                     {this.props.meetingSuggestions && this.createOptions()}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.props.handleOpen} color="primary">Back</Button>
-                    <Button onClick={this.props.handleSave} color="primary">Save</Button>
+                    <Button onClick={this.props.handleOpen} color='primary'>Back</Button>
+                    <Button onClick={this.props.handleSave} color='primary'>Save</Button>
                 </DialogActions>
             </Dialog>
         );
