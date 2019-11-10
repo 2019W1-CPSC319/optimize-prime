@@ -259,7 +259,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
             timeConstraint,
             maxCandidates: 100,
             meetingDuration,
-            isOrganizerOptional: "false",
             locationConstraint: {
               isRequired: "true",
               suggestLocation: "false",
