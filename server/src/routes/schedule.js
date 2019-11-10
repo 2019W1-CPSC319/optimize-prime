@@ -2,6 +2,7 @@ const router = require('express').Router();
 const axios = require('axios');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
+const uuidv1 = require('uuid/v1');
 
 // get all rooms
 router.get('/rooms', (req, res) => {
@@ -80,23 +81,58 @@ router.post('/newuser', (req, res) => {
   const type = user.role;
   // status Active as default when adding
   const status = 'A';
+  const uuid = uuidv1();
   let sql = '';
   switch (type) {
     case 'candidate':
-      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
+      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';     
       break;
     case 'interviewer':
       sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
       break;
     default: return;
   }
-  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status]);
+  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
+    
+    // send an unique link to the candidate to fill out their availability
+    if (type === "candidate") {
+      try {
+        const subject = "Availability"
+        const body = "Hi " + user.firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate/" + uuid;
+        const response = axios({
+          method: 'post',
+          url: 'https://graph.microsoft.com/v1.0/me/sendMail',
+          headers: {
+            Authorization: `Bearer ${req.user.accessToken}`,
+          },
+          data: {
+            message: {
+              subject: subject,
+              body: {
+                contentType: 'text',
+                content: body,
+              },
+              toRecipients: [
+                {
+                  emailAddress: {
+                    address: user.email,
+                  },
+                },
+              ],
+            },
+          },
+        });
+        res.send(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   });
 });
 
