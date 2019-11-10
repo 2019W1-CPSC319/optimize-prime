@@ -85,7 +85,7 @@ router.post('/newuser', (req, res) => {
   let sql = '';
   switch (type) {
     case 'candidate':
-      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';     
+      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';
       break;
     case 'interviewer':
       sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
@@ -99,7 +99,7 @@ router.post('/newuser', (req, res) => {
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
-    
+
     // send an unique link to the candidate to fill out their availability
     if (type === "candidate") {
       try {
@@ -197,53 +197,45 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
     if (result.length === 0) {
       res.send("No candidate availability found");
-    }
-    try {
-      const timeZone = "UTC";
+    } else {
+      try {
+        const timeZone = "UTC";
 
-      const timeConstraint = {
-        activityDomain: "work",
-        timeSlots: result.map(time => ({
-          start: {
-            dateTime: time.startTime || new Date().toString(),
-            timeZone,
-          },
-          end: {
-            dateTime: time.endTime || new Date().toString(),
-            timeZone,
+        const timeConstraint = {
+          activityDomain: "work",
+          timeSlots: result.map(time => ({
+            start: {
+              dateTime: time.startTime,
+              timeZone,
+            },
+            end: {
+              dateTime: time.endTime,
+              timeZone,
+            }
+          }))
+        };
+
+        const requiredAttendees = required.map(interviewer => ({
+          type: "required",
+          emailAddress: {
+            address: interviewer.email
           }
-        }))
-      };
+        }));
 
-      const requiredAttendees = required.map(interviewer => ({
-        type: "required",
-        emailAddress: {
-          name: interviewer.lastName + ', ' + interviewer.firstName,
-          address: interviewer.email
-        }
-      }));
+        const optionalAttendees = optional.map(interviewer => ({
+          type: "optional",
+          emailAddress: {
+            address: interviewer.email
+          }
+        }));
 
-      const optionalAttendees = optional.map(interviewer => ({
-        type: "optional",
-        emailAddress: {
-          address: interviewer.email
-        }
-      }));
+        const attendees = requiredAttendees.concat(optionalAttendees);
 
-      const attendees = requiredAttendees.concat(optionalAttendees);
-
-      // should add locationConstraint
-
-      const response = await axios({
-        method: 'post',
-        url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
-        headers: {
-          Authorization: `Bearer ${req.user.accessToken}`,
-        },
-        data: {
+        const data = {
           attendees,
           timeConstraint,
           meetingDuration,
+          isOrganizerOptional: "false",
           locationConstraint: {
             isRequired: "false",
             suggestLocation: "false",
@@ -274,31 +266,45 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
               }
             ]
           }
-        }
-      });
+        };
 
-      const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
+        console.log(JSON.stringify(data));
 
-      console.log(JSON.stringify(meetingTimeSuggestions));
+        const response = await axios({
+          method: 'post',
+          url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+          headers: {
+            Authorization: `Bearer ${req.user.accessToken}`,
+          },
+          data
+        });
 
-      if (meetingTimeSuggestions.length === 0) {
-        res.send([]);
-      } else {
-        let possibleMeetings = [];
-        for (meeting of meetingTimeSuggestions) {
-          for (room of meeting.locations) {
-            possibleMeetings.push({
-              start: meeting.meetingTimeSlot.start,
-              end: meeting.meetingTimeSlot.end,
-              room,
-              interviewers: meeting.attendeeAvailability,
-            });
+        const meetingTimeSuggestions = response.data && response.data.meetingTimeSuggestions;
+
+        console.log(JSON.stringify(meetingTimeSuggestions));
+
+        if (meetingTimeSuggestions.length === 0) {
+          res.send([]);
+        } else {
+          let possibleMeetings = [];
+          for (meeting of meetingTimeSuggestions) {
+            for (room of meeting.locations) {
+              possibleMeetings.push({
+                start: meeting.meetingTimeSlot.start,
+                end: meeting.meetingTimeSlot.end,
+                room,
+                interviewers:
+                  meeting.organizerAvailability === "free" ?
+                    [...meeting.attendeeAvailability, { availability: "free", attendee: { emailAddress: { address: candidate } } }] :
+                    meeting.attendeeAvailability,
+              });
+            }
           }
+          res.send(possibleMeetings);
         }
-        res.send(possibleMeetings);
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   });
 });
