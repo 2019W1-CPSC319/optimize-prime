@@ -244,7 +244,6 @@ class UserDialog extends Component {
         label={title}
         onChange={e => this.onChangeTextField(key, e)}
         onKeyPress={e => this.onKeyPress(e)}
-        // inputProps={inputProps}
         onBlur={e => this.onBlurTextField(key, e)}
         helperText={error[key] ? helperText : ''}
       >
