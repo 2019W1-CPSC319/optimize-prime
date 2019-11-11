@@ -193,6 +193,7 @@ class CalendarPage extends React.Component {
     const { actions } = this.props;
     await actions.getUsers('candidate');
     await actions.getUsers('interviewer');
+    if (!this.props.interviews) await actions.getInterviews();
   }
 
   render() {
@@ -204,20 +205,20 @@ class CalendarPage extends React.Component {
             <TableHead>
               <TableRow>
                 <TableCell scope="col">Organizer</TableCell>
-                <TableCell scope="col">Subject</TableCell>
+                <TableCell scope="col">Location</TableCell>
                 <TableCell scope="col">Start</TableCell>
                 <TableCell scope="col">End</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.state.events.map(
-                function (event) {
+              {this.props.interviews && this.props.interviews.map(
+                interview => {
                   return (
-                    <TableRow key={event.id}>
-                      <TableCell>{event.organizer.emailAddress.name}</TableCell>
-                      <TableCell>{event.subject}</TableCell>
-                      <TableCell>{formatDateTime(event.start.dateTime)}</TableCell>
-                      <TableCell>{formatDateTime(event.end.dateTime)}</TableCell>
+                    <TableRow key={interview.id}>
+                      <TableCell>{interview.firstName + ' ' + interview.lastName}</TableCell>
+                      <TableCell>{interview.roomID}</TableCell>
+                      <TableCell>{formatDateTime(interview.startTime)}</TableCell>
+                      <TableCell>{formatDateTime(interview.endTime)}</TableCell>
                     </TableRow>
                   );
                 })}
