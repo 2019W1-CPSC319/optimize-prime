@@ -381,7 +381,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       // get roomId
       const roomId = result[0].id;
       const sql = 'UPDATE Candidate SET startTime = ? , endTime = ?, roomId = ? WHERE id = ?';
-      const sqlcmd = connection.format(sql, [date.startTime, date.endTime, roomId, candidate.id]);
+      const sqlcmd = connection.format(sql, [date.startTime.dateTime, date.endTime.dateTime, roomId, candidate.id]);
       connection.query(sqlcmd, (err, result) => {
         if (err) {
           throw err;
@@ -406,7 +406,6 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
   });
   res.send(response.data && response.data.value);
 });
-
 
 // **************************** Get all scheduled interviews ************************************ //
 
