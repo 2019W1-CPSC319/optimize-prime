@@ -343,9 +343,16 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       }
     }));
 
+    const roomAttendee = {
+      type: "required",
+      emailAddress: {
+        address: room.email
+      }
+    };
+
     // combine all the attendees aswell as the candidate
     const interviewerAttendees = requiredAttendees.concat(optionalAttendees);
-    const attendees = interviewerAttendees.concat(candidateAttendee);
+    const attendees = interviewerAttendees.concat(candidateAttendee).concat(roomAttendee);
 
     const response = await axios({
       method: 'post',
