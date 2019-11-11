@@ -36,6 +36,7 @@ const AuthReducer = (state = {}, action) => {
         status: action.payload,
       };
     case 'CREATE_EVENT_SUCCESS':
+    case 'CREATE_EVENT_FAILURE':
       return {
         ...state,
         loading: false,
