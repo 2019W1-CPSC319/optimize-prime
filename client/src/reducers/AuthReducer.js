@@ -26,15 +26,8 @@ const AuthReducer = (state = {}, action) => {
     case 'GET_INTERVIEWS_SUCCESS':
       return {
         ...state,
+        loading: false,
         interviews: action.payload,
-        loading: false,
-        hasTriedLogin: true,
-      };
-    case 'GET_INTERVIEWS_FAILURE':
-      return {
-        ...state,
-        loading: false,
-        hasTriedLogin: true,
       };
     case 'FIND_MEETING_TIMES_SUCCESS':
       return {

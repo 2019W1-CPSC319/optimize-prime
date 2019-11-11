@@ -1,27 +1,33 @@
 import axios from 'axios';
 
-function loginUserSuccess(user) {
-  return {
-    type: 'LOGIN_USER_SUCCESS',
-    user,
-  };
-}
+// function loginUserSuccess(user) {
+//   return {
+//     type: 'LOGIN_USER_SUCCESS',
+//     user,
+//   };
+// }
 
-function loginUserFailure(error) {
-  return {
-    type: 'LOGIN_USER_FAILURE',
-    error,
-  };
-}
+// function loginUserFailure(error) {
+//   return {
+//     type: 'LOGIN_USER_FAILURE',
+//     error,
+//   };
+// }
 
-export function loginUser(user) {
-  return (dispatch) => {
-    // Example:
-    // if (error) {
-    //   dispatch(loginUserFailure(error));
-    // } else {
-    //   dispatch(loginUserSuccess(user));
-    // }
+// export function loginUser(user) {
+//   return (dispatch) => {
+//     // Example:
+//     // if (error) {
+//     //   dispatch(loginUserFailure(error));
+//     // } else {
+//     //   dispatch(loginUserSuccess(user));
+//     // }
+//   };
+// }
+
+function updateLoadingState(type) {
+  return {
+    type,
   };
 }
 
@@ -172,9 +178,10 @@ const getInterviewsFailure = (error) => (
 
 export const getInterviews = () => async (dispatch) => {
   try {
-    dispatch(initRequest());
+    dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.get('/schedule/interviews');
     const interviews = response.data;
+    debugger;
     return dispatch(getInterviewsSuccess(interviews));
   } catch (error) {
     console.log(error);

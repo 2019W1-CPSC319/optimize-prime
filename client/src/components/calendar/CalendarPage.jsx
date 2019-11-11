@@ -189,14 +189,15 @@ class CalendarPage extends React.Component {
     )
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const { actions } = this.props;
-    await actions.getUsers('candidate');
-    await actions.getUsers('interviewer');
-    if (!this.props.interviews) await actions.getInterviews();
+    actions.getUsers('candidate');
+    actions.getUsers('interviewer');
+    actions.getInterviews();
   }
 
   render() {
+    const { interviews } = this.props;
     return (
       <div>
         <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Calendar</h1>
@@ -212,7 +213,7 @@ class CalendarPage extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.props.interviews && this.props.interviews.map(
+              {interviews && interviews.map(
                 interview => {
                   return (
                     <TableRow key={interview.id}>
