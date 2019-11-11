@@ -312,8 +312,10 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
 
     const { candidate, date, required, optional, room} = req.body;
 
-    const subject = "Interview with " + candidate.name;
+    const subject = "Interview with " + candidate.firstName + ' ' + candidate.lastName;
     const content = "Please confirm if you are available during this time."
+
+    const timeZone = "UTC";
 
     // create candidate as an attendee
     const candidateAttendee = [
@@ -359,11 +361,11 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         },
         start: {
           dateTime: date.startTime,
-          timeZone: 'Pacific Standard Time',
+          timeZone: timeZone,
         },
         end: {
           dateTime: date.endTime,
-          timeZone: 'Pacific Standard Time',
+          timeZone: timeZone,
         },
         location: {
           displayName: room.name,
