@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as candidateActions from '../../actions/candidateActions';
 import * as candidateSelectors from '../../selectors/CandidateSelectors';
-
 import Swal from 'sweetalert2'
-
 import { withStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 import AvailabilityTable from "./AvailabilityTable.jsx"
@@ -50,35 +48,37 @@ class AddAvailability extends Component {
     };
   }
 
-  componentDidMount(){
-    if(!this.props.candidate){
-      this.props.fetchCandidate(this.props.id);
-    }
+  componentDidMount() {
+    // if (!this.props.candidate) {
+    //   this.props.fetchCandidate(this.props.id);
+    // }
   }
 
-  handleSubmit = (times) => {
+  handleSubmit = async (times) => {
     // Add on the candidate name to the times
+    const { actions } = this.props;
 
     const availability = times.map(time => ({
       startTime: time.start.toISOString().slice(0, 19).replace('T', ' '),
       endTime: time.end.toISOString().slice(0, 19).replace('T', ' ')
     }))
-    
-    this.props.sendAvailability(availability, this.props.candidate.uuid);
+
+    // this.props.sendAvailability(availability, this.props.candidate.uuid);
+    await actions.sendAvailability(availability, this.props.candidate.uuid);
   }
 
   render() {
     const { classes, candidate } = this.props;
     const { name } = this.state;
-    if(this.props.loading) {
+    if (this.props.loading) {
       return <div>Loading</div>
     }
-    if(!this.props.candidate) {
+    if (!this.props.candidate) {
       return <div>
         No content
       </div>
     }
-    if(this.props.success) {
+    if (this.props.success) {
       Swal.fire({
         type: "success",
         title: "Your availability has been submitted!",
@@ -103,7 +103,7 @@ class AddAvailability extends Component {
               Start off by adding when you'll be free in the next month and we'll get back to you if we need any more info.
             </Typography>
           </div>
-          <AvailabilityTable submitHandler={this.handleSubmit}/>
+          <AvailabilityTable submitHandler={this.handleSubmit} />
         </div>
       </div>
     );
@@ -117,7 +117,7 @@ const mapStateToProps = (state, ownProps) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchCandidate: (id) => dispatch(candidateActions.fetchSpecificCandidate(id)),
+  // fetchCandidate: (id) => dispatch(candidateActions.fetchSpecificCandidate(id)),
   sendAvailability: (availability, uuid) => dispatch(candidateActions.sendAvailability(availability, uuid))
 })
 

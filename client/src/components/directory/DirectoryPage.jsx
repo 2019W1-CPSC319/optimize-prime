@@ -73,10 +73,11 @@ class DirectoryPage extends Component {
     };
   }
 
-  componentDidMount() {
-    const { fetchInterviewers, fetchCandidates } = this.props.actions;
-    fetchInterviewers()
-    fetchCandidates()
+  async componentDidMount() {
+    // const { fetchInterviewers, fetchCandidates } = this.props.actions;
+    const { actions } = this.props;
+    await actions.fetchInterviewers();
+    await actions.getUsers();
   }
 
   onClickUserAction = (mode, userId) => {
@@ -145,12 +146,12 @@ class DirectoryPage extends Component {
           onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
         />
       );
-      }
+    }
 
     return null;
   }
 
-    
+
   /*
   function Directory(props) {
       const { label, rows } = props
@@ -180,7 +181,7 @@ class DirectoryPage extends Component {
       </Paper>;
   }    
   This came up in the merge but does not seem to be used*/
-    
+
   render() {
     const { classes, actions } = this.props;
     const { value, mode, openUserDialog, selectedUser } = this.state;
@@ -211,7 +212,7 @@ class DirectoryPage extends Component {
               ))
             }
           </Tabs>
-          { this.renderDirectoryTable() }
+          {this.renderDirectoryTable()}
         </Paper>
         <UserDialog
           mode={mode}

@@ -1,29 +1,29 @@
 import axios from 'axios';
 
-function loginUserSuccess(user) {
-  return {
-    type: 'LOGIN_USER_SUCCESS',
-    user,
-  };
-}
+// function loginUserSuccess(user) {
+//   return {
+//     type: 'LOGIN_USER_SUCCESS',
+//     user,
+//   };
+// }
 
-function loginUserFailure(error) {
-  return {
-    type: 'LOGIN_USER_FAILURE',
-    error,
-  };
-}
+// function loginUserFailure(error) {
+//   return {
+//     type: 'LOGIN_USER_FAILURE',
+//     error,
+//   };
+// }
 
-export function loginUser(user) {
-  return (dispatch) => {
-    // Example:
-    // if (error) {
-    //   dispatch(loginUserFailure(error));
-    // } else {
-    //   dispatch(loginUserSuccess(user));
-    // }
-  };
-}
+// export function loginUser(user) {
+//   return (dispatch) => {
+//     // Example:
+//     // if (error) {
+//     //   dispatch(loginUserFailure(error));
+//     // } else {
+//     //   dispatch(loginUserSuccess(user));
+//     // }
+//   };
+// }
 
 function initRequest() {
   return {
