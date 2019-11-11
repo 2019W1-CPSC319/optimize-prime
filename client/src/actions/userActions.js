@@ -118,7 +118,14 @@ export const findMeetingTimes = (data) => async (dispatch) => {
 
 const createEventSuccess = () => (
   {
-    type: 'CREATE_EVENT_SUCCESS',
+    type: 'CREATE_EVENT_SUCCESS'
+  }
+);
+
+const createEventFailure = (error) => (
+  {
+    type: 'CREATE_EVENT_FAILURE',
+    payload: error,
   }
 );
 
@@ -143,8 +150,8 @@ export const createEvent = (selectedSuggestion, candidate, required, optional) =
   try {
     dispatch(initRequest());
     await axios.post('/schedule/event', body);
-    dispatch(createEventSuccess());
+    return dispatch(createEventSuccess());
   } catch (error) {
-    console.log(error);
+    return dispatch(createEventFailure(error));
   }
 };
