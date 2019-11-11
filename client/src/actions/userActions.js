@@ -122,6 +122,13 @@ const createEventSuccess = () => (
   }
 );
 
+const createEventFailure = (error) => (
+  {
+    type: 'CREATE_EVENT_SUCCESS',
+    error,
+  }
+);
+
 export const createEvent = (selectedSuggestion, candidate, required, optional) => async (dispatch) => {
   const body = {
     candidate: {
@@ -146,5 +153,6 @@ export const createEvent = (selectedSuggestion, candidate, required, optional) =
     dispatch(createEventSuccess());
   } catch (error) {
     console.log(error);
+    dispatch(createEventFailure(error));
   }
 };
