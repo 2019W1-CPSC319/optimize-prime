@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { Autocomplete } from '@material-ui/lab';
 import PersonIcon from '@material-ui/icons/Person';
 import {
   Avatar,
@@ -67,27 +68,8 @@ class RequestDialog extends Component {
     super(props);
   }
 
-  Autosuggest = () => {
-    return (
-      <Paper style={{ padding: '0' }} square>
-        <List style={{ padding: '0' }} dense>
-          {this.props.candidates.map((candidate, i) => {
-            const input = this.props.candidate.toLowerCase();
-            return (
-              input !== ''
-              && candidate.email.toLowerCase().includes(input)
-              && candidate.email.toLowerCase() !== input
-              && <ListItem key={i}><Button value={candidate.email} onClick={this.props.updateCandidateAutosuggested}>{candidate.email}</Button></ListItem>
-            )
-          })}
-        </List>
-      </Paper>
-    );
-  }
-
   render() {
-    const { classes } = this.props;
-    const Autosuggest = this.Autosuggest;
+    const { classes, candidates } = this.props;
     return (
       <Dialog open={this.props.reqOpen} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
@@ -95,26 +77,33 @@ class RequestDialog extends Component {
           <DialogContentText>
             To schedule a new interview, provide a candidate and a list of interviewers to request a list of options.
           </DialogContentText>
-          <TextField
+          <Autocomplete
             autoFocus
-            margin="dense"
-            id="candidate"
-            label="Candidate"
-            type="email"
-            autoComplete="off"
+            options={candidates}
+            getOptionLabel={candidate => candidate.email}
+            style={{ width: 300 }}
+            renderInput={params => (
+              <TextField {...params} label="Candidate" variant="outlined" fullWidth />
+            )}
+            autoComplete={false}
             value={this.props.candidate}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PersonIcon />
-                </InputAdornment>
-              ),
-            }}
             onChange={this.props.updateCandidate}
-            fullWidth
           />
-          <Autosuggest />
+          {/* <Autocomplete
+            multiple
+            options={this.props.required}
+            getOptionLabel={option => option}
+            filterSelectedOptions
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="filterSelectedOptions"
+                margin="normal"
+                fullWidth
+              />
+            )}
+          /> */}
           <FormControl
             fullWidth
             variant="outlined">
