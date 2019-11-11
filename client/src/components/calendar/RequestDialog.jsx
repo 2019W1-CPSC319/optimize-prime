@@ -52,17 +52,6 @@ const styles = theme => ({
   }
 });
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
 class RequestDialog extends Component {
   constructor(props) {
     super(props);
@@ -87,7 +76,7 @@ class RequestDialog extends Component {
             )}
             style={{ width: '100%' }}
             autoComplete={false}
-            value={this.props.candidate}
+            // value={this.props.candidate}
             onChange={this.props.updateCandidate}
           />
           <Autocomplete
@@ -104,7 +93,6 @@ class RequestDialog extends Component {
                 fullWidth
               />
             )}
-            // value={this.props.required}
             onChange={this.props.updateRequiredInterviewers}
           />
           <Autocomplete
@@ -121,71 +109,8 @@ class RequestDialog extends Component {
                 fullWidth
               />
             )}
-            // value={this.props.required}
             onChange={this.props.updateOptionalInterviewers}
           />
-          {/* <FormControl
-            fullWidth
-            variant="outlined">
-            <InputLabel
-              htmlFor="select-multiple-chip"
-              className={classes.inputlabel}>
-              Required Interviewer(s)</InputLabel>
-            <Select
-              multiple
-              value={this.props.required}
-              onChange={this.props.updateRequiredInterviewers}
-              input={<Input id="select-multiple-chip" disableUnderline={true} />}
-              renderValue={selected => (
-                <div className={classes.chips}>
-                  {selected.map(value => (
-                    <Chip
-                      key={value.email}
-                      label={value.email}
-                      className={classes.chip}
-                      avatar={<Avatar className={classes.avatar}>{value.email.charAt(0).toUpperCase()}</Avatar>} />
-                  ))}
-                </div>
-              )}
-              MenuProps={MenuProps}
-              className={classes.select}
-            >
-              {this.props.interviewers && this.props.interviewers.map(employee => (
-                <MenuItem key={employee.email} value={employee}>{employee.email}</MenuItem>
-              ))}
-            </Select>
-          </FormControl> */}
-          {/* <FormControl
-            fullWidth
-            variant="outlined">
-            <InputLabel
-              htmlFor="select-multiple-chip"
-              className={classes.inputlabel}>
-              Optional Interviewer(s)</InputLabel>
-            <Select
-              multiple
-              value={this.props.optional}
-              onChange={this.props.updateOptionalInterviewers}
-              input={<Input id="select-multiple-chip" disableUnderline={true} />}
-              renderValue={selected => (
-                <div className={classes.chips}>
-                  {selected.map(value => (
-                    <Chip
-                      key={value.email}
-                      label={value.email}
-                      className={classes.chip}
-                      avatar={<Avatar className={classes.avatar}>{value.email.charAt(0).toUpperCase()}</Avatar>} />
-                  ))}
-                </div>
-              )}
-              MenuProps={MenuProps}
-              className={classes.select}
-            >
-              {this.props.interviewers && this.props.interviewers.map(employee => (
-                <MenuItem key={employee.email} value={employee}>{employee.email}</MenuItem>
-              ))}
-            </Select>
-          </FormControl> */}
           <ButtonGroup fullWidth size="small" aria-label="small outlined button group" className={classes.buttonGroup}>
             {this.props.durations.map(
               (duration, i) => {

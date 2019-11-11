@@ -147,7 +147,7 @@ class CalendarPage extends React.Component {
   }
 
   handleSelectOption = (i) => {
-    console.log(i)
+    // console.log(i)
     this.setState({ selectedOption: i });
   }
 

@@ -100,8 +100,6 @@ class OptionsDialog extends Component {
   createOptions = () => {
     const { classes } = this.props;
 
-    console.log(this.props.meetingSuggestions);
-
     if (Array.isArray(this.props.meetingSuggestions.data) && this.props.meetingSuggestions.data.length > 0) {
       return (
         <List dense>
