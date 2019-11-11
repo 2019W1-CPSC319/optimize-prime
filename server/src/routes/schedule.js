@@ -411,7 +411,7 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
 // **************************** Get all scheduled interviews ************************************ //
 router.get('/interviews', notAuthMiddleware, (req, res) => {
   const currDate = new Date();
-  const sql = 'SELECT * FROM Candidate WHERE startTime >= ?';
+  const sql = 'SELECT * FROM Candidate c INNER JOIN Rooms r ON c.roomId = r.id WHERE startTime >= ?';
   const sqlcmd = connection.format(sql, [currDate]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
