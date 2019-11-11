@@ -141,9 +141,9 @@ class OptionsDialog extends Component {
                                 </Box>
                                 <ListItemSecondaryAction>
                                     <GreenRadio
-                                        checked={this.props.selectedOption === hash}
+                                        checked={this.props.selectedOption === index}
                                         onChange={() => this.props.handleSelectOption(index)}
-                                        value={hash}
+                                        value={index}
                                     />
                                 </ListItemSecondaryAction>
                             </ListItem>
