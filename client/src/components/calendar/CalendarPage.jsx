@@ -131,12 +131,20 @@ class CalendarPage extends React.Component {
     }
   }
 
-  handleSave = () => {
+  handleSave = async () => {
+    const { selectedOption, candidate: candidateEmail, required, optional } = this.state;
+    const { meetingSuggestions, actions, candidates } = this.props;
+    const selectedSuggestion = meetingSuggestions.data[selectedOption];
+    const candidateUser = candidates.find(candidate => candidate.email === candidateEmail);
+    await actions.createEvent(selectedSuggestion, candidateUser, required, optional);
+
     swalWithBootstrapButtons.fire(
       'Success',
-      'Successfully added new user',
+      'Successfully scheduled',
       'success'
     );
+
+    // Clear state of dialog
     this.setState({ reqOpen: false });
     this.setState({ optOpen: false });
     this.setState({ onSuccess: true });
