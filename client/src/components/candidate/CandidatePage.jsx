@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import * as candidateActions from '../../actions/candidateActions';
-import * as candidateSelectors from '../../selectors/CandidateSelectors';
-import Swal from 'sweetalert2'
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import AvailabilityTable from "./AvailabilityTable.jsx"
 
 import logo_long from '../../images/galvanize_long.png';
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: true,
+});
 
 const styles = {
   wrapper: {
@@ -49,9 +53,9 @@ class AddAvailability extends Component {
   }
 
   componentDidMount() {
-    // if (!this.props.candidate) {
-    //   this.props.fetchCandidate(this.props.id);
-    // }
+    const { actions } = this.props;
+    debugger;
+    actions.getUsers('candidate');
   }
 
   handleSubmit = async (times) => {
@@ -63,30 +67,18 @@ class AddAvailability extends Component {
       endTime: time.end.toISOString().slice(0, 19).replace('T', ' ')
     }))
 
-    // this.props.sendAvailability(availability, this.props.candidate.uuid);
-    await actions.sendAvailability(availability, this.props.candidate.uuid);
+    await actions.sendAvailability(availability, this.props.uuid);
+    swalWithBootstrapButtons.fire(
+      'Successfully submitted!',
+      'We\'ll get back to you with an interview invitation in the next few days.',
+      'success',
+    ).then(result => {
+      window.location.reload();
+    });
   }
 
   render() {
-    const { classes, candidate } = this.props;
-    const { name } = this.state;
-    // if (this.props.loading) {
-    //   return <div>Loading</div>
-    // }
-    // if (!this.props.candidate) {
-    //   return <div>
-    //     No content
-    //   </div>
-    // }
-    // if (this.props.success) {
-    //   Swal.fire({
-    //     type: "success",
-    //     title: "Your availability has been submitted!",
-    //     text: "We'll get back to you with an interview invitation in the next few days.",
-    //     showConfirmButton: false,
-    //     timer: 10000
-    //   });
-    // }
+    const { classes, candidates, uuid } = this.props;
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" className={classes.title}>
@@ -95,7 +87,7 @@ class AddAvailability extends Component {
         <div className={classes.container}>
           <img className={classes.bigLogo} src={logo_long} alt="Galvanize Logo" />
           <div className={classes.subText}>
-            <Typography>{`Hi ${candidate.firstName}, `}</Typography>
+            <Typography>{`Hi ${candidates.find(candidate => candidate.uuid === uuid) ? candidates.find(candidate => candidate.uuid === uuid).firstName : 'John Doe'}, `}</Typography>
             <Typography>
               Please add your availability to come in for an on-site interview at our <b>Vancouver</b> office below.
             </Typography>
@@ -110,15 +102,4 @@ class AddAvailability extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  candidate: candidateSelectors.getCandidateById(state, ownProps.id),
-  success: state.candidates.success,
-  loading: !!state.candidates.loading
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  // fetchCandidate: (id) => dispatch(candidateActions.fetchSpecificCandidate(id)),
-  sendAvailability: (availability, uuid) => dispatch(candidateActions.sendAvailability(availability, uuid))
-})
-
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(AddAvailability));
+export default withStyles(styles)(AddAvailability);
