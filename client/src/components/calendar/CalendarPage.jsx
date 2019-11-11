@@ -101,12 +101,12 @@ class CalendarPage extends React.Component {
     this.setState({ candidate: event.target.textContent });
   }
 
-  updateRequiredInterviewers = (event) => {
-    this.setState({ required: event.target.value });
+  updateRequiredInterviewers = (event, value) => {
+    this.setState({ required: value });
   }
 
-  updateOptionalInterviewers = (event) => {
-    this.setState({ optional: event.target.value });
+  updateOptionalInterviewers = (event, value) => {
+    this.setState({ optional: value });
   }
 
   handleNext = async () => {

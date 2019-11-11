@@ -27,7 +27,7 @@ import {
 
 const styles = theme => ({
   duration: {
-    padding: '5px 30px',
+    padding: '15px 30px',
     borderColor: '#765ea8',
   },
   chip: {
@@ -85,26 +85,46 @@ class RequestDialog extends Component {
             renderInput={params => (
               <TextField {...params} label="Candidate" variant="outlined" fullWidth />
             )}
+            style={{ width: '100%' }}
             autoComplete={false}
             value={this.props.candidate}
             onChange={this.props.updateCandidate}
           />
-          {/* <Autocomplete
+          <Autocomplete
             multiple
-            options={this.props.required}
-            getOptionLabel={option => option}
+            options={this.props.interviewers}
+            getOptionLabel={option => option.email}
             filterSelectedOptions
             renderInput={params => (
               <TextField
                 {...params}
                 variant="outlined"
-                label="filterSelectedOptions"
+                label="Required interviewer(s)"
                 margin="normal"
                 fullWidth
               />
             )}
-          /> */}
-          <FormControl
+            // value={this.props.required}
+            onChange={this.props.updateRequiredInterviewers}
+          />
+          <Autocomplete
+            multiple
+            options={this.props.interviewers}
+            getOptionLabel={option => option.email}
+            filterSelectedOptions
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Optional interviewer(s)"
+                margin="normal"
+                fullWidth
+              />
+            )}
+            // value={this.props.required}
+            onChange={this.props.updateOptionalInterviewers}
+          />
+          {/* <FormControl
             fullWidth
             variant="outlined">
             <InputLabel
@@ -134,8 +154,8 @@ class RequestDialog extends Component {
                 <MenuItem key={employee.email} value={employee}>{employee.email}</MenuItem>
               ))}
             </Select>
-          </FormControl>
-          <FormControl
+          </FormControl> */}
+          {/* <FormControl
             fullWidth
             variant="outlined">
             <InputLabel
@@ -165,7 +185,7 @@ class RequestDialog extends Component {
                 <MenuItem key={employee.email} value={employee}>{employee.email}</MenuItem>
               ))}
             </Select>
-          </FormControl>
+          </FormControl> */}
           <ButtonGroup fullWidth size="small" aria-label="small outlined button group" className={classes.buttonGroup}>
             {this.props.durations.map(
               (duration, i) => {
