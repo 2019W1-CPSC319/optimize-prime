@@ -204,10 +204,11 @@ class CalendarPage extends React.Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell scope="col">Organizer</TableCell>
-                <TableCell scope="col">Location</TableCell>
-                <TableCell scope="col">Start</TableCell>
-                <TableCell scope="col">End</TableCell>
+                <TableCell scope="col" align="center">Candidate Name</TableCell>
+                <TableCell scope="col" align="center">Location</TableCell>
+                <TableCell scope="col" align="center">Capacity</TableCell>
+                <TableCell scope="col" align="center">Start</TableCell>
+                <TableCell scope="col" align="center">End</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -215,10 +216,11 @@ class CalendarPage extends React.Component {
                 interview => {
                   return (
                     <TableRow key={interview.id}>
-                      <TableCell>{interview.firstName + ' ' + interview.lastName}</TableCell>
-                      <TableCell>{interview.roomID}</TableCell>
-                      <TableCell>{formatDateTime(interview.startTime)}</TableCell>
-                      <TableCell>{formatDateTime(interview.endTime)}</TableCell>
+                      <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
+                      <TableCell align="center">{interview.name}</TableCell>
+                      <TableCell align="center">{interview.seats}</TableCell>
+                      <TableCell align="center">{formatDateTime(interview.startTime)}</TableCell>
+                      <TableCell align="center">{formatDateTime(interview.endTime)}</TableCell>
                     </TableRow>
                   );
                 })}
