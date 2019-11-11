@@ -61,10 +61,10 @@ const USER_DIALOG = {
   editTitle: 'Edit a User',
   subtitle: 'Please enter user details.',
   fields: [
-    { key: 'firstName', title: 'First Name', type: 'string', helperText: 'Only alphabet letters. No whitespaces allowed.' },
-    { key: 'lastName', title: 'Last Name', type: 'string', helperText: 'Only alphabet letters. No whitespaces allowed.' },
-    { key: 'email', title: 'Email', type: 'string', helperText: 'Invalid email address format!' },
-    { key: 'phone', title: 'Phone Number', type: 'string', helperText: 'Only digits allowed.' },
+    { key: 'firstName', title: 'First Name', type: 'string', helperText: 'First letter should be capitalized. No whitespaces allowed.' },
+    { key: 'lastName', title: 'Last Name', type: 'string', helperText: 'First letter should be capitalized. No whitespaces allowed.' },
+    { key: 'email', title: 'Email', type: 'string', helperText: 'Invalid email address format.' },
+    { key: 'phone', title: 'Phone Number', type: 'string', helperText: 'e.g. 999-999-9999.' },
     {
       key: 'role',
       title: 'Role',
@@ -195,17 +195,13 @@ class UserDialog extends Component {
   onValidate = (fieldKey, value) => {
     switch (fieldKey) {
       case 'firstName':
-        console.log(/^[a-zA-Z]*$/g.test(value) ? 'regex matched for' : 'regex did not match for', fieldKey);
-        return !/^[a-zA-Z]*$/g.test(value);
+        return !/^[A-Z][a-zA-Z'][^#&<>\"~;$^%{}?]{1,20}$/g.test(value);
       case 'lastName':
-        console.log(/^[a-zA-Z]*$/g.test(value) ? 'regex matched for' : 'regex did not match for', fieldKey);
-        return !/^[a-zA-Z]*$/g.test(value);
+        return !/^[A-Z][a-zA-Z'][^#&<>\"~;$^%{}?]{1,20}$/g.test(value);
       case 'email':
-        console.log(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value) ? 'regex matched for' : 'regex did not match for', fieldKey);
         return !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value);
       case 'phone':
-        console.log(/^\d*$/g.test(value) ? 'regex matched for' : 'regex did not match for', fieldKey);
-        return !/^\d*$/g.test(value);
+        return !/^\d{3}-\d{3}-\d{4}$/g.test(value);
       default:
         return false;
     }
