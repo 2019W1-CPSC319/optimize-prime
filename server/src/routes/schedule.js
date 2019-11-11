@@ -380,8 +380,8 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       }
       // get roomId
       const roomId = result[0].id;
-      const sql = 'UPDATE Candidate SET startTime = ?, endTime = ?, roomId = ? WHERE email = ?';
-      const sqlcmd = connection.format(sql, [date.startTime.dateTime, date.endTime.dateTime, roomId, candidate.email]);
+      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)'
+      const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
       connection.query(sqlcmd, (err, result) => {
         if (err) {
           throw err;
@@ -409,9 +409,9 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
 
 // **************************** Get all scheduled interviews ************************************ //
 
-router.get('/interviews', notAuthMiddleware, (req, res) => {
+router.get('/interviews', (req, res) => {
   const currDate = new Date();
-  const sql = 'SELECT * FROM Candidate c INNER JOIN Rooms r ON c.roomId = r.id WHERE startTime >= ?';
+  const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
   const sqlcmd = connection.format(sql, [currDate]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
