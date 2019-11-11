@@ -105,7 +105,7 @@ class OptionsDialog extends Component {
         if (Array.isArray(this.props.meetingSuggestions.data) && this.props.meetingSuggestions.data.length > 0) {
             return (
                 <List dense>
-                    {this.props.meetingSuggestions.data.map(option => {
+                    {this.props.meetingSuggestions.data.map((option, index) => {
                         const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
                         const labelId = `radio-list-secondary-label-${hash}`;
                         return (
@@ -142,7 +142,7 @@ class OptionsDialog extends Component {
                                 <ListItemSecondaryAction>
                                     <GreenRadio
                                         checked={this.props.selectedOption === hash}
-                                        onChange={() => this.props.handleSelectOption(hash)}
+                                        onChange={() => this.props.handleSelectOption(index)}
                                         value={hash}
                                     />
                                 </ListItemSecondaryAction>
