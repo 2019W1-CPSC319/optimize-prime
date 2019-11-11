@@ -70,23 +70,23 @@ class AddAvailability extends Component {
   render() {
     const { classes, candidate } = this.props;
     const { name } = this.state;
-    if (this.props.loading) {
-      return <div>Loading</div>
-    }
-    if (!this.props.candidate) {
-      return <div>
-        No content
-      </div>
-    }
-    if (this.props.success) {
-      Swal.fire({
-        type: "success",
-        title: "Your availability has been submitted!",
-        text: "We'll get back to you with an interview invitation in the next few days.",
-        showConfirmButton: false,
-        timer: 10000
-      });
-    }
+    // if (this.props.loading) {
+    //   return <div>Loading</div>
+    // }
+    // if (!this.props.candidate) {
+    //   return <div>
+    //     No content
+    //   </div>
+    // }
+    // if (this.props.success) {
+    //   Swal.fire({
+    //     type: "success",
+    //     title: "Your availability has been submitted!",
+    //     text: "We'll get back to you with an interview invitation in the next few days.",
+    //     showConfirmButton: false,
+    //     timer: 10000
+    //   });
+    // }
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" className={classes.title}>

@@ -3,13 +3,13 @@ import React, { Component } from 'react';
 import { withStyles } from "@material-ui/core/styles"
 // Material UI
 import {
-        Table, TableBody, TableHead, TableCell, TableRow,
-        Select, MenuItem, Button, FormControl, FormHelperText, Typography
-       } from "@material-ui/core"
+  Table, TableBody, TableHead, TableCell, TableRow,
+  Select, MenuItem, Button, FormControl, FormHelperText, Typography
+} from "@material-ui/core"
 import {
-        MuiPickersUtilsProvider,
-        KeyboardDatePicker,
-       } from '@material-ui/pickers';
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 import Fab from "@material-ui/core/Fab"
 import AddIcon from "@material-ui/icons/Add"
 
@@ -106,24 +106,24 @@ class AvailabilityTable extends Component {
 
   getDateAsWeekString = (date) => {
     const day = ["Sunday",
-                 "Monday",
-                 "Tuesday",
-                 "Wednesday",
-                 "Thursday",
-                 "Friday",
-                 "Saturday"][date.getDay()];
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"][date.getDay()];
     const month = ["January",
-                   "February",
-                   "March",
-                   "April",
-                   "May",
-                   "June",
-                   "July",
-                   "August",
-                   "September",
-                   "October",
-                   "November",
-                   "December"][date.getMonth()]
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"][date.getMonth()]
     return day + ", " + date.getDate() + " " + month + ".";
   }
 
@@ -136,7 +136,7 @@ class AvailabilityTable extends Component {
     // Adds a row to the table
     const row = this.createRow(this.state.indexctr, this.state.twoDaysFuture, 9, 17);
     const newindex = this.state.indexctr + 1;
-    this.setState({indexctr: newindex, rows: [...this.state.rows, row]});
+    this.setState({ indexctr: newindex, rows: [...this.state.rows, row] });
   }
 
   handleRemoveRow = (id) => {
@@ -147,11 +147,11 @@ class AvailabilityTable extends Component {
         rows.splice(rows.indexOf(row), 1);
       }
     }
-    this.setState({rows: rows});
+    this.setState({ rows: rows });
   }
 
   createRow(id, date, from, to) {
-    return {id, date, from, to, dateValid: true, timeValid: true};
+    return { id, date, from, to, dateValid: true, timeValid: true };
   }
 
   /**
@@ -159,7 +159,7 @@ class AvailabilityTable extends Component {
    */
   handleSelectorChange = (event) = (event, id, field) => {
     const rows = this.state.rows;
-    for (const row of rows){
+    for (const row of rows) {
       if (row.id == id) {
         if (field == FIELD_FROM) {
           row.from = event.target.value;
@@ -179,7 +179,7 @@ class AvailabilityTable extends Component {
     const rows = this.state.rows;
     rows[id].date = date;
     rows[id].dateValid = rows[id].date >= this.state.twoDaysFuture;
-    this.setState({rows: rows});
+    this.setState({ rows: rows });
   }
 
   /**
@@ -199,24 +199,24 @@ class AvailabilityTable extends Component {
       // Validate the input, and show an error message if its invalid
       if (!row.dateValid || !row.timeValid) {
         const title = "Theres an issue with your availability!";
-        const description = "It looks like the problem is with the the " + 
-                            (row.dateValid ? "time" : "date") +
-                            " on row " + (this.state.rows.indexOf(row) + 1) + ".";
+        const description = "It looks like the problem is with the the " +
+          (row.dateValid ? "time" : "date") +
+          " on row " + (this.state.rows.indexOf(row) + 1) + ".";
         Swal.fire(title, description, "error");
         return;
       }
 
       const start = new Date(row.date.getFullYear(),
-                             row.date.getMonth(),
-                             row.date.getDate(),
-                             row.from - 8,
-                             (row.from % 1) * 60)
+        row.date.getMonth(),
+        row.date.getDate(),
+        row.from - 8,
+        (row.from % 1) * 60)
       const end = new Date(row.date.getFullYear(),
-                           row.date.getMonth(),
-                           row.date.getDate(),
-                           row.to - 8,
-                           (row.to% 1) * 60)
-      times.push({start: start, end: end});
+        row.date.getMonth(),
+        row.date.getDate(),
+        row.to - 8,
+        (row.to % 1) * 60)
+      times.push({ start: start, end: end });
     }
     console.log(times);
     this.state.submitHandler(times);
@@ -224,88 +224,88 @@ class AvailabilityTable extends Component {
 
   render() {
     const { classes } = this.props;
-      return (
-            <div>
-              <Table aria-label="Availability">
-                  <TableHead>
-                      <TableRow>
-                          <TableCell>Date</TableCell>
-                          <TableCell>From</TableCell>
-                          <TableCell>To</TableCell>
-                          <TableCell></TableCell>
-                      </TableRow>
-                  </TableHead>
-                  <TableBody>
-                      {this.state.rows.map(row => (
-                        <TableRow key={row.id}>
-                          <TableCell>
-                            <FormControl error={!row.dateValid}>
-                              <MuiPickersUtilsProvider utils={DateFnsUtils} className={classes.datePicker}>
-                                <KeyboardDatePicker
-                                    disableToolbar
-                                    variant="inline"
-                                    format="MM/dd/yyyy"
-                                    minDate={new Date()}
-                                    error={!row.dateValid}
-                                    margin="none"
-                                    id="date-picker-inline"
-                                    value={row.date}
-                                    onChange={(date) => this.handleDateChange(date, row.id)}
-                                    KeyboardButtonProps={{
-                                        'aria-label': 'change date',
-                                    }}
-                                  />
-                              </MuiPickersUtilsProvider>
-                              <FormHelperText>
-                                {row.dateValid ? this.getDateAsWeekString(row.date) : "Please gives dates at least 2 days in advance!"}
-                              </FormHelperText>
-                            </FormControl>
-                          </TableCell>
-                          <TableCell>
-                            <FormControl error={!row.timeValid}>
-                              <Select className={classes.timeSelector} value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
-                                {times}
-                              </Select>
-                              <FormHelperText>
-                                {row.timeValid ? "" : "Start time must be before end time!"}
-                              </FormHelperText>
-                            </FormControl>
-                          </TableCell>
-                          <TableCell>
-                            <FormControl error={!row.timeValid}>
-                              <Select className={classes.timeSelector} value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
-                                {times}
-                              </Select>
-                              <FormHelperText>
-                                {row.timeValid ? this.getBlockLengthAsString(row) : "End time must be before start time!"}
-                              </FormHelperText>
-                            </FormControl>
-                          </TableCell>
-                          <TableCell>
-                              <Button variant="outlined" color="primary" onClick={() => {this.handleRemoveRow(row.id)}}>
-                                  Remove
+    return (
+      <div>
+        <Table aria-label="Availability">
+          <TableHead>
+            <TableRow>
+              <TableCell>Date</TableCell>
+              <TableCell>From</TableCell>
+              <TableCell>To</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {this.state.rows.map(row => (
+              <TableRow key={row.id}>
+                <TableCell>
+                  <FormControl error={!row.dateValid}>
+                    <MuiPickersUtilsProvider utils={DateFnsUtils} className={classes.datePicker}>
+                      <KeyboardDatePicker
+                        disableToolbar
+                        variant="inline"
+                        format="MM/dd/yyyy"
+                        minDate={new Date()}
+                        error={!row.dateValid}
+                        margin="none"
+                        id="date-picker-inline"
+                        value={row.date}
+                        onChange={(date) => this.handleDateChange(date, row.id)}
+                        KeyboardButtonProps={{
+                          'aria-label': 'change date',
+                        }}
+                      />
+                    </MuiPickersUtilsProvider>
+                    <FormHelperText>
+                      {row.dateValid ? this.getDateAsWeekString(row.date) : "Please gives dates at least 2 days in advance!"}
+                    </FormHelperText>
+                  </FormControl>
+                </TableCell>
+                <TableCell>
+                  <FormControl error={!row.timeValid}>
+                    <Select className={classes.timeSelector} value={row.from} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_FROM)}>
+                      {times}
+                    </Select>
+                    <FormHelperText>
+                      {row.timeValid ? "" : "Start time must be before end time!"}
+                    </FormHelperText>
+                  </FormControl>
+                </TableCell>
+                <TableCell>
+                  <FormControl error={!row.timeValid}>
+                    <Select className={classes.timeSelector} value={row.to} onChange={(event) => this.handleSelectorChange(event, row.id, FIELD_TO)}>
+                      {times}
+                    </Select>
+                    <FormHelperText>
+                      {row.timeValid ? this.getBlockLengthAsString(row) : "End time must be before start time!"}
+                    </FormHelperText>
+                  </FormControl>
+                </TableCell>
+                <TableCell>
+                  <Button variant="outlined" color="primary" onClick={() => { this.handleRemoveRow(row.id) }}>
+                    Remove
                               </Button>
-                          </TableCell>
-                        </TableRow>
-                    ))}
-                    <TableRow>
-                      <TableCell colSpan={3}>
-                      </TableCell>
-                      <TableCell>
-                        <Fab aria-label="add" size="small" onClick={this.handleAddRow} className={classes.fabAdd}>
-                          <AddIcon />
-                        </Fab>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-              </Table>
-          <div>
-            <Button color="primary" variant="outlined" onClick={this.handleSubmit} className={classes.submitBtn}>
-              Submit
+                </TableCell>
+              </TableRow>
+            ))}
+            <TableRow>
+              <TableCell colSpan={3}>
+              </TableCell>
+              <TableCell>
+                <Fab aria-label="add" size="small" onClick={this.handleAddRow} className={classes.fabAdd}>
+                  <AddIcon />
+                </Fab>
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <div>
+          <Button color="primary" variant="outlined" onClick={this.handleSubmit} className={classes.submitBtn}>
+            Submit
             </Button>
-          </div>
-            </div>
-        );
+        </div>
+      </div>
+    );
   }
 }
 
