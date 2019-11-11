@@ -190,7 +190,7 @@ router.put('/interviewer/delete/:id', (req, res) => {
   });
 });
 
-// find all the possible meeting times, given the following constraints/information: 
+// find all the possible meeting times, given the following constraints/information:
 // attendess, timeConstraints, meetingDuration, locationConstraints
 router.post('/meeting', notAuthMiddleware, async (req, res) => {
   const { candidate, meetingDuration, required, optional } = req.body;
@@ -249,7 +249,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           if (result.length > 0) {
             locations = result.map(room => ({
               displayName: room.name,
-              locationEmailAddress: room.email 
+              locationEmailAddress: room.email
             }))
           }
 
@@ -302,6 +302,88 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
       }
     }
   });
+});
+
+
+// ************* Send out a meeting invite to the attendees and book the room for the duration of the interview **************************
+
+router.post('/event', notAuthMiddleware, async (req, res) => {
+  try {
+
+    const { candidate, date, required, optional, room } = req.body;
+
+    const subject = "Interview with " + candidate.firstName + ' ' + candidate.lastName;
+    const content = "Please confirm if you are available during this time."
+
+    const timeZone = "UTC";
+
+    // create candidate as an attendee
+    const candidateAttendee = [
+      {
+        type: "required",
+        emailAddress: {
+          address: candidate.email
+        }
+      }
+    ];
+
+    // required attendees
+    const requiredAttendees = required.map(interviewer => ({
+      type: "required",
+      emailAddress: {
+        address: interviewer.email
+      }
+    }));
+
+    // optional attendees
+    const optionalAttendees = optional.map(interviewer => ({
+      type: "optional",
+      emailAddress: {
+        address: interviewer.email
+      }
+    }));
+
+    // combine all the attendees aswell as the candidate
+    const interviewerAttendees = requiredAttendees.concat(optionalAttendees);
+    const attendees = interviewerAttendees.concat(candidateAttendee);
+
+    const response = await axios({
+      method: 'post',
+      url: 'https://graph.microsoft.com/v1.0/me/events',
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
+      },
+      data: {
+        subject: subject,
+        body: {
+          contentType: 'HTML',
+          content: content,
+        },
+        start: date.startTime,
+        end: date.endTime,
+        location: {
+          displayName: room.name,
+          locationEmailAddress: room.email,
+        },
+        attendees: attendees
+      },
+    });
+
+    // insert the scheduled interview in the candidate table
+    // startTime, endTime, RoomID
+    // const sql = '';
+    // const sqlcmd = connection.format(sql, []);
+
+    // connection.query(sqlcmd, async (err, result) => {
+    //   if (err) {
+    //     throw err;
+    //   }
+    // });
+
+    res.send(response.data);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // ************* Get meeting rooms from outlook *************** //

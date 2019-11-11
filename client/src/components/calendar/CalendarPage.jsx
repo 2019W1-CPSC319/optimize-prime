@@ -132,11 +132,19 @@ class CalendarPage extends React.Component {
   }
 
   handleSave = () => {
+    const { selectedOption, candidate: candidateEmail, required, optional } = this.state;
+    const { meetingSuggestions, actions, candidates } = this.props;
+    const selectedSuggestion = meetingSuggestions.data[selectedOption];
+    const candidateUser = candidates.find(candidate => candidate.email === candidateEmail);
+    actions.createEvent(selectedSuggestion, candidateUser, required, optional);
+
     swalWithBootstrapButtons.fire(
       'Success',
-      'Successfully added new user',
+      'Successfully scheduled',
       'success'
     );
+
+    // Clear state of dialog
     this.setState({ reqOpen: false });
     this.setState({ optOpen: false });
     this.setState({ onSuccess: true });
@@ -181,10 +189,10 @@ class CalendarPage extends React.Component {
     )
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { actions } = this.props;
-    actions.getUsers('candidate');
-    actions.getUsers('interviewer');
+    await actions.getUsers('candidate');
+    await actions.getUsers('interviewer');
   }
 
   render() {
@@ -234,14 +242,14 @@ class CalendarPage extends React.Component {
           handleSelectInterviewDuration={this.handleSelectInterviewDuration}
           {...this.props}
           {...this.state}
-        ></RequestDialog>
+        />
         <OptionsDialog
           handleOpen={this.handleOpen}
           handleSave={this.handleSave}
           handleSelectOption={this.handleSelectOption}
           {...this.props}
           {...this.state}
-        ></OptionsDialog>
+        />
         {this.showSnackbarOnSuccess()}
       </div >
     );

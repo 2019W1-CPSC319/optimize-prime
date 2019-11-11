@@ -35,6 +35,11 @@ const AuthReducer = (state = {}, action) => {
         loading: false,
         status: action.payload,
       };
+    case 'CREATE_EVENT_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+      };
     default:
       return state;
   }
