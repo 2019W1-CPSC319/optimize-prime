@@ -380,8 +380,8 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       }
       // get roomId
       const roomId = result[0].id;
-      const sql = 'UPDATE Candidate SET startTime = ? , endTime = ?, roomId = ?';
-      const sqlcmd = connection.format(sql, [date.startTime, date.endTime, roomId]);
+      const sql = 'UPDATE Candidate SET startTime = ? , endTime = ?, roomId = ? WHERE id = ?';
+      const sqlcmd = connection.format(sql, [date.startTime, date.endTime, roomId, candidate.id]);
       connection.query(sqlcmd, (err, result) => {
         if (err) {
           throw err;
