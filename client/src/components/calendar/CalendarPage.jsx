@@ -193,6 +193,7 @@ class CalendarPage extends React.Component {
     const { actions } = this.props;
     await actions.getUsers('candidate');
     await actions.getUsers('interviewer');
+    if (!this.props.interviews) await actions.getInterviews();
   }
 
   render() {
@@ -203,21 +204,23 @@ class CalendarPage extends React.Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell scope="col">Organizer</TableCell>
-                <TableCell scope="col">Subject</TableCell>
-                <TableCell scope="col">Start</TableCell>
-                <TableCell scope="col">End</TableCell>
+                <TableCell scope="col" align="center">Candidate Name</TableCell>
+                <TableCell scope="col" align="center">Location</TableCell>
+                <TableCell scope="col" align="center">Capacity</TableCell>
+                <TableCell scope="col" align="center">Start</TableCell>
+                <TableCell scope="col" align="center">End</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.state.events.map(
-                function (event) {
+              {this.props.interviews && this.props.interviews.map(
+                interview => {
                   return (
-                    <TableRow key={event.id}>
-                      <TableCell>{event.organizer.emailAddress.name}</TableCell>
-                      <TableCell>{event.subject}</TableCell>
-                      <TableCell>{formatDateTime(event.start.dateTime)}</TableCell>
-                      <TableCell>{formatDateTime(event.end.dateTime)}</TableCell>
+                    <TableRow key={interview.id}>
+                      <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
+                      <TableCell align="center">{interview.name}</TableCell>
+                      <TableCell align="center">{interview.seats}</TableCell>
+                      <TableCell align="center">{formatDateTime(interview.startTime)}</TableCell>
+                      <TableCell align="center">{formatDateTime(interview.endTime)}</TableCell>
                     </TableRow>
                   );
                 })}

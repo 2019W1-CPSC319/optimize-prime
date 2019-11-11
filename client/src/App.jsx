@@ -34,6 +34,7 @@ const mapStateToProps = state => ({
   rooms: state.rooms.rooms,
   outlookRooms: state.rooms.outlookRooms,
   meetingSuggestions: state.user.meetingSuggestions,
+  interviews: state.user.interviews
 });
 
 const mapDispatchToProps = dispatch => ({

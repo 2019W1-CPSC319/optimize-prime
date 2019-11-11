@@ -155,3 +155,29 @@ export const createEvent = (selectedSuggestion, candidate, required, optional) =
     return dispatch(createEventFailure(error));
   }
 };
+
+const getInterviewsSuccess = (interviews) => (
+  {
+    type: 'GET_INTERVIEWS_SUCCESS',
+    payload: interviews
+  }
+);
+
+const getInterviewsFailure = (error) => (
+  {
+    type: 'GET_INTERVIEWS_FAILURE',
+    payload: error,
+  }
+);
+
+export const getInterviews = () => async (dispatch) => {
+  try {
+    dispatch(initRequest());
+    const response = await axios.get('/schedule/interviews');
+    const interviews = response.data;
+    return dispatch(getInterviewsSuccess(interviews));
+  } catch (error) {
+    console.log(error);
+    return dispatch(getInterviewsFailure(error));
+  }
+};
