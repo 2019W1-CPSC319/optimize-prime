@@ -146,8 +146,6 @@ router.post('/sendEmail', (req, res) => {
       throw err;
     }
 
-    console.log(result);
-
     const uuid = result[0].uuid;
 
     try {
@@ -178,7 +176,6 @@ router.post('/sendEmail', (req, res) => {
       });
       res.send(response.data);
     } catch (error) {
-      console.log(error);
       res.status(500).send({ message: 'Internal server Error.' });
     }
   });
