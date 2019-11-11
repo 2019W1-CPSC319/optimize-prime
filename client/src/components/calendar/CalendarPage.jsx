@@ -1,10 +1,8 @@
 import React from 'react';
-import moment from 'moment';
+import Moment from 'react-moment';
+import 'moment-timezone';
 import { withStyles } from '@material-ui/core/styles';
-// import config from '../../Config';
 import Swal from 'sweetalert2';
-import axios from 'axios';
-// import { getEvents } from '../../GraphService';
 import RequestDialog from './RequestDialog';
 import OptionsDialog from './OptionsDialog';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -220,8 +218,8 @@ class CalendarPage extends React.Component {
                       <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
                       <TableCell align="center">{interview.name}</TableCell>
                       <TableCell align="center">{interview.seats}</TableCell>
-                      <TableCell align="center">{formatDateTime(interview.startTime)}</TableCell>
-                      <TableCell align="center">{formatDateTime(interview.endTime)}</TableCell>
+                      <TableCell align="center"><Moment subtract={{ hours: 8 }} format='ll h:mm a' tz='America/Los_Angeles'>{interview.startTime}</Moment></TableCell>
+                      <TableCell align="center"><Moment subtract={{ hours: 8 }} format='ll h:mm a' tz='America/Los_Angeles'>{interview.endTime}</Moment></TableCell>
                     </TableRow>
                   );
                 })}
