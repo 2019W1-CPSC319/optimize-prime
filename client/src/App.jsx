@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
 import * as Actions from './actions/index';
 import PrivateRoute from './components/core/PrivateRoute';
 import LoginPage from './components/authentication/LoginPage';
@@ -32,6 +31,8 @@ const mapStateToProps = state => ({
   candidates: state.directory.candidates,
   interviewers: state.directory.interviewers,
   rooms: state.rooms.rooms,
+  outlookRooms: state.rooms.outlookRooms,
+  meetingSuggestions: state.user.meetingSuggestions,
 });
 
 const mapDispatchToProps = dispatch => ({

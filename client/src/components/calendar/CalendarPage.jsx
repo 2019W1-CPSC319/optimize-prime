@@ -51,18 +51,30 @@ class CalendarPage extends React.Component {
       required: [],
       optional: [],
       selected: 0,
-      // selectedOpt: 0,
       selectedOption: 0,
       background: ['#280e3a', '#fff', '#fff', '#fff'],
       color: ['#fff', '#000', '#000', '#000'],
       candidate: '',
       durations: [
         { minutes: 30 },
-        { minutes: 45 },
         { minutes: 60 },
         { minutes: 90 },
+        { minutes: 120 }
       ]
     };
+  }
+
+  getInterviewDuration = () => {
+    switch (this.state.durations[this.state.selected].minutes) {
+      case 30:
+        return 'PT30M';
+      case 60:
+        return 'PT1H';
+      case 90:
+        return 'PT1H30M';
+      case 120:
+        return 'PT2H';
+    }
   }
 
   handleOpen = () => {
@@ -84,7 +96,7 @@ class CalendarPage extends React.Component {
   }
 
   updateCandidate = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     this.setState({ candidate: event.target.value });
   }
 
@@ -94,29 +106,45 @@ class CalendarPage extends React.Component {
   }
 
   updateRequiredInterviewers = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     this.setState({ required: event.target.value });
   }
 
   updateOptionalInterviewers = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     this.setState({ optional: event.target.value });
   }
 
-  handleNext = () => {
-    // axios.get('http://localhost:8080/blocks/' + this.state.candidate)
-    //   // .then(res => res.text())
-    //   .then(res => this.setState({ candidates: res.data }));
-    this.setState({ reqOpen: false });
-    this.setState({ optOpen: true });
+  handleNext = async () => {
+    const { actions } = this.props;
+    try {
+      await actions.findMeetingTimes({
+        candidate: this.state.candidate,
+        required: this.state.required,
+        optional: this.state.optional,
+        meetingDuration: this.getInterviewDuration(),
+      });
+      this.setState({ reqOpen: false });
+      this.setState({ optOpen: true });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   handleSave = () => {
+    const { selectedOption, candidate: candidateEmail, required, optional } = this.state;
+    const { meetingSuggestions, actions, candidates } = this.props;
+    const selectedSuggestion = meetingSuggestions.data[selectedOption];
+    const candidateUser = candidates.find(candidate => candidate.email === candidateEmail);
+    actions.createEvent(selectedSuggestion, candidateUser, required, optional);
+
     swalWithBootstrapButtons.fire(
       'Success',
-      'Successfully added new user',
+      'Successfully scheduled',
       'success'
     );
+
+    // Clear state of dialog
     this.setState({ reqOpen: false });
     this.setState({ optOpen: false });
     this.setState({ onSuccess: true });
@@ -161,21 +189,11 @@ class CalendarPage extends React.Component {
     )
   }
 
-  // async componentDidMount() {
-  //   try {
-  //     // Get the user's access token
-  //     var accessToken = await window.msal.acquireTokenSilent({
-  //       scopes: config.scopes
-  //     });
-  //     // Get the user's events
-  //     var events = await getEvents(accessToken);
-  //     // Update the array of events in state
-  //     this.setState({ events: events.value });
-  //   }
-  //   catch (err) {
-  //     this.props.showError('ERROR', JSON.stringify(err));
-  //   }
-  // }
+  async componentDidMount() {
+    const { actions } = this.props;
+    await actions.getUsers('candidate');
+    await actions.getUsers('interviewer');
+  }
 
   render() {
     return (
@@ -222,14 +240,16 @@ class CalendarPage extends React.Component {
           updateRequiredInterviewers={this.updateRequiredInterviewers}
           updateOptionalInterviewers={this.updateOptionalInterviewers}
           handleSelectInterviewDuration={this.handleSelectInterviewDuration}
+          {...this.props}
           {...this.state}
-        ></RequestDialog>
+        />
         <OptionsDialog
           handleOpen={this.handleOpen}
           handleSave={this.handleSave}
           handleSelectOption={this.handleSelectOption}
+          {...this.props}
           {...this.state}
-        ></OptionsDialog>
+        />
         {this.showSnackbarOnSuccess()}
       </div >
     );

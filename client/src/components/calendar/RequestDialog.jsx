@@ -62,32 +62,6 @@ const MenuProps = {
   },
 };
 
-const employees = [
-  'Employee A',
-  'Employee B',
-  'Employee C',
-  'Employee D',
-  'Employee E',
-  'Employee F',
-  'Employee G',
-  'Employee H',
-  'Employee I',
-  'Employee J',
-];
-
-const candidates = [
-  'Student A',
-  'Student B',
-  'Student C',
-  'Student D',
-  'Student E',
-  'Student F',
-  'Student G',
-  'Student H',
-  'Student I',
-  'Student J',
-];
-
 class RequestDialog extends Component {
   constructor(props) {
     super(props);
@@ -97,13 +71,13 @@ class RequestDialog extends Component {
     return (
       <Paper style={{ padding: '0' }} square>
         <List style={{ padding: '0' }} dense>
-          {candidates.map((name, i) => {
+          {this.props.candidates.map((candidate, i) => {
             const input = this.props.candidate.toLowerCase();
             return (
               input !== ''
-              && name.toLowerCase().includes(input)
-              && name.toLowerCase() !== input
-              && <ListItem key={i}><Button value={name} onClick={this.props.updateCandidateAutosuggested}>{name}</Button></ListItem>
+              && candidate.email.toLowerCase().includes(input)
+              && candidate.email.toLowerCase() !== input
+              && <ListItem key={i}><Button value={candidate.email} onClick={this.props.updateCandidateAutosuggested}>{candidate.email}</Button></ListItem>
             )
           })}
         </List>
@@ -127,6 +101,7 @@ class RequestDialog extends Component {
             id="candidate"
             label="Candidate"
             type="email"
+            autoComplete="off"
             value={this.props.candidate}
             variant="outlined"
             InputProps={{
@@ -156,18 +131,18 @@ class RequestDialog extends Component {
                 <div className={classes.chips}>
                   {selected.map(value => (
                     <Chip
-                      key={value}
-                      label={value}
+                      key={value.email}
+                      label={value.email}
                       className={classes.chip}
-                      avatar={<Avatar className={classes.avatar}>{value.charAt(0).toUpperCase()}</Avatar>} />
+                      avatar={<Avatar className={classes.avatar}>{value.email.charAt(0).toUpperCase()}</Avatar>} />
                   ))}
                 </div>
               )}
               MenuProps={MenuProps}
               className={classes.select}
             >
-              {employees.map(name => (
-                <MenuItem key={name} value={name}>{name}</MenuItem>
+              {this.props.interviewers && this.props.interviewers.map(employee => (
+                <MenuItem key={employee.email} value={employee}>{employee.email}</MenuItem>
               ))}
             </Select>
           </FormControl>
@@ -187,18 +162,18 @@ class RequestDialog extends Component {
                 <div className={classes.chips}>
                   {selected.map(value => (
                     <Chip
-                      key={value}
-                      label={value}
+                      key={value.email}
+                      label={value.email}
                       className={classes.chip}
-                      avatar={<Avatar className={classes.avatar}>{value.charAt(0).toUpperCase()}</Avatar>} />
+                      avatar={<Avatar className={classes.avatar}>{value.email.charAt(0).toUpperCase()}</Avatar>} />
                   ))}
                 </div>
               )}
               MenuProps={MenuProps}
               className={classes.select}
             >
-              {employees.map(name => (
-                <MenuItem key={name} value={name}>{name}</MenuItem>
+              {this.props.interviewers && this.props.interviewers.map(employee => (
+                <MenuItem key={employee.email} value={employee}>{employee.email}</MenuItem>
               ))}
             </Select>
           </FormControl>

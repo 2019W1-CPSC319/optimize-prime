@@ -11,7 +11,7 @@ const RootReducer = combineReducers({
   candidates,
   interviewers,
   directory,
-  rooms,
+  rooms
 });
 
 export default RootReducer;

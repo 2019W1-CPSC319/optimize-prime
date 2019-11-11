@@ -58,32 +58,100 @@ export const fetchUser = () => async (dispatch) => {
   }
 };
 
-const sendEmailSuccess = () => (
+const sendEmailSuccess = (response) => (
   {
     type: 'EMAIL_SEND_SUCCESS',
+    payload: response,
   }
 );
 
-export const sendEmail = (subject, body) => async (dispatch) => {
+const sendEmailFailure = (error) => (
+  {
+    type: 'EMAIL_SEND_FAILURE',
+    payload: error,
+  }
+);
+
+export const sendEmail = (user) => async (dispatch) => {
   try {
     dispatch(initRequest());
-    await axios.post('/user/sendemail', {
-      subject, body,
-    });
-    dispatch(sendEmailSuccess());
+    const response = await axios.post('/schedule/sendemail', user);
+    return dispatch(sendEmailSuccess(response));
   } catch (error) {
-    console.log(error);
+    return dispatch(sendEmailFailure(error));
   }
 };
 
-export const findMeetingTimes = () => async (dispatch) => {
+const findMeetingTimesSuccess = (meetingSuggestions = []) => (
+  {
+    type: 'FIND_MEETING_TIMES_SUCCESS',
+    payload: meetingSuggestions,
+  }
+);
+
+const findMeetingTimesFailure = (error) => (
+  {
+    type: 'FIND_MEETING_TIMES_FAILURE',
+    payload: error,
+  }
+);
+
+export const findMeetingTimes = (data) => async (dispatch) => {
+  try {
+    const {
+      candidate,
+      required,
+      optional,
+      meetingDuration,
+    } = data;
+    const response = await axios.post('/schedule/meeting', {
+      candidate,
+      meetingDuration,
+      required,
+      optional,
+    });
+    return dispatch(findMeetingTimesSuccess(response));
+  } catch (error) {
+    return dispatch(findMeetingTimesFailure(error));
+  }
+};
+
+const createEventSuccess = () => (
+  {
+    type: 'CREATE_EVENT_SUCCESS'
+  }
+);
+
+const createEventFailure = (error) => (
+  {
+    type: 'CREATE_EVENT_FAILURE',
+    payload: error,
+  }
+);
+
+export const createEvent = (selectedSuggestion, candidate, required, optional) => async (dispatch) => {
+  const body = {
+    candidate: {
+      firstName: candidate.firstName,
+      lastName: candidate.lastName,
+      email: candidate.email,
+    },
+    room: {
+      email: selectedSuggestion.room.locationEmailAddress,
+      name: selectedSuggestion.room.displayName,
+    },
+    date: {
+      startTime: selectedSuggestion.start,
+      endTime: selectedSuggestion.end,
+    },
+    required,
+    optional,
+  };
   try {
     dispatch(initRequest());
-    const response = await axios.get('/user/findMeetingTimes');
-    const profile = response.data;
-    return dispatch(fetchUserSuccess(profile));
+    await axios.post('/schedule/event', body);
+    return dispatch(createEventSuccess());
   } catch (error) {
-    console.log(error);
-    return dispatch(fetchUserFailure(error));
+    return dispatch(createEventFailure(error));
   }
 };

@@ -79,7 +79,7 @@ export const deleteUser = (role, userId) => async (dispatch) => {
   try {
     dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.put(`/schedule/${role}/delete/${userId}`);
-    const addedUser = response.data;
+    // const addedUser = response.data;
     return dispatch(deleteUserSuccess(`${role}s`, userId));
   } catch (error) {
     console.log(error);

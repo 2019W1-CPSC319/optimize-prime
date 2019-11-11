@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
+import { CircularProgress, Box } from '@material-ui/core';
 import {
   Badge,
   Drawer,
@@ -165,7 +166,11 @@ class PrivateRoute extends React.Component {
     //   );
     // }
     if (pageProps.user.loading || !pageProps.user.hasTriedLogin) {
-      return <div>Loading</div>;
+      return (
+        <Box style={{ width: '100%' }}>
+          <CircularProgress style={{ margin: '400px auto auto', display: 'block' }} />
+        </Box>
+      );
     };
 
     if (!pageProps.user.profile) {

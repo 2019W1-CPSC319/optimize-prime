@@ -10,6 +10,12 @@ import {
     DialogTitle,
     InputAdornment,
     TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Chip,
+    Input
 } from '@material-ui/core';
 
 const styles = theme => ({
@@ -24,8 +30,28 @@ const styles = theme => ({
         backgroundColor: `${'#' + Math.floor(Math.random() * 16777215).toString(16)}`,
         color: '#fff',
         fontSize: 'xx-small'
-    }
+    },
+    inputlabel: {
+        fontSize: '12px',
+        lineHeight: '30px'
+    },
+    select: {
+        border: '1px solid rgba(0, 0, 0, 0.25)',
+        borderRadius: '5px',
+        paddingTop: '5px',
+    },
 });
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
 class RoomDialog extends Component {
     constructor(props) {
@@ -41,18 +67,29 @@ class RoomDialog extends Component {
                     <DialogContentText>
                         To add a new room, provide all the required fields.
                     </DialogContentText>
-                    <TextField
-                        required
-                        autoFocus={true}
-                        id="name"
-                        label="Room Name"
-                        name="name"
-                        value={this.props.name}
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.props.handleChangeRoomName}
+
+                    <FormControl
                         fullWidth
-                    />
+                        variant="outlined">
+                        <InputLabel
+                            htmlFor="select-multiple-chip"
+                            className={classes.inputlabel}>
+                            Available room(s)</InputLabel>
+                        <Select
+                            value={this.props.name}
+                            onChange={this.props.handleChangeRoomName}
+                            input={<Input id="select-chip" disableUnderline={true} />}
+                            renderValue={selected => (
+                                <Chip key={selected} label={selected} className={classes.chip} />
+                            )}
+                            MenuProps={MenuProps}
+                            className={classes.select}
+                        >
+                            {this.props.outlookRooms && this.props.outlookRooms.map(room => (
+                                <MenuItem key={room.name} value={room.name}>{room.name}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
                     <TextField
                         required
                         id="seats"
