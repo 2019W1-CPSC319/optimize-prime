@@ -399,4 +399,18 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
   res.send(response.data && response.data.value);
 });
 
+
+// **************************** Get all scheduled interviews ************************************ //
+router.get('/interviews', notAuthMiddleware, (req, res) => {
+  const currDate = new Date();
+  const sql = 'SELECT * FROM Candidate WHERE startTime >= ?';
+  const sqlcmd = connection.format(sql, [currDate]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
 module.exports = router;
