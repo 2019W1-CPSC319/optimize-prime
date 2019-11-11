@@ -61,14 +61,15 @@ const USER_DIALOG = {
   editTitle: 'Edit a User',
   subtitle: 'Please enter user details.',
   fields: [
-    { key: 'firstName', title: 'First Name', type: 'string' },
-    { key: 'lastName', title: 'Last Name', type: 'string' },
-    { key: 'email', title: 'Email', type: 'string' },
-    { key: 'phone', title: 'Phone Number', type: 'string' },
+    { key: 'firstName', title: 'First Name', type: 'string', helperText: 'Only alphabet letters. No whitespaces allowed.' },
+    { key: 'lastName', title: 'Last Name', type: 'string', helperText: 'Only alphabet letters. No whitespaces allowed.' },
+    { key: 'email', title: 'Email', type: 'string', helperText: 'Invalid email address format!' },
+    { key: 'phone', title: 'Phone Number', type: 'string', helperText: 'Only digits allowed.' },
     {
       key: 'role',
       title: 'Role',
       type: 'select',
+      helperText: '',
       selectOptions: [
         { key: 'admin', title: 'Administrator' },
         { key: 'interviewer', title: 'Interviewer' },
@@ -87,7 +88,7 @@ class UserDialog extends Component {
     super(props);
     const userFields = this.initializeUserInfoFields();
     this.state = {
-      ...userFields,
+      ...userFields
     };
   }
 
@@ -96,7 +97,16 @@ class UserDialog extends Component {
     USER_DIALOG.fields.forEach((field) => {
       state[field.key] = '';
     });
-    return state;
+    return {
+      ...state,
+      error: {
+        firstName: false,
+        lastName: false,
+        email: false,
+        phone: false,
+        role: false
+      }
+    };
   }
 
   onClickSubmit = async () => {
@@ -107,72 +117,98 @@ class UserDialog extends Component {
       email,
       phone,
       role,
+      error
     } = this.state;
 
-    if (mode === 'add') {
-      await actions.addUser(role, {
-        firstName,
-        lastName,
-        email,
-        phone,
-        role,
-      });
-      if (role.toLowerCase() === 'candidate') {
-        swalWithBootstrapButtons.fire({
-          title: 'A new user profile has been created!',
-          text: "Do you want to send an email to collect candidate\'s availability?",
-          type: 'success',
-          showCancelButton: true,
-          confirmButtonText: 'Send Email',
-          cancelButtonText: 'Cancel',
-          reverseButtons: true
-        }).then(async (result) => {
-          const { value } = result;
-          if (value) {
-            // const { value: tabIndex } = this.state;
-            await actions.sendEmail({
-              firstName,
-              lastName,
-              email,
-              phone,
-              role,
-            });
-            swalWithBootstrapButtons.fire(
-              'Email is sent!',
-              'You\'re all set.',
-              'success'
-            );
-          }
+    if (Object.values(error).filter(value => value).length === 0) {
+      if (mode === 'add') {
+        await actions.addUser(role, {
+          firstName,
+          lastName,
+          email,
+          phone,
+          role,
         });
-      } else {
-        swalWithBootstrapButtons.fire(
-          'A new user profile has been created!',
-          'You\'re all set.',
-          'success'
-        );
+        if (role.toLowerCase() === 'candidate') {
+          swalWithBootstrapButtons.fire({
+            title: 'A new user profile has been created!',
+            text: "Do you want to send an email to collect candidate\'s availability?",
+            type: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Send Email',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+          }).then(async (result) => {
+            const { value } = result;
+            if (value) {
+              // const { value: tabIndex } = this.state;
+              await actions.sendEmail({
+                firstName,
+                lastName,
+                email,
+                phone,
+                role,
+              });
+              swalWithBootstrapButtons.fire(
+                'Email is sent!',
+                'You\'re all set.',
+                'success'
+              );
+            }
+          });
+        } else {
+          swalWithBootstrapButtons.fire(
+            'A new user profile has been created!',
+            'You\'re all set.',
+            'success'
+          );
+        }
+      } else if (mode === 'edit') {
+        // TODO: edit user action
+        // actions.updateUser({
+        //   firstName,
+        //   lastName,
+        //   email,
+        //   role,
+        // });
       }
-    } else if (mode === 'edit') {
-      // TODO: edit user action
-      // actions.updateUser({
-      //   firstName,
-      //   lastName,
-      //   email,
-      //   role,
-      // });
-    }
 
-    // swalWithBootstrapButtons.fire(
-    //   mode === 'add' ? 'Added!' : 'Saved',
-    //   `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
-    //   'success'
-    // )
-    // Clear dialog state
-    this.setState(this.initializeUserInfoFields());
-    onClickCloseDialog();
+      // swalWithBootstrapButtons.fire(
+      //   mode === 'add' ? 'Added!' : 'Saved',
+      //   `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
+      //   'success'
+      // )
+      // Clear dialog state
+      this.setState(this.initializeUserInfoFields());
+      onClickCloseDialog();
+    }
   }
 
   onChangeTextField = (fieldKey, event) => {
     this.setState({ [fieldKey]: event.target.value });
+  }
+
+  onBlurTextField = (fieldKey, event) => {
+    this.setState({ error: { ...this.state.error, [fieldKey]: this.onValidate(fieldKey, event.target.value) } });
+  }
+
+  onValidate = (fieldKey, value) => {
+    switch (fieldKey) {
+      case 'firstName':
+        console.log(/^[a-zA-Z]*$/g.test(value) ? 'regex matched for' : 'regex did not match for', fieldKey);
+        return !/^[a-zA-Z]*$/g.test(value);
+      case 'lastName':
+        console.log(/^[a-zA-Z]*$/g.test(value) ? 'regex matched for' : 'regex did not match for', fieldKey);
+        return !/^[a-zA-Z]*$/g.test(value);
+      case 'email':
+        console.log(/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value) ? 'regex matched for' : 'regex did not match for', fieldKey);
+        return !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value);
+      case 'phone':
+        console.log(/^\d*$/g.test(value) ? 'regex matched for' : 'regex did not match for', fieldKey);
+        return !/^\d*$/g.test(value);
+      default:
+        return false;
+    }
   }
 
   onKeyPress = (event) => {
@@ -196,11 +232,14 @@ class UserDialog extends Component {
 
   renderInputComponent = (infoField) => {
     const { classes } = this.props;
-    const { key, title, type, selectOptions } = infoField;
+    const { error } = this.state;
+    const { key, title, type, helperText, selectOptions } = infoField;
     const isSelect = type === 'select';
 
     return (
       <TextField
+        autoFocus={key === 'firstName'}
+        error={error[key]}
         select={isSelect}
         value={this.state[key]}
         key={key}
@@ -209,6 +248,9 @@ class UserDialog extends Component {
         label={title}
         onChange={e => this.onChangeTextField(key, e)}
         onKeyPress={e => this.onKeyPress(e)}
+        // inputProps={inputProps}
+        onBlur={e => this.onBlurTextField(key, e)}
+        helperText={error[key] ? helperText : ''}
       >
         {
           isSelect
