@@ -310,7 +310,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 router.post('/event', notAuthMiddleware, async (req, res) => {
   try {
 
-    const { candidate, date, required, optional, room} = req.body;
+    const { candidate, date, required, optional, room } = req.body;
 
     const subject = "Interview with " + candidate.firstName + ' ' + candidate.lastName;
     const content = "Please confirm if you are available during this time."
@@ -322,7 +322,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       {
         type: "required",
         emailAddress: {
-          addreess: candidate.email
+          address: candidate.email
         }
       }
     ];
@@ -359,14 +359,8 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
           contentType: 'HTML',
           content: content,
         },
-        start: {
-          dateTime: date.startTime,
-          timeZone: timeZone,
-        },
-        end: {
-          dateTime: date.endTime,
-          timeZone: timeZone,
-        },
+        start: date.startTime,
+        end: date.endTime,
         location: {
           displayName: room.name,
           locationEmailAddress: room.email,
@@ -377,14 +371,14 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
 
     // insert the scheduled interview in the candidate table
     // startTime, endTime, RoomID
-    const sql = '';
-    const sqlcmd = connection.format(sql, []);
-  
-    connection.query(sqlcmd, async (err, result) => {
-      if (err) {
-        throw err;
-      }
-    });
+    // const sql = '';
+    // const sqlcmd = connection.format(sql, []);
+
+    // connection.query(sqlcmd, async (err, result) => {
+    //   if (err) {
+    //     throw err;
+    //   }
+    // });
 
     res.send(response.data);
   } catch (error) {
