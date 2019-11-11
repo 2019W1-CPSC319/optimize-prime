@@ -1,16 +1,13 @@
 import { combineReducers } from 'redux';
 import user from './AuthReducer';
-
-import candidates from './CandidateReducer';
 import directory from './DirectoryReducer';
-import rooms from './RoomReducer';
 import interviewers from './InterviewerReducer';
+import rooms from './RoomReducer';
 
 const RootReducer = combineReducers({
   user,
-  candidates,
-  interviewers,
   directory,
+  interviewers,
   rooms
 });
 

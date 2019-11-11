@@ -7,10 +7,6 @@ import {
   Tab,
   Tabs,
 } from '@material-ui/core';
-
-import { connect } from 'react-redux';
-import * as candidateSelectors from '../../selectors/CandidateSelectors';
-import * as interviewerSelectors from '../../selectors/InterviewerSelectors';
 import Swal from 'sweetalert2';
 import DirectoryTable from './subComponents/DirectoryTable';
 import UserDialog from './UserDialog';
@@ -73,11 +69,10 @@ class DirectoryPage extends Component {
     };
   }
 
-  async componentDidMount() {
-    // const { fetchInterviewers, fetchCandidates } = this.props.actions;
+  componentDidMount() {
     const { actions } = this.props;
-    await actions.fetchInterviewers();
-    await actions.getUsers();
+    actions.getUsers('candidate');
+    actions.getUsers('interviewer');
   }
 
   onClickUserAction = (mode, userId) => {
@@ -138,7 +133,9 @@ class DirectoryPage extends Component {
           onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
         />
       );
-    } else if (key === 'interviewer') {
+    }
+
+    else if (key === 'interviewer') {
       return (
         <DirectoryTable
           headers={EMPLOYEE_TABLE_HEADER}
@@ -150,37 +147,6 @@ class DirectoryPage extends Component {
 
     return null;
   }
-
-
-  /*
-  function Directory(props) {
-      const { label, rows } = props
-      return <Paper className={classes.directory}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>{label} Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map(row => (
-              <TableRow key={row.id}>
-                <TableCell component="th" scope="row">
-                  {row.firstName + " " + row.lastName}
-                </TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone}</TableCell>
-                <TableCell><Button variant="outlined" className={classes.delete}>Delete</Button></TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>;
-  }    
-  This came up in the merge but does not seem to be used*/
 
   render() {
     const { classes, actions } = this.props;
@@ -226,9 +192,4 @@ class DirectoryPage extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  candidates: candidateSelectors.getCandidates(state),
-  interviewers: interviewerSelectors.getInterviewers(state)
-})
-
-export default withStyles(styles)(connect(mapStateToProps)(DirectoryPage));
+export default withStyles(styles)(DirectoryPage);
