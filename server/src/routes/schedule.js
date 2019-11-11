@@ -304,8 +304,47 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
   });
 });
 
+
+// ************* Send out a meeting invite to the attendees and book the room for the duration of the interview **************************
+
 router.post('/event', notAuthMiddleware, async (req, res) => {
   try {
+
+    const { candidate, date, required, optional, room} = req.body;
+
+    const subject = "Interview with " + candidate.name;
+    const content = "Please confirm if you are available during this time."
+
+    // create candidate as an attendee
+    const candidateAttendee = [
+      {
+        type: "required",
+        emailAddress: {
+          addreess: candidate.email
+        }
+      }
+    ];
+
+    // required attendees
+    const requiredAttendees = required.map(interviewer => ({
+      type: "required",
+      emailAddress: {
+        address: interviewer.email
+      }
+    }));
+
+    // optional attendees
+    const optionalAttendees = optional.map(interviewer => ({
+      type: "optional",
+      emailAddress: {
+        address: interviewer.email
+      }
+    }));
+
+    // combine all the attendees aswell as the candidate
+    const interviewerAttendees = requiredAttendees.concat(optionalAttendees);
+    const attendees = interviewerAttendees.concat(candidateAttendee);
+
     const response = await axios({
       method: 'post',
       url: 'https://graph.microsoft.com/v1.0/me/events',
@@ -313,33 +352,38 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         Authorization: `Bearer ${req.user.accessToken}`,
       },
       data: {
-        subject: "Let's go for lunch",
+        subject: subject,
         body: {
           contentType: 'HTML',
-          content: 'Does late morning work for you?',
+          content: content,
         },
         start: {
-          dateTime: '2019-11-03T12:00:00',
+          dateTime: date.startTime,
           timeZone: 'Pacific Standard Time',
         },
         end: {
-          dateTime: '2019-11-03T14:00:00',
+          dateTime: date.endTime,
           timeZone: 'Pacific Standard Time',
         },
         location: {
-          displayName: "Harry's Bar",
+          displayName: room.name,
+          locationEmailAddress: room.email,
         },
-        attendees: [
-          {
-            emailAddress: {
-              address: 'candicepang@optimizeprime.onmicrosoft.com',
-              name: 'Candice Pang',
-            },
-            type: 'required',
-          },
-        ],
+        attendees: attendees
       },
     });
+
+    // insert the scheduled interview in the candidate table
+    // startTime, endTime, RoomID
+    const sql = '';
+    const sqlcmd = connection.format(sql, []);
+  
+    connection.query(sqlcmd, async (err, result) => {
+      if (err) {
+        throw err;
+      }
+    });
+
     res.send(response.data);
   } catch (error) {
     console.log(error);
