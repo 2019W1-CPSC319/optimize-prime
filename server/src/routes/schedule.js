@@ -370,16 +370,24 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
 
     // insert the scheduled interview in the candidate table
-    // startTime, endTime, RoomID
-    // const sql = '';
-    // const sqlcmd = connection.format(sql, []);
 
-    // connection.query(sqlcmd, async (err, result) => {
-    //   if (err) {
-    //     throw err;
-    //   }
-    // });
+    const sql = 'SELECT * FROM Rooms WHERE name = ?';
+    const sqlcmd = connection.format(sql, [room.name]);
 
+    connection.query(sqlcmd, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      // get roomId
+      const roomId = result[0].id;
+      const sql = 'UPDATE Candidate SET startTime = ? , endTime = ?, roomId = ?';
+      const sqlcmd = connection.format(sql, [date.startTime, date.endTime, roomId]);
+      connection.query(sqlcmd, (err, result) => {
+        if (err) {
+          throw err;
+        }
+      });
+    });
     res.send(response.data);
   } catch (error) {
     console.log(error);
