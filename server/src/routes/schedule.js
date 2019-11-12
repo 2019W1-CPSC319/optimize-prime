@@ -102,6 +102,31 @@ router.post('/newuser', (req, res) => {
   });
 });
 
+
+// edit the interviewer or candidate user information
+router.post('/edituser', (req, res) => {
+  const user = req.body;
+  const type = user.role;
+  let sql = '';
+  switch (type) {
+    case 'candidate':
+      sql = 'UPDATE Candidate SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
+      break;
+    case 'interviewer':
+      sql = 'UPDATE Interviewer SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
+      break;
+    default: return;
+  }
+  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, user.id]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
+
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/delete/:id', (req, res) => {
   const { id } = req.params;
