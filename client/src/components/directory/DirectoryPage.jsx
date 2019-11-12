@@ -178,7 +178,7 @@ class DirectoryPage extends Component {
               ))
             }
           </Tabs>
-          { this.renderDirectoryTable() }
+          {this.renderDirectoryTable()}
         </Paper>
         <UserDialog
           mode={mode}

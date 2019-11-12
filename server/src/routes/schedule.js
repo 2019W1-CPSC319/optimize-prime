@@ -1,8 +1,10 @@
 const router = require('express').Router();
+const uuidv1 = require('uuid/v1');
 const axios = require('axios');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
-const uuidv1 = require('uuid/v1');
+
+// ***************** ROOMS Endpoints *******************
 
 // get all rooms
 router.get('/rooms', (req, res) => {
@@ -62,14 +64,35 @@ router.get('/candidates', async (req, res) => {
   });
 });
 
-// get a specific candidate
-router.get('/candidate/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = 'SELECT * FROM Candidate WHERE id = ?';
-  const sqlcmd = connection.format(sql, [id]);
+/**
+ * Get a candidate's firstname, for the candidate availabilty page.
+ *
+ * This should be the only method that can be used without authentication.
+ */
+router.get('/candidate/name/:uuid', (req, res) => {
+  const { uuid } = req.params;
+  const sql = 'SELECT firstName FROM Candidate WHERE uuid = ?';
+  const sqlcmd = connection.format(sql, [uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      return res.status(500).send({ message: 'Internal server Error.' });
+    }
+    if (result.length === 0) {
+      return res.status(204).send({ message: 'No candidate' });
+    }
+    // Just send the UUID and the first name
+    return res.send([{ uuid, firstName: result[0].firstName }]);
+  });
+});
+
+// get a specific candidate
+router.get('/candidate/:uuid', notAuthMiddleware, (req, res) => {
+  const { uuid } = req.params;
+  const sql = 'SELECT * FROM Candidate WHERE uuid = ?';
+  const sqlcmd = connection.format(sql, [uuid]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      return res.status(500).send({ message: 'Internal server error.' });
     }
     res.send(result);
   });
@@ -123,8 +146,6 @@ router.post('/sendEmail', (req, res) => {
       throw err;
     }
 
-    console.log(result);
-
     const uuid = result[0].uuid;
 
     try {
@@ -155,7 +176,6 @@ router.post('/sendEmail', (req, res) => {
       });
       res.send(response.data);
     } catch (error) {
-      console.log(error);
       res.status(500).send({ message: 'Internal server Error.' });
     }
   });
@@ -163,6 +183,32 @@ router.post('/sendEmail', (req, res) => {
 
 // ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
+router.post('/availability', (req, res) => {
+  try {
+    const { availability, uuid } = req.body;
+    const sqlSelect = 'SELECT * FROM Candidate WHERE uuid = ?';
+    const sqlSelectcmd = connection.format(sqlSelect, [uuid]);
+    let candidateId;
+    connection.query(sqlSelectcmd, (err, result) => {
+      if (err) {
+        return res.status(500).send({ message: 'Internal Server error' });
+      }
+      candidateId = result[0].id;
+
+      const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES ?';
+      const values = [availability.map((time) => [candidateId, time.startTime, time.endTime])];
+      const sqlcmd = connection.format(sql, values);
+      connection.query(sqlcmd, (err, result) => {
+        if (err) {
+          return res.status(500).send({ message: 'Internal Server error' });
+        }
+        res.send(result);
+      });
+    });
+  } catch (error) {
+    res.status(error.statusCode).send({ message: error.message });
+  }
+});
 
 // ***************** INTERVIEWERS Endpoints *****************************
 
@@ -290,7 +336,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
                   start: meeting.meetingTimeSlot.start,
                   end: meeting.meetingTimeSlot.end,
                   room,
-                  interviewers: meeting.attendeeAvailability,
+                  interviewers: meeting.attendeeAvailability.filter(attendee => attendee.availability === "free"),
                 });
               }
             }
@@ -303,7 +349,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
     }
   });
 });
-
 
 // ************* Send out a meeting invite to the attendees and book the room for the duration of the interview **************************
 

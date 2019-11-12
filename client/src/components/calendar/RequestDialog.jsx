@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { Autocomplete } from '@material-ui/lab';
 import PersonIcon from '@material-ui/icons/Person';
 import {
   Avatar,
@@ -26,7 +27,7 @@ import {
 
 const styles = theme => ({
   duration: {
-    padding: '5px 30px',
+    padding: '15px 30px',
     borderColor: '#765ea8',
   },
   chip: {
@@ -51,43 +52,13 @@ const styles = theme => ({
   }
 });
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
 class RequestDialog extends Component {
   constructor(props) {
     super(props);
   }
 
-  Autosuggest = () => {
-    return (
-      <Paper style={{ padding: '0' }} square>
-        <List style={{ padding: '0' }} dense>
-          {this.props.candidates.map((candidate, i) => {
-            const input = this.props.candidate.toLowerCase();
-            return (
-              input !== ''
-              && candidate.email.toLowerCase().includes(input)
-              && candidate.email.toLowerCase() !== input
-              && <ListItem key={i}><Button value={candidate.email} onClick={this.props.updateCandidateAutosuggested}>{candidate.email}</Button></ListItem>
-            )
-          })}
-        </List>
-      </Paper>
-    );
-  }
-
   render() {
-    const { classes } = this.props;
-    const Autosuggest = this.Autosuggest;
+    const { classes, candidates } = this.props;
     return (
       <Dialog open={this.props.reqOpen} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
@@ -95,88 +66,51 @@ class RequestDialog extends Component {
           <DialogContentText>
             To schedule a new interview, provide a candidate and a list of interviewers to request a list of options.
           </DialogContentText>
-          <TextField
+          <Autocomplete
             autoFocus
-            margin="dense"
-            id="candidate"
-            label="Candidate"
-            type="email"
-            autoComplete="off"
-            value={this.props.candidate}
-            variant="outlined"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <PersonIcon />
-                </InputAdornment>
-              ),
-            }}
+            options={candidates}
+            getOptionLabel={candidate => candidate.email}
+            style={{ width: 300 }}
+            renderInput={params => (
+              <TextField {...params} label="Candidate" variant="outlined" fullWidth />
+            )}
+            style={{ width: '100%' }}
+            autoComplete={false}
+            // value={this.props.candidate}
             onChange={this.props.updateCandidate}
-            fullWidth
           />
-          <Autosuggest />
-          <FormControl
-            fullWidth
-            variant="outlined">
-            <InputLabel
-              htmlFor="select-multiple-chip"
-              className={classes.inputlabel}>
-              Required Interviewer(s)</InputLabel>
-            <Select
-              multiple
-              value={this.props.required}
-              onChange={this.props.updateRequiredInterviewers}
-              input={<Input id="select-multiple-chip" disableUnderline={true} />}
-              renderValue={selected => (
-                <div className={classes.chips}>
-                  {selected.map(value => (
-                    <Chip
-                      key={value.email}
-                      label={value.email}
-                      className={classes.chip}
-                      avatar={<Avatar className={classes.avatar}>{value.email.charAt(0).toUpperCase()}</Avatar>} />
-                  ))}
-                </div>
-              )}
-              MenuProps={MenuProps}
-              className={classes.select}
-            >
-              {this.props.interviewers && this.props.interviewers.map(employee => (
-                <MenuItem key={employee.email} value={employee}>{employee.email}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl
-            fullWidth
-            variant="outlined">
-            <InputLabel
-              htmlFor="select-multiple-chip"
-              className={classes.inputlabel}>
-              Optional Interviewer(s)</InputLabel>
-            <Select
-              multiple
-              value={this.props.optional}
-              onChange={this.props.updateOptionalInterviewers}
-              input={<Input id="select-multiple-chip" disableUnderline={true} />}
-              renderValue={selected => (
-                <div className={classes.chips}>
-                  {selected.map(value => (
-                    <Chip
-                      key={value.email}
-                      label={value.email}
-                      className={classes.chip}
-                      avatar={<Avatar className={classes.avatar}>{value.email.charAt(0).toUpperCase()}</Avatar>} />
-                  ))}
-                </div>
-              )}
-              MenuProps={MenuProps}
-              className={classes.select}
-            >
-              {this.props.interviewers && this.props.interviewers.map(employee => (
-                <MenuItem key={employee.email} value={employee}>{employee.email}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            multiple
+            options={this.props.interviewers}
+            getOptionLabel={option => option.email}
+            filterSelectedOptions
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Required interviewer(s)"
+                margin="normal"
+                fullWidth
+              />
+            )}
+            onChange={this.props.updateRequiredInterviewers}
+          />
+          <Autocomplete
+            multiple
+            options={this.props.interviewers}
+            getOptionLabel={option => option.email}
+            filterSelectedOptions
+            renderInput={params => (
+              <TextField
+                {...params}
+                variant="outlined"
+                label="Optional interviewer(s)"
+                margin="normal"
+                fullWidth
+              />
+            )}
+            onChange={this.props.updateOptionalInterviewers}
+          />
           <ButtonGroup fullWidth size="small" aria-label="small outlined button group" className={classes.buttonGroup}>
             {this.props.durations.map(
               (duration, i) => {

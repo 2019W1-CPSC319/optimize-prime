@@ -5,7 +5,6 @@ function updateLoadingState(type) {
     type,
   };
 }
-
 function initRequest() {
   return {
     type: 'INIT_REQUEST',
