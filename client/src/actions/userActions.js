@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-=======
 function updateLoadingState(type) {
   return {
     type,
