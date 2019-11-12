@@ -1,5 +1,10 @@
 import axios from 'axios';
 
+function updateLoadingState(type) {
+  return {
+    type,
+  };
+}
 function initRequest() {
   return {
     type: 'INIT_REQUEST',
@@ -107,6 +112,7 @@ const createEventFailure = (error) => (
 export const createEvent = (selectedSuggestion, candidate, required, optional) => async (dispatch) => {
   const body = {
     candidate: {
+      id: candidate.id,
       firstName: candidate.firstName,
       lastName: candidate.lastName,
       email: candidate.email,
@@ -128,5 +134,32 @@ export const createEvent = (selectedSuggestion, candidate, required, optional) =
     return dispatch(createEventSuccess());
   } catch (error) {
     return dispatch(createEventFailure(error));
+  }
+};
+
+const getInterviewsSuccess = (interviews) => (
+  {
+    type: 'GET_INTERVIEWS_SUCCESS',
+    payload: interviews
+  }
+);
+
+const getInterviewsFailure = (error) => (
+  {
+    type: 'GET_INTERVIEWS_FAILURE',
+    payload: error,
+  }
+);
+
+export const getInterviews = () => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.get('/schedule/interviews');
+    const interviews = response.data;
+    debugger;
+    return dispatch(getInterviewsSuccess(interviews));
+  } catch (error) {
+    console.log(error);
+    return dispatch(getInterviewsFailure(error));
   }
 };
