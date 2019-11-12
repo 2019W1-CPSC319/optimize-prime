@@ -1,5 +1,6 @@
 import React from 'react';
-import moment from 'moment';
+import Moment from 'react-moment';
+import 'moment-timezone';
 import { withStyles } from '@material-ui/core/styles';
 import Swal from 'sweetalert2';
 import RequestDialog from './RequestDialog';
@@ -178,13 +179,15 @@ class CalendarPage extends React.Component {
     )
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     const { actions } = this.props;
-    await actions.getUsers('candidate');
-    await actions.getUsers('interviewer');
+    actions.getUsers('candidate');
+    actions.getUsers('interviewer');
+    actions.getInterviews();
   }
 
   render() {
+    const { interviews } = this.props;
     return (
       <div>
         <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Calendar</h1>
@@ -192,21 +195,23 @@ class CalendarPage extends React.Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell scope="col">Organizer</TableCell>
-                <TableCell scope="col">Subject</TableCell>
-                <TableCell scope="col">Start</TableCell>
-                <TableCell scope="col">End</TableCell>
+                <TableCell scope="col" align="center">Candidate Name</TableCell>
+                <TableCell scope="col" align="center">Location</TableCell>
+                <TableCell scope="col" align="center">Capacity</TableCell>
+                <TableCell scope="col" align="center">Start</TableCell>
+                <TableCell scope="col" align="center">End</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.state.events.map(
-                function (event) {
+              {interviews && interviews.map(
+                interview => {
                   return (
-                    <TableRow key={event.id}>
-                      <TableCell>{event.organizer.emailAddress.name}</TableCell>
-                      <TableCell>{event.subject}</TableCell>
-                      <TableCell>{formatDateTime(event.start.dateTime)}</TableCell>
-                      <TableCell>{formatDateTime(event.end.dateTime)}</TableCell>
+                    <TableRow key={interview.id}>
+                      <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
+                      <TableCell align="center">{interview.name}</TableCell>
+                      <TableCell align="center">{interview.seats}</TableCell>
+                      <TableCell align="center"><Moment subtract={{ hours: 8 }} format='ll h:mm a' tz='America/Los_Angeles'>{interview.startTime}</Moment></TableCell>
+                      <TableCell align="center"><Moment subtract={{ hours: 8 }} format='ll h:mm a' tz='America/Los_Angeles'>{interview.endTime}</Moment></TableCell>
                     </TableRow>
                   );
                 })}

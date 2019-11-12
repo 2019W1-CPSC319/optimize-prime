@@ -388,9 +388,16 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       }
     }));
 
+    const roomAttendee = {
+      type: "required",
+      emailAddress: {
+        address: room.email
+      }
+    };
+
     // combine all the attendees aswell as the candidate
     const interviewerAttendees = requiredAttendees.concat(optionalAttendees);
-    const attendees = interviewerAttendees.concat(candidateAttendee);
+    const attendees = interviewerAttendees.concat(candidateAttendee).concat(roomAttendee);
 
     const response = await axios({
       method: 'post',
@@ -415,16 +422,24 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
 
     // insert the scheduled interview in the candidate table
-    // startTime, endTime, RoomID
-    // const sql = '';
-    // const sqlcmd = connection.format(sql, []);
 
-    // connection.query(sqlcmd, async (err, result) => {
-    //   if (err) {
-    //     throw err;
-    //   }
-    // });
+    const sql = 'SELECT * FROM Rooms WHERE name = ?';
+    const sqlcmd = connection.format(sql, [room.name]);
 
+    connection.query(sqlcmd, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      // get roomId
+      const roomId = result[0].id;
+      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)'
+      const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
+      connection.query(sqlcmd, (err, result) => {
+        if (err) {
+          throw err;
+        }
+      });
+    });
     res.send(response.data);
   } catch (error) {
     console.log(error);
@@ -442,6 +457,20 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
     }
   });
   res.send(response.data && response.data.value);
+});
+
+// **************************** Get all scheduled interviews ************************************ //
+
+router.get('/interviews', notAuthMiddleware,  (req, res) => {
+  const currDate = new Date();
+  const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
+  const sqlcmd = connection.format(sql, [currDate]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
 });
 
 module.exports = router;
