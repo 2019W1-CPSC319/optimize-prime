@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import * as user from '../../selectors/AuthSelector';
-import * as userActions from '../../actions/userActions';
 
 const styles = {
   title: {
@@ -16,19 +15,7 @@ const styles = {
 class OverviewPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-
-    };
-  }
-
-  handleChange = (e) => {
-    this.setState({
-    [e.target.id]: e.target.value
-    })
-  }
-
-  sendEmail = () => {
-    this.props.sendEmail(this.state.subject, this.state.body);
+    this.state = {};
   }
 
   render() {
@@ -37,11 +24,6 @@ class OverviewPage extends Component {
       <div>
         <div className={clsx(classes.header, classes.flex)}>
           {userProfile && <h1 className={classes.title}>Welcome, {userProfile.givenName}</h1>}
-        </div>
-        <div>
-          <input type='input' id="subject" onChange={(e) => this.handleChange(e)} value={this.state.subjec} placeholder="Email Subject" />
-          <input type='input' id="body" onChange={(e) => this.handleChange(e)} value={this.state.subjec} placeholder="Email body"/>
-          <button onClick={this.sendEmail}>Send email</button>
         </div>
       </div>
     );
@@ -54,8 +36,4 @@ const mapStateToProps = (state) => ({
   hasTriedLogin: user.hasTriedLogin(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  sendEmail: (subject, body) => dispatch(userActions.sendEmail(subject, body))
-})
-
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(OverviewPage));
+export default withStyles(styles)(connect(mapStateToProps)(OverviewPage));
