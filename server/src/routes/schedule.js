@@ -104,7 +104,7 @@ router.post('/newuser', (req, res) => {
 
 
 // edit the interviewer or candidate user information
-router.post('/edituser', (req, res) => {
+router.put('/edituser', (req, res) => {
   const user = req.body;
   const type = user.role;
   let sql = '';
