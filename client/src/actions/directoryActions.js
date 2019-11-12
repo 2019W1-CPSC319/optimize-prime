@@ -28,7 +28,6 @@ export const addUser = (role, user) => async (dispatch) => {
     const addedUser = response.data;
     return dispatch(addUserSuccess(`${role}s`, addedUser));
   } catch (error) {
-    console.log(error);
     return dispatch(addUserFailure(error));
   }
 };
@@ -55,7 +54,6 @@ export const getUsers = (role) => async (dispatch) => {
     const users = response.data;
     return dispatch(getUsersSuccess(`${role}s`, users));
   } catch (error) {
-    console.log(error);
     return dispatch(getUsersFailure(error));
   }
 };
@@ -79,10 +77,27 @@ export const deleteUser = (role, userId) => async (dispatch) => {
   try {
     dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.put(`/schedule/${role}/delete/${userId}`);
-    // const addedUser = response.data;
     return dispatch(deleteUserSuccess(`${role}s`, userId));
   } catch (error) {
-    console.log(error);
     return dispatch(deleteUserFailure(error));
+  }
+};
+
+const sendAvailabilitySuccess = (data = {}) => ({
+  type: 'SEND_AVAILABILITY_SUCCESS',
+  payload: data
+});
+
+const sendAvailabilityFailure = (message) => ({
+  type: 'SEND_AVIALABILITY_FAILURE',
+  payload: message,
+});
+
+export const sendAvailability = (availability, uuid) => async (dispatch) => {
+  try {
+    const response = await axios.post('/schedule/availability', { availability, uuid });
+    return dispatch(sendAvailabilitySuccess(response.data));
+  } catch (error) {
+    return dispatch(sendAvailabilityFailure(error.response.data.message));
   }
 };

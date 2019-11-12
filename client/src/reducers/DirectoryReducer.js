@@ -25,6 +25,12 @@ const DirectoryReducer = (state = initialState, action) => {
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = newState[action.role].filter((user) => user.id !== action.userId);
       return newState;
+    case 'SEND_AVAILABILITY_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+        success: true,
+      };
     default:
       return state;
   }

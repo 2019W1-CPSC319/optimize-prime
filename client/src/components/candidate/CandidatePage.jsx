@@ -1,10 +1,17 @@
 import React, { Component } from 'react';
-
 import { withStyles } from '@material-ui/core/styles';
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import AvailabilityTable from "./AvailabilityTable.jsx"
 
 import logo_long from '../../images/galvanize_long.png';
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: true,
+});
 
 const styles = {
   wrapper: {
@@ -41,13 +48,37 @@ class AddAvailability extends Component {
     super(props);
     this.state = {
       name: 'John Doe',
+      success: false
     };
   }
 
-  render() {
-    const { classes } = this.props;
-    const { name } = this.state;
+  componentDidMount() {
+    const { actions } = this.props;
+    debugger;
+    actions.getUsers('candidate');
+  }
 
+  handleSubmit = async (times) => {
+    // Add on the candidate name to the times
+    const { actions } = this.props;
+
+    const availability = times.map(time => ({
+      startTime: time.start.toISOString().slice(0, 19).replace('T', ' '),
+      endTime: time.end.toISOString().slice(0, 19).replace('T', ' ')
+    }))
+
+    await actions.sendAvailability(availability, this.props.uuid);
+    swalWithBootstrapButtons.fire(
+      'Successfully submitted!',
+      'We\'ll get back to you with an interview invitation in the next few days.',
+      'success',
+    ).then(result => {
+      window.location.reload();
+    });
+  }
+
+  render() {
+    const { classes, candidates, uuid } = this.props;
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" className={classes.title}>
@@ -56,7 +87,7 @@ class AddAvailability extends Component {
         <div className={classes.container}>
           <img className={classes.bigLogo} src={logo_long} alt="Galvanize Logo" />
           <div className={classes.subText}>
-            <Typography>{`Hi ${name}, `}</Typography>
+            <Typography>{`Hi ${candidates.find(candidate => candidate.uuid === uuid) ? candidates.find(candidate => candidate.uuid === uuid).firstName : 'John Doe'}, `}</Typography>
             <Typography>
               Please add your availability to come in for an on-site interview at our <b>Vancouver</b> office below.
             </Typography>
@@ -64,7 +95,7 @@ class AddAvailability extends Component {
               Start off by adding when you'll be free in the next month and we'll get back to you if we need any more info.
             </Typography>
           </div>
-          <AvailabilityTable />
+          <AvailabilityTable submitHandler={this.handleSubmit} />
         </div>
       </div>
     );

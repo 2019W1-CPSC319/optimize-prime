@@ -1,10 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
-// import config from '../../Config';
 import Swal from 'sweetalert2';
-import axios from 'axios';
-// import { getEvents } from '../../GraphService';
 import RequestDialog from './RequestDialog';
 import OptionsDialog from './OptionsDialog';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -38,23 +35,27 @@ const swalWithBootstrapButtons = Swal.mixin({
 
 const styles = theme => ({});
 
+const initialState = {
+  reqOpen: false,
+  optOpen: false,
+  required: [],
+  optional: [],
+  candidate: { email: '' }
+}
+
 class CalendarPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      ...initialState,
       events: [],
-      optOpen: false,
-      reqOpen: false,
       onSuccess: false,
       onSlide: false,
-      required: [],
-      optional: [],
       selected: 0,
       selectedOption: 0,
       background: ['#280e3a', '#fff', '#fff', '#fff'],
       color: ['#fff', '#000', '#000', '#000'],
-      candidate: '',
       durations: [
         { minutes: 30 },
         { minutes: 60 },
@@ -88,16 +89,11 @@ class CalendarPage extends React.Component {
       'Your progress has not been saved!',
       'error'
     )
-    this.setState({ reqOpen: false });
-    this.setState({ optOpen: false });
-    this.setState({ required: [] });
-    this.setState({ optional: [] });
-    this.setState({ candidate: '' });
+    this.setState({ ...initialState });
   }
 
-  updateCandidate = (event) => {
-    // console.log(event.target.value)
-    this.setState({ candidate: event.target.value });
+  updateCandidate = (event, candidate) => {
+    this.setState({ candidate });
   }
 
   updateCandidateAutosuggested = (event) => {
@@ -105,21 +101,19 @@ class CalendarPage extends React.Component {
     this.setState({ candidate: event.target.textContent });
   }
 
-  updateRequiredInterviewers = (event) => {
-    // console.log(event.target.value)
-    this.setState({ required: event.target.value });
+  updateRequiredInterviewers = (event, value) => {
+    this.setState({ required: value });
   }
 
-  updateOptionalInterviewers = (event) => {
-    // console.log(event.target.value)
-    this.setState({ optional: event.target.value });
+  updateOptionalInterviewers = (event, value) => {
+    this.setState({ optional: value });
   }
 
   handleNext = async () => {
     const { actions } = this.props;
     try {
       await actions.findMeetingTimes({
-        candidate: this.state.candidate,
+        candidate: this.state.candidate.email,
         required: this.state.required,
         optional: this.state.optional,
         meetingDuration: this.getInterviewDuration(),
@@ -132,10 +126,10 @@ class CalendarPage extends React.Component {
   }
 
   handleSave = () => {
-    const { selectedOption, candidate: candidateEmail, required, optional } = this.state;
+    const { selectedOption, candidate: selectedCandidate, required, optional } = this.state;
     const { meetingSuggestions, actions, candidates } = this.props;
     const selectedSuggestion = meetingSuggestions.data[selectedOption];
-    const candidateUser = candidates.find(candidate => candidate.email === candidateEmail);
+    const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
     actions.createEvent(selectedSuggestion, candidateUser, required, optional);
 
     swalWithBootstrapButtons.fire(
@@ -145,12 +139,7 @@ class CalendarPage extends React.Component {
     );
 
     // Clear state of dialog
-    this.setState({ reqOpen: false });
-    this.setState({ optOpen: false });
-    this.setState({ onSuccess: true });
-    this.setState({ required: [] });
-    this.setState({ optional: [] });
-    this.setState({ candidate: '' });
+    this.setState({ ...initialState, onSuccess: true });
   }
 
   handleSelectInterviewDuration = (i) => {
@@ -158,7 +147,7 @@ class CalendarPage extends React.Component {
   }
 
   handleSelectOption = (i) => {
-    console.log(i)
+    // console.log(i)
     this.setState({ selectedOption: i });
   }
 
