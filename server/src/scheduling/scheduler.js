@@ -18,7 +18,7 @@ class Interview {
 
 async function findTimes(interviews, candidateEmail, token) {
     // TODO
-    token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IlBKREh3QVUxcUIycUVjNnVyWTJ3SlJuUm9lclZVc29ERjNsN1JRVDBIYmsiLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC84Nzk2NTM5Ny04NTRhLTQzNjYtYjQ2MS1iNWQyODExZTU5ZGQvIiwiaWF0IjoxNTczNjg3MzE5LCJuYmYiOjE1NzM2ODczMTksImV4cCI6MTU3MzY5MTIxOSwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IjQyVmdZTkF2WjJ3VEtjOTU4K0JZK3Zrd0RUbUx2S25sci9RT3NoOTMzcjFubVozQisyMEEiLCJhbXIiOlsicHdkIl0sImFwcF9kaXNwbGF5bmFtZSI6IkdhbHZhbml6ZSIsImFwcGlkIjoiMDk3MDY5MGQtOWM3ZS00Y2NmLThlNWMtMjk3NmYzY2RiYjUxIiwiYXBwaWRhY3IiOiIxIiwiZmFtaWx5X25hbWUiOiJIZW5hZ2hhbiIsImdpdmVuX25hbWUiOiJCZW4iLCJpcGFkZHIiOiIyMDYuODcuMjM5LjE3MiIsIm5hbWUiOiJCZW4gSGVuYWdoYW4iLCJvaWQiOiJhOWYyMzdjYi00NGQ4LTQ4NjUtODQzOC01ZWQ3MzE5NzdiZmEiLCJwbGF0ZiI6IjMiLCJwdWlkIjoiMTAwMzIwMDA4MTNEMUE0OSIsInNjcCI6IkNhbGVuZGFycy5SZWFkIENhbGVuZGFycy5SZWFkLlNoYXJlZCBDYWxlbmRhcnMuUmVhZFdyaXRlIENhbGVuZGFycy5SZWFkV3JpdGUuU2hhcmVkIE1haWwuU2VuZCBvcGVuaWQgcHJvZmlsZSBVc2VyLlJlYWQgVXNlci5SZWFkLkFsbCBlbWFpbCIsInN1YiI6IlRYcmR2c0IzNWR4Zy14ci1xeG5fdFV1S0V0Y2gyVTVUWUtTdkgyenlZeUkiLCJ0aWQiOiI4Nzk2NTM5Ny04NTRhLTQzNjYtYjQ2MS1iNWQyODExZTU5ZGQiLCJ1bmlxdWVfbmFtZSI6ImJlbmhlbmFnaGFuQG9wdGltaXplcHJpbWUub25taWNyb3NvZnQuY29tIiwidXBuIjoiYmVuaGVuYWdoYW5Ab3B0aW1pemVwcmltZS5vbm1pY3Jvc29mdC5jb20iLCJ1dGkiOiJZVGx1UTJyUm1VU1hfbWoxTUtnMEFRIiwidmVyIjoiMS4wIiwid2lkcyI6WyI2MmU5MDM5NC02OWY1LTQyMzctOTE5MC0wMTIxNzcxNDVlMTAiXSwieG1zX3N0Ijp7InN1YiI6Im16RS1jLTAyOUZsTEtGaXZlZWcwZ3NGYlMxMDdtTHN4T05mMy1HV18teUEifSwieG1zX3RjZHQiOjE1NzIzODE3ODR9.fOXv5ypuno-8UkJ4gZOUd-4gwHoVil2X1PPFhZxrnQx84uDRYZREcbziuuzNP_TDzCFfdTQAlT6_GJC7KmqYfRosJBXuFInsT2BprFTgoDYAxfsXpJlpSL63lGOIhWMkf7BBFPJJaZfj74AAtafpNdv3a3AVl8twj2BDRdco3XWCbSwtnghchuP-vn8Idhew3XEPIJ7YaaxihfQKIGiUj13oo5SGuUbVZU3jZJEQr4AgL4sdWu3VKIIQZh0Z0FrmbY9NdiTvs6_XBZRVuWxmNFqojrC7TkYjoXG-hH1eZtPMOyIdg5Fs2bdiUXDJMWJzMrQRBJeGsVbVj7MTKJBpUw"
+    token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6IkY5bmJNVDFFeE83Tkp0NE1kczUyX21US2pJTVhMb19BNl9XNXZhQ2xTWmciLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC84Nzk2NTM5Ny04NTRhLTQzNjYtYjQ2MS1iNWQyODExZTU5ZGQvIiwiaWF0IjoxNTczNzY1MDA1LCJuYmYiOjE1NzM3NjUwMDUsImV4cCI6MTU3Mzc2ODkwNSwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFTUUEyLzhOQUFBQWh2c1pVS01UZUtGM01OdVBkc3dIcTY2RnIwN1pzS2lLejIyYlArM2p3ZVE9IiwiYW1yIjpbInB3ZCJdLCJhcHBfZGlzcGxheW5hbWUiOiJHYWx2YW5pemUiLCJhcHBpZCI6IjA5NzA2OTBkLTljN2UtNGNjZi04ZTVjLTI5NzZmM2NkYmI1MSIsImFwcGlkYWNyIjoiMSIsImZhbWlseV9uYW1lIjoiSGVuYWdoYW4iLCJnaXZlbl9uYW1lIjoiQmVuIiwiaXBhZGRyIjoiMjA2Ljg3LjIzMi4xMTgiLCJuYW1lIjoiQmVuIEhlbmFnaGFuIiwib2lkIjoiYTlmMjM3Y2ItNDRkOC00ODY1LTg0MzgtNWVkNzMxOTc3YmZhIiwicGxhdGYiOiI1IiwicHVpZCI6IjEwMDMyMDAwODEzRDFBNDkiLCJzY3AiOiJDYWxlbmRhcnMuUmVhZCBDYWxlbmRhcnMuUmVhZC5TaGFyZWQgQ2FsZW5kYXJzLlJlYWRXcml0ZSBDYWxlbmRhcnMuUmVhZFdyaXRlLlNoYXJlZCBNYWlsLlNlbmQgb3BlbmlkIHByb2ZpbGUgVXNlci5SZWFkIFVzZXIuUmVhZC5BbGwgZW1haWwiLCJzdWIiOiJUWHJkdnNCMzVkeGcteHItcXhuX3RVdUtFdGNoMlU1VFlLU3ZIMnp5WXlJIiwidGlkIjoiODc5NjUzOTctODU0YS00MzY2LWI0NjEtYjVkMjgxMWU1OWRkIiwidW5pcXVlX25hbWUiOiJiZW5oZW5hZ2hhbkBvcHRpbWl6ZXByaW1lLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImJlbmhlbmFnaGFuQG9wdGltaXplcHJpbWUub25taWNyb3NvZnQuY29tIiwidXRpIjoiY0FBc1RtRmtHMFdTaTRlTEEwY0hBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiNjJlOTAzOTQtNjlmNS00MjM3LTkxOTAtMDEyMTc3MTQ1ZTEwIl0sInhtc19zdCI6eyJzdWIiOiJtekUtYy0wMjlGbExLRml2ZWVnMGdzRmJTMTA3bUxzeE9OZjMtR1dfLXlBIn0sInhtc190Y2R0IjoxNTcyMzgxNzg0fQ.E1fnbGHmkD7yFz598gKWiJk_LFiCJqZ1FvYzByUEvKoBMygWbxJL1OnULP-VE7vDSDz4LY5enH7KJ-dMATCvjYAWkDkTs9fQoiAySOGHezzN-YuXx0emeheoQoAqbcI5eelsobnLY6pWIgZEOltaSDHl6RBBCJqAj84D5ZCuHJFmIBor4gvMKODNw1UQUN5jJdKex6YOfnkdiOZ5cLIUY-skOy_FUxTIPQyE0-Q_y5vdwhEFim-DxbGvPsTRaBmmYdr1UmF7eVJEwV9yZJjFeL0blAI9N2joq_9aVGrxl7Zs36_lvylKHKI8xo04-3mmmDBkQi_V-o8RY_z_DXXfrw"
 
     let rawAvail = await getAvailability(candidateEmail);
 
@@ -30,7 +30,7 @@ async function findTimes(interviews, candidateEmail, token) {
             end: moment(element.endTime)
         })
     });
-    console.log(availability)
+    //console.log(availability)
 
     /**
      * ** ASSUMPTION **
@@ -48,6 +48,8 @@ async function findTimes(interviews, candidateEmail, token) {
     console.log("Total interview time = " + String(totalTime));
     console.log("All required interviewers = " + String(allRequired));
 
+    let optimalSchedules = [];
+
     for (block = 0; block < availability.length; block++) {
         let start = availability[block].start, end = availability[block].end;
 
@@ -61,14 +63,15 @@ async function findTimes(interviews, candidateEmail, token) {
         // Get Availabilities of all interviewers for this block
         let avails = await getInterviewerAvailability(allRequired, start, end, token);
         console.log(avails);
-        arrangeInterviews(interviews, avails);
-
+        let schedules = arrangeInterviews(interviews, avails);
+        optimalSchedules = optimalSchedules.concat(schedules)
     }
+    console.log(optimalSchedules);
 }
 
 function availStringToBoolArray(availabilityString) {
     let boolArray = []
-    for (i = 0; i < availabilityString.length; i++) {
+    for (let i = 0; i < availabilityString.length; i++) {
         boolArray.push(availabilityString.charAt(i) == '0' ? true : false)
     }
     return boolArray;
@@ -95,7 +98,6 @@ async function getAvailability(email) {
 }
 
 async function getInterviewerAvailability(emails, from, to, token) {
-    //todo
   try {
     const response = await axios({
       url: 'https://graph.microsoft.com/v1.0/me/calendar/getschedule',
@@ -128,19 +130,89 @@ async function getInterviewerAvailability(emails, from, to, token) {
   }
 }
 
-function findAvailable(availability, duration, backwards=false) {
-    let durationLength = duration / TIME_INTERVAL;
-    for (interval = 0; interval < availability.length; interval++) {
-        // if (availability.charAt())
-    }
-}
+function fitInterview(currentSolution, availability, interview, interviewId, backwards=false) {
+    let durationLength = interview.duration / TIME_INTERVAL;
+    let interval = 0;
+    // console.log(currentSolution);
+    // console.log(j)
+    while (interval < currentSolution.length - durationLength) {
+        // Make sure the slot is free
+        if (currentSolution[interval] != -1) {
+            interval++;
+            continue;
+        }
+        let fitsAll = true;
+        for (let i = interval; i < interval + durationLength; i++) {
+            if (currentSolution[interval] != -1) {
+                interval = i + 1;
+                break;
+            }
+            let fits = true;
+            // console.log(interview.required)
+            interview.required.forEach((interviewer) => {
+                fits = fits && availability.get(interviewer)[i];
+                // if (!fits) {
+                //     break;
+                // }
+            })
+            fitsAll = fits;
+            if (!fitsAll) {
+                interval = i + 1;
+                break;
+            }
+        }
 
-function getWastedTime(sequence) {
-    
+        // The interview fits in this spot
+        if (fitsAll) {
+            //console.log(interviewId);
+            solution = currentSolution.fill(interviewId, interval, interval + durationLength);
+            return solution
+        }
+    }
+    return null;
 }
 
 /**
- * To say this is unoptimized is an understatement
+ * 
+ * @param {[number]} sequence 
+ */
+function getTotalTime(sequence) {
+    let start = 0, end = sequence.length;
+
+    for (let i = 0; i < sequence.length; i++) {
+        if (sequence[i] != -1) {
+            start = i;
+            break;
+        }
+    }
+    for (let i = sequence.length - 1; i > 0; i--) {
+        if (sequence[i] != -1) {
+            end = i;
+            break;
+        }
+    }
+
+    return (end - start) * TIME_INTERVAL;
+}
+
+function getPermutations(indexes) {
+    let perms = [];
+  
+    for (let i = 0; i < indexes.length; i = i + 1) {
+      let rest = getPermutations(indexes.slice(0, i).concat(indexes.slice(i + 1)));
+  
+      if(!rest.length) {
+        perms.push([indexes[i]])
+      } else {
+        for(let j = 0; j < rest.length; j = j + 1) {
+          perms.push([indexes[i]].concat(rest[j]))
+        }
+      }
+    }
+    return perms;
+  }
+
+/**
  * @param {[Interview...]} interviews 
  * @param {[boolean...]} availability 
  * @returns {[number]} sequence of interviews where -1 indicates no interview,
@@ -148,13 +220,45 @@ function getWastedTime(sequence) {
  */
 function arrangeInterviews(interviews, availability) {
     let n = interviews.length;
-    let solution = new Array(availability[0].length).fill(-1);
-
-    for (i = 0; i < n; i++) {
-
-    }
+    let time = availability.values().next().value.length;
+    let permutations = (getPermutations([...Array(n).keys()]))
+    console.log(permutations)
+    console.log(permutations.length);
+    console.log("time = " + String(time))
     
-    return solution;
+    let bestTime = Number.MAX_VALUE;
+    let solutions = [];
+    for (let permIndex = 0; permIndex < permutations.length; permIndex++) {
+        let solution = new Array(time).fill(-1);
+        let perm = permutations[permIndex]
+        console.log(permutations.length)
+        console.log("Permutation " + String(permIndex) + " : " + String(perm));
+
+        //Fit each interview
+        for (let j = 0; j < n; j++) {
+            solution = fitInterview(solution, availability, interviews[perm[j]], perm[j]);
+            // Break if we couldn't fit that interview
+            if (solution == null) {
+                console.log("no fit");
+                break;
+            }
+        }
+        console.log(solution)
+        if (solution == null) {
+            console.log("null")
+            continue;
+        }
+        let totalTime = getTotalTime(solution);
+        console.log("totalTime = " + String(totalTime));
+        if (totalTime <= bestTime) {
+            console.log("new best");
+            bestTime = totalTime;
+            solutions.push(solution);
+        }
+    }
+    console.log("Final solutions:");
+    console.log(solutions);
+    return solutions;
 }
 
 module.exports.findTimes = findTimes;
