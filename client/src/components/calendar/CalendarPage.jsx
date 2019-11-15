@@ -26,6 +26,10 @@ function formatDateTime(dateTime) {
   return moment.utc(dateTime).local().format('M/D/YY h:mm A');
 }
 
+export const FIELD_DURATION = 1;
+export const FIELD_REQUIRED = 2;
+export const FIELD_PROFILE = 3;
+
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: 'btn btn-success',
@@ -41,7 +45,8 @@ const initialState = {
   optOpen: false,
   required: [],
   optional: [],
-  candidate: { email: '' }
+  candidate: { email: '' },
+  rows: []
 }
 
 class CalendarPage extends React.Component {
@@ -97,17 +102,106 @@ class CalendarPage extends React.Component {
     this.setState({ candidate });
   }
 
-  updateCandidateAutosuggested = (event) => {
-    event.persist();
-    this.setState({ candidate: event.target.textContent });
-  }
-
   updateRequiredInterviewers = (event, value) => {
     this.setState({ required: value });
   }
 
   updateOptionalInterviewers = (event, value) => {
     this.setState({ optional: value });
+  }
+
+  // updateInterviewer = (event, row, index, required = false, duration = 30) => {
+  //   debugger;
+  //   // const { rows } = this.state;
+  //   const rows = this.state.rows;
+  //   rows[index] = { ...row, required, duration };
+  //   // removeInterviewer(index);
+  //   this.setState({ rows });
+  //   console.log(this.state.rows);
+  // }
+
+  // updateInterviewerProfile = (event, row, index) => {
+  //   debugger;
+  //   // const { rows } = this.state;
+  //   const rows = this.state.rows;
+  //   rows[index] = row;
+  //   // removeInterviewer(index);
+  //   this.setState({ rows });
+  //   console.log(this.state.rows);
+  // }
+
+  // updateInterviewerStatus = (event, row, index, required) => {
+  //   debugger;
+  //   // const { rows } = this.state;
+  //   const rows = this.state.rows;
+  //   rows[index] = { ...row, required };
+  //   // removeInterviewer(index);
+  //   this.setState({ rows });
+  //   console.log(this.state.rows);
+  // }
+
+  // updateInterviewerDuration = (event, row, index, duration) => {
+  //   debugger;
+  //   // const { rows } = this.state;
+  //   const rows = this.state.rows;
+  //   rows[index] = { ...row, duration };
+  //   // removeInterviewer(index);
+  //   this.setState({ rows });
+  //   console.log(this.state.rows);
+  // }
+
+  handleAddRow = () => {
+    debugger;
+    const { rows } = this.state;
+    this.setState({
+      rows: [...rows, this.createRow()]
+    });
+  }
+
+  handleRemoveRow = (index) => {
+    debugger;
+    // const { rows } = this.state;
+    const rows = this.state.rows;
+    rows.splice(index, 1);
+    this.setState({ rows });
+    console.log(rows)
+  }
+
+  createRow = (id = '', firstName = '', lastName = '', email = '', phone = '', status = '', required = false, duration = 30) => {
+    return { id, firstName, lastName, email, phone, status, required, duration };
+  }
+
+  handleSelectorChange = (event) = (event, index, field) => {
+    event.persist();
+    console.log(event);
+    console.log(index)
+    console.log(field)
+    debugger;
+    const { interviewers } = this.props;
+    const rows = this.state.rows;
+    switch (field) {
+      case FIELD_DURATION:
+        rows[index].duration = event.target.value;
+        break;
+      case FIELD_REQUIRED:
+        rows[index].required = event.target.checked;
+        break;
+      case FIELD_PROFILE:
+        rows[index] = { ...rows[index], ...interviewers[event.target.dataset.optionIndex] };
+        break;
+    }
+    // for (const row of rows) {
+    //   if (row.id == id) {
+    //     if (field == FIELD_FROM) {
+    //       row.from = event.target.value;
+    //     } else {
+    //       row.to = event.target.value;
+    //     }
+    //     row.timeValid = row.from < row.to;
+    //   }
+    // }
+    this.setState({ rows });
+    console.log(rows)
   }
 
   handleNext = async () => {
@@ -204,9 +298,9 @@ class CalendarPage extends React.Component {
             </TableHead>
             <TableBody>
               {interviews && interviews.map(
-                interview => {
+                (interview, i) => {
                   return (
-                    <TableRow key={interview.id}>
+                    <TableRow key={i}>
                       <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
                       <TableCell align="center">{interview.name}</TableCell>
                       <TableCell align="center">{interview.seats}</TableCell>
@@ -230,10 +324,15 @@ class CalendarPage extends React.Component {
           handleNext={this.handleNext}
           handleClose={this.handleClose}
           updateCandidate={this.updateCandidate}
-          updateCandidateAutosuggested={this.updateCandidateAutosuggested}
           updateRequiredInterviewers={this.updateRequiredInterviewers}
           updateOptionalInterviewers={this.updateOptionalInterviewers}
           handleSelectInterviewDuration={this.handleSelectInterviewDuration}
+          // updateInterviewer={this.updateInterviewer}
+          // addInterviewer={this.addInterviewer}
+          // removeInterviewer={this.removeInterviewer}
+          handleSelectorChange={this.handleSelectorChange}
+          handleAddRow={this.handleAddRow}
+          handleRemoveRow={this.handleRemoveRow}
           {...this.props}
           {...this.state}
         />

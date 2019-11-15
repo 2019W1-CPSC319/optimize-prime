@@ -110,7 +110,7 @@ class UserDialog extends Component {
   }
 
   onClickSubmit = async () => {
-    const { actions, mode, onClickCloseDialog } = this.props;
+    const { actions, mode, onClickCloseDialog, candidates } = this.props;
     const {
       firstName,
       lastName,
@@ -141,13 +141,9 @@ class UserDialog extends Component {
           }).then(async (result) => {
             const { value } = result;
             if (value) {
-              // const { value: tabIndex } = this.state;
               await actions.sendEmail({
                 firstName,
-                lastName,
-                email,
-                phone,
-                role,
+                email
               });
               swalWithBootstrapButtons.fire(
                 'Email is sent!',
@@ -245,7 +241,7 @@ class UserDialog extends Component {
         onChange={e => this.onChangeTextField(key, e)}
         onKeyPress={e => this.onKeyPress(e)}
         onBlur={e => this.onBlurTextField(key, e)}
-        helperText={error[key] ? helperText : ''}
+        helperText={error[key] || key === 'phone' ? helperText : ''}
       >
         {
           isSelect

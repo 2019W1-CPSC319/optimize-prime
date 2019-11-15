@@ -157,7 +157,6 @@ export const getInterviews = () => async (dispatch) => {
     dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.get('/schedule/interviews');
     const interviews = response.data;
-    debugger;
     return dispatch(getInterviewsSuccess(interviews));
   } catch (error) {
     console.log(error);
