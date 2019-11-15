@@ -3,6 +3,7 @@ const uuidv1 = require('uuid/v1');
 const axios = require('axios');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
+const scheduler = require('../scheduling/scheduler')
 
 // ***************** ROOMS Endpoints *******************
 
@@ -62,6 +63,7 @@ router.get('/candidates', async (req, res) => {
     }
     res.send(result);
   });
+  console.log(req.user);
 });
 
 /**
@@ -234,6 +236,16 @@ router.put('/interviewer/delete/:id', (req, res) => {
     }
     res.send(result);
   });
+});
+
+router.post('/allmeetings', notAuthMiddleware, async (req, res) => {
+  const { candidate, interviews } = req.body;
+  // console.log(candidate);
+  // console.log(interviews);
+  // console.log(req.body);
+  let result = await scheduler.findTimes(interviews, candidate, req.user.accessToken);
+  // console.log("ret = " + String(result));
+  res.send(result);
 });
 
 // find all the possible meeting times, given the following constraints/information:

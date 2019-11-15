@@ -31,6 +31,25 @@ class OverviewPage extends Component {
     this.props.sendEmail(this.state.subject, this.state.body);
   }
 
+  findTimes = () => {
+    //todo
+    const interviews = [
+      {
+        required: ["benhenaghan@optimizeprime.onmicrosoft.com"],
+        optional: [""],
+        room: "",
+        duration: 30
+      },
+      {
+        required: ["martinjohansen@optimizeprime.onmicrosoft.com"],
+        optional: [""],
+        room: "",
+        duration: 45 
+      }
+    ];
+    this.props.findMeetings("stefan.milosevic.sm@gmail.com", interviews)
+  }
+
   render() {
     const { classes, userProfile } = this.props
     return (
@@ -42,6 +61,7 @@ class OverviewPage extends Component {
           <input type='input' id="subject" onChange={(e) => this.handleChange(e)} value={this.state.subjec} placeholder="Email Subject" />
           <input type='input' id="body" onChange={(e) => this.handleChange(e)} value={this.state.subjec} placeholder="Email body"/>
           <button onClick={this.sendEmail}>Send email</button>
+          <button onClick={this.findTimes}>Find Times</button>
         </div>
       </div>
     );
@@ -55,7 +75,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  sendEmail: (subject, body) => dispatch(userActions.sendEmail(subject, body))
+  sendEmail: (subject, body) => dispatch(userActions.sendEmail(subject, body)),
+  findMeetings: (candidate, interviews) => dispatch(userActions.findAllMeetingTimes(candidate, interviews))
 })
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(OverviewPage));

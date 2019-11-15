@@ -18,7 +18,7 @@ class Interview {
 
 async function findTimes(interviews, candidateEmail, token) {
     // TODO
-    token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6Iks4bDZYZjBUbk5LT1BQaXlxVW43TERTMERWREFTUVk5Szl4WlRDY0ViNDQiLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC84Nzk2NTM5Ny04NTRhLTQzNjYtYjQ2MS1iNWQyODExZTU5ZGQvIiwiaWF0IjoxNTczNzg4NzIyLCJuYmYiOjE1NzM3ODg3MjIsImV4cCI6MTU3Mzc5MjYyMiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFTUUEyLzhOQUFBQTBpRm9iNk03YmNldnk2a2c3TmphTlc4YkFOdlFld1hRaWtYbU9JY2Y1c3c9IiwiYW1yIjpbInB3ZCJdLCJhcHBfZGlzcGxheW5hbWUiOiJHYWx2YW5pemUiLCJhcHBpZCI6IjA5NzA2OTBkLTljN2UtNGNjZi04ZTVjLTI5NzZmM2NkYmI1MSIsImFwcGlkYWNyIjoiMSIsImZhbWlseV9uYW1lIjoiSGVuYWdoYW4iLCJnaXZlbl9uYW1lIjoiQmVuIiwiaXBhZGRyIjoiMjA2Ljg3LjIzNy4xNDIiLCJuYW1lIjoiQmVuIEhlbmFnaGFuIiwib2lkIjoiYTlmMjM3Y2ItNDRkOC00ODY1LTg0MzgtNWVkNzMxOTc3YmZhIiwicGxhdGYiOiI1IiwicHVpZCI6IjEwMDMyMDAwODEzRDFBNDkiLCJzY3AiOiJDYWxlbmRhcnMuUmVhZCBDYWxlbmRhcnMuUmVhZC5TaGFyZWQgQ2FsZW5kYXJzLlJlYWRXcml0ZSBDYWxlbmRhcnMuUmVhZFdyaXRlLlNoYXJlZCBNYWlsLlNlbmQgb3BlbmlkIHByb2ZpbGUgVXNlci5SZWFkIFVzZXIuUmVhZC5BbGwgZW1haWwiLCJzdWIiOiJUWHJkdnNCMzVkeGcteHItcXhuX3RVdUtFdGNoMlU1VFlLU3ZIMnp5WXlJIiwidGlkIjoiODc5NjUzOTctODU0YS00MzY2LWI0NjEtYjVkMjgxMWU1OWRkIiwidW5pcXVlX25hbWUiOiJiZW5oZW5hZ2hhbkBvcHRpbWl6ZXByaW1lLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImJlbmhlbmFnaGFuQG9wdGltaXplcHJpbWUub25taWNyb3NvZnQuY29tIiwidXRpIjoibkRzaDRodEg2MEtUOXBRdlowRVBBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiNjJlOTAzOTQtNjlmNS00MjM3LTkxOTAtMDEyMTc3MTQ1ZTEwIl0sInhtc19zdCI6eyJzdWIiOiJtekUtYy0wMjlGbExLRml2ZWVnMGdzRmJTMTA3bUxzeE9OZjMtR1dfLXlBIn0sInhtc190Y2R0IjoxNTcyMzgxNzg0fQ.YQqtnCbmUbEFYV4QjWI4ZxosZt1Ed23D5zw6YLzoXSe2n67cXXPex0iVO2MU6N6StYOQ4Z7zdCDl2GY5N8L1Nong4Ll_IwolMXw9ByW-VcgEV5pITd8A0fTj6elpI1qnZNjgOTGcGQmb-oAFRQNAM1ZaWs1a5xHwMa5OKM_MW5-6WKx6qXf0MhwUKd7HBNadxS265QCe9vMO3BsMt1j9jy2OncnjxCtYI1JAw0q-hOImHw4UbaGSbWH9TNSFQSDOzHid_BHPXgWBP9sOe7Q0QgsPQaIFVKpPIsVMkf4j-KcTNaPxsV8pH4iH6QH5sRiUB9mDufYIwo96u3Qp8FEzJQ"
+    // token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6Iks4bDZYZjBUbk5LT1BQaXlxVW43TERTMERWREFTUVk5Szl4WlRDY0ViNDQiLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC84Nzk2NTM5Ny04NTRhLTQzNjYtYjQ2MS1iNWQyODExZTU5ZGQvIiwiaWF0IjoxNTczNzg4NzIyLCJuYmYiOjE1NzM3ODg3MjIsImV4cCI6MTU3Mzc5MjYyMiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFTUUEyLzhOQUFBQTBpRm9iNk03YmNldnk2a2c3TmphTlc4YkFOdlFld1hRaWtYbU9JY2Y1c3c9IiwiYW1yIjpbInB3ZCJdLCJhcHBfZGlzcGxheW5hbWUiOiJHYWx2YW5pemUiLCJhcHBpZCI6IjA5NzA2OTBkLTljN2UtNGNjZi04ZTVjLTI5NzZmM2NkYmI1MSIsImFwcGlkYWNyIjoiMSIsImZhbWlseV9uYW1lIjoiSGVuYWdoYW4iLCJnaXZlbl9uYW1lIjoiQmVuIiwiaXBhZGRyIjoiMjA2Ljg3LjIzNy4xNDIiLCJuYW1lIjoiQmVuIEhlbmFnaGFuIiwib2lkIjoiYTlmMjM3Y2ItNDRkOC00ODY1LTg0MzgtNWVkNzMxOTc3YmZhIiwicGxhdGYiOiI1IiwicHVpZCI6IjEwMDMyMDAwODEzRDFBNDkiLCJzY3AiOiJDYWxlbmRhcnMuUmVhZCBDYWxlbmRhcnMuUmVhZC5TaGFyZWQgQ2FsZW5kYXJzLlJlYWRXcml0ZSBDYWxlbmRhcnMuUmVhZFdyaXRlLlNoYXJlZCBNYWlsLlNlbmQgb3BlbmlkIHByb2ZpbGUgVXNlci5SZWFkIFVzZXIuUmVhZC5BbGwgZW1haWwiLCJzdWIiOiJUWHJkdnNCMzVkeGcteHItcXhuX3RVdUtFdGNoMlU1VFlLU3ZIMnp5WXlJIiwidGlkIjoiODc5NjUzOTctODU0YS00MzY2LWI0NjEtYjVkMjgxMWU1OWRkIiwidW5pcXVlX25hbWUiOiJiZW5oZW5hZ2hhbkBvcHRpbWl6ZXByaW1lLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImJlbmhlbmFnaGFuQG9wdGltaXplcHJpbWUub25taWNyb3NvZnQuY29tIiwidXRpIjoibkRzaDRodEg2MEtUOXBRdlowRVBBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiNjJlOTAzOTQtNjlmNS00MjM3LTkxOTAtMDEyMTc3MTQ1ZTEwIl0sInhtc19zdCI6eyJzdWIiOiJtekUtYy0wMjlGbExLRml2ZWVnMGdzRmJTMTA3bUxzeE9OZjMtR1dfLXlBIn0sInhtc190Y2R0IjoxNTcyMzgxNzg0fQ.YQqtnCbmUbEFYV4QjWI4ZxosZt1Ed23D5zw6YLzoXSe2n67cXXPex0iVO2MU6N6StYOQ4Z7zdCDl2GY5N8L1Nong4Ll_IwolMXw9ByW-VcgEV5pITd8A0fTj6elpI1qnZNjgOTGcGQmb-oAFRQNAM1ZaWs1a5xHwMa5OKM_MW5-6WKx6qXf0MhwUKd7HBNadxS265QCe9vMO3BsMt1j9jy2OncnjxCtYI1JAw0q-hOImHw4UbaGSbWH9TNSFQSDOzHid_BHPXgWBP9sOe7Q0QgsPQaIFVKpPIsVMkf4j-KcTNaPxsV8pH4iH6QH5sRiUB9mDufYIwo96u3Qp8FEzJQ"
 
     let rawAvail = await getAvailability(candidateEmail);
 
@@ -73,7 +73,7 @@ async function findTimes(interviews, candidateEmail, token) {
         for (let x = 0; x < schedules.sequence.length; x++) {
             console.log(String(schedules.sequence[x]));
         }
-        parseNumArrayToTimes(interviews, schedules.sequence[0], start)
+        // parseNumArrayToTimes(interviews, schedules.sequence[0], start)
         if (schedules.best < best) {
             best = schedules.best;
             // console.log("new best " + String(best));
@@ -83,6 +83,7 @@ async function findTimes(interviews, candidateEmail, token) {
             optimalSchedules = optimalSchedules.concat(schedules.sequence)
         }
     }
+    return optimalSchedules;
 }
 
 function parseNumArrayToTimes(interviews, solution, blockStart) {
@@ -94,7 +95,7 @@ function parseNumArrayToTimes(interviews, solution, blockStart) {
 
         let start = index, end = index;
         let currentInterview = solution[index];
-        while (solution[index] == currentInterview) {
+        while (solution[index + 1] == currentInterview) {
             index++;
         }
         end = index;
