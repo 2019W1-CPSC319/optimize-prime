@@ -4,6 +4,8 @@ const axios = require('axios');
 const db = require('../init/setupMySql');
 
 //File Constants
+const DEBUG = false;
+
 const GET_AVAILABILITY_SQL = 'SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.email = ? ORDER BY a.id DESC';
 const TIME_INTERVAL = 15;
 
@@ -17,8 +19,7 @@ class Interview {
 }
 
 async function findTimes(interviews, candidateEmail, token) {
-    // TODO
-    // token = "eyJ0eXAiOiJKV1QiLCJub25jZSI6Iks4bDZYZjBUbk5LT1BQaXlxVW43TERTMERWREFTUVk5Szl4WlRDY0ViNDQiLCJhbGciOiJSUzI1NiIsIng1dCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyIsImtpZCI6IkJCOENlRlZxeWFHckdOdWVoSklpTDRkZmp6dyJ9.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTAwMDAtYzAwMC0wMDAwMDAwMDAwMDAiLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC84Nzk2NTM5Ny04NTRhLTQzNjYtYjQ2MS1iNWQyODExZTU5ZGQvIiwiaWF0IjoxNTczNzg4NzIyLCJuYmYiOjE1NzM3ODg3MjIsImV4cCI6MTU3Mzc5MjYyMiwiYWNjdCI6MCwiYWNyIjoiMSIsImFpbyI6IkFTUUEyLzhOQUFBQTBpRm9iNk03YmNldnk2a2c3TmphTlc4YkFOdlFld1hRaWtYbU9JY2Y1c3c9IiwiYW1yIjpbInB3ZCJdLCJhcHBfZGlzcGxheW5hbWUiOiJHYWx2YW5pemUiLCJhcHBpZCI6IjA5NzA2OTBkLTljN2UtNGNjZi04ZTVjLTI5NzZmM2NkYmI1MSIsImFwcGlkYWNyIjoiMSIsImZhbWlseV9uYW1lIjoiSGVuYWdoYW4iLCJnaXZlbl9uYW1lIjoiQmVuIiwiaXBhZGRyIjoiMjA2Ljg3LjIzNy4xNDIiLCJuYW1lIjoiQmVuIEhlbmFnaGFuIiwib2lkIjoiYTlmMjM3Y2ItNDRkOC00ODY1LTg0MzgtNWVkNzMxOTc3YmZhIiwicGxhdGYiOiI1IiwicHVpZCI6IjEwMDMyMDAwODEzRDFBNDkiLCJzY3AiOiJDYWxlbmRhcnMuUmVhZCBDYWxlbmRhcnMuUmVhZC5TaGFyZWQgQ2FsZW5kYXJzLlJlYWRXcml0ZSBDYWxlbmRhcnMuUmVhZFdyaXRlLlNoYXJlZCBNYWlsLlNlbmQgb3BlbmlkIHByb2ZpbGUgVXNlci5SZWFkIFVzZXIuUmVhZC5BbGwgZW1haWwiLCJzdWIiOiJUWHJkdnNCMzVkeGcteHItcXhuX3RVdUtFdGNoMlU1VFlLU3ZIMnp5WXlJIiwidGlkIjoiODc5NjUzOTctODU0YS00MzY2LWI0NjEtYjVkMjgxMWU1OWRkIiwidW5pcXVlX25hbWUiOiJiZW5oZW5hZ2hhbkBvcHRpbWl6ZXByaW1lLm9ubWljcm9zb2Z0LmNvbSIsInVwbiI6ImJlbmhlbmFnaGFuQG9wdGltaXplcHJpbWUub25taWNyb3NvZnQuY29tIiwidXRpIjoibkRzaDRodEg2MEtUOXBRdlowRVBBQSIsInZlciI6IjEuMCIsIndpZHMiOlsiNjJlOTAzOTQtNjlmNS00MjM3LTkxOTAtMDEyMTc3MTQ1ZTEwIl0sInhtc19zdCI6eyJzdWIiOiJtekUtYy0wMjlGbExLRml2ZWVnMGdzRmJTMTA3bUxzeE9OZjMtR1dfLXlBIn0sInhtc190Y2R0IjoxNTcyMzgxNzg0fQ.YQqtnCbmUbEFYV4QjWI4ZxosZt1Ed23D5zw6YLzoXSe2n67cXXPex0iVO2MU6N6StYOQ4Z7zdCDl2GY5N8L1Nong4Ll_IwolMXw9ByW-VcgEV5pITd8A0fTj6elpI1qnZNjgOTGcGQmb-oAFRQNAM1ZaWs1a5xHwMa5OKM_MW5-6WKx6qXf0MhwUKd7HBNadxS265QCe9vMO3BsMt1j9jy2OncnjxCtYI1JAw0q-hOImHw4UbaGSbWH9TNSFQSDOzHid_BHPXgWBP9sOe7Q0QgsPQaIFVKpPIsVMkf4j-KcTNaPxsV8pH4iH6QH5sRiUB9mDufYIwo96u3Qp8FEzJQ"
+    const algorithmStartTime = new Date().getTime();
 
     let rawAvail = await getAvailability(candidateEmail);
 
@@ -30,7 +31,8 @@ async function findTimes(interviews, candidateEmail, token) {
             end: moment(element.endTime)
         })
     });
-    // console.log(availability)
+    DEBUG && console.log("candidate availability:")
+    DEBUG && console.log(availability)
 
     /**
      * ** ASSUMPTION **
@@ -45,8 +47,8 @@ async function findTimes(interviews, candidateEmail, token) {
         totalTime += interview.duration;
         allRequired = allRequired.concat(interview.required)
     });
-    console.log("Total interview time = " + String(totalTime));
-    console.log("All required interviewers = " + String(allRequired));
+    DEBUG && console.log("Total interview time = " + String(totalTime));
+    DEBUG && console.log("All required interviewers = " + String(allRequired));
 
     let optimalSchedules = [];
     let best = Number.MAX_VALUE;
@@ -57,32 +59,42 @@ async function findTimes(interviews, candidateEmail, token) {
         // Make sure that the block is longer than the duration of all interviews
         let blockDuration = moment.duration(end.diff(start)).asMinutes();
         if (totalTime > blockDuration) {
-            console.log("Block " + String(block) + " is too short (" + String(blockDuration) + " mins)");
+            DEBUG && console.log("Block " + String(block) + " is too short (" + String(blockDuration) + " mins)");
             continue;
         }
 
         // Get Availabilities of all interviewers for this block
         let avails = await getInterviewerAvailability(allRequired, start, end, token);
-        // console.log(avails);
+        DEBUG && console.log("Availabilities: ")
+        DEBUG && console.log(avails);
+
         let schedules = arrangeInterviews(interviews, avails, best, totalTime / TIME_INTERVAL);
 
         //godlike one-liner to remove duplicates
         schedules.sequence = Array.from(new Set(schedules.sequence.map(JSON.stringify))).map(JSON.parse);
 
-        console.log(String(schedules.sequence.length) + " Schedules for " + String(start) + ":");
-        for (let x = 0; x < schedules.sequence.length; x++) {
-            console.log(String(schedules.sequence[x]));
+        if (DEBUG) {
+            console.log(String(schedules.sequence.length) + " Schedules for " + String(start) + ":");
+            for (let x = 0; x < schedules.sequence.length; x++) {
+                console.log(String(schedules.sequence[x]));
+            }
         }
         // parseNumArrayToTimes(interviews, schedules.sequence[0], start)
         if (schedules.best < best) {
             best = schedules.best;
-            // console.log("new best " + String(best));
             optimalSchedules = schedules.sequence
         } else if (schedules.best == best) {
-            // console.log("eq");
             optimalSchedules = optimalSchedules.concat(schedules.sequence)
         }
     }
+    //Kept even when debug disabled
+    const algorithmRunTime = new Date().getTime() - algorithmStartTime;
+    console.log("Found " +
+                String(optimalSchedules.length) +
+                " optimal interview schedules in " +
+                String(algorithmRunTime) +
+                "ms.");
+
     return optimalSchedules;
 }
 
@@ -100,14 +112,15 @@ function parseNumArrayToTimes(interviews, solution, blockStart) {
         }
         end = index;
 
-        console.log("I = " + String(currentInterview) + " " + String(start * TIME_INTERVAL) + " " + String(end * TIME_INTERVAL));
+        DEBUG && console.log("I = " + String(currentInterview) + " " + String(start * TIME_INTERVAL) + " " + String(end * TIME_INTERVAL));
 
         interviewConfiguration[currentInterview].start = blockStart.clone().add(start * TIME_INTERVAL, 'minute');
         interviewConfiguration[currentInterview].end = blockStart.clone().add(end + 1 * TIME_INTERVAL, 'minute');
-        console.log(interviewConfiguration[currentInterview].start.format() + "  :  " + interviewConfiguration[currentInterview].end.format())
+        DEBUG && console.log(interviewConfiguration[currentInterview].start.format() + "  :  " + interviewConfiguration[currentInterview].end.format())
     }
 
-    console.log(interviewConfiguration);
+    DEBUG && console.log("Interview Configuration:");
+    DEBUG && console.log(interviewConfiguration);
     return interviewConfiguration;
 }
 
@@ -135,7 +148,7 @@ async function getAvailability(email) {
         }
         });
     }).catch((err) => {
-        console.log("Unable to get candidate availability");
+        console.error("Unable to get candidate availability");
     });
 }
 
@@ -192,7 +205,7 @@ function checkInterviewFits(currentSolution, availability, interview, startIndex
 
         for (let interviewer = 0; interviewer < interview.required.length; interviewer++) {
             if(!availability.get(interview.required[interviewer])[i]) {
-                // console.log(String(interview.required[interviewer]) + " busy at " + String(i))
+                DEBUG && console.log(String(interview.required[interviewer]) + " busy at " + String(i))
                 return false;
             }
         }
@@ -270,7 +283,6 @@ function arrangeInterviews(interviews, availability, bestTime, totalInterviewLen
 
                 // Break if we couldn't fit that interview
                 if (solution == null) {
-                    // console.log("no fit");
                     break;
                 }
             }

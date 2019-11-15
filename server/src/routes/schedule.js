@@ -240,11 +240,7 @@ router.put('/interviewer/delete/:id', (req, res) => {
 
 router.post('/allmeetings', notAuthMiddleware, async (req, res) => {
   const { candidate, interviews } = req.body;
-  // console.log(candidate);
-  // console.log(interviews);
-  // console.log(req.body);
   let result = await scheduler.findTimes(interviews, candidate, req.user.accessToken);
-  // console.log("ret = " + String(result));
   res.send(result);
 });
 
