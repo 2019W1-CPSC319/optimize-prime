@@ -73,13 +73,17 @@ async function findTimes(interviews, candidateEmail, token) {
         //godlike one-liner to remove duplicates
         schedules.sequence = Array.from(new Set(schedules.sequence.map(JSON.stringify))).map(JSON.parse);
 
+        // Make into proper interview sequence objects
+        schedules.sequence = schedules.sequence.map((x => parseNumArrayToTimes(interviews, x, start)))
+
         if (DEBUG) {
             console.log(String(schedules.sequence.length) + " Schedules for " + String(start) + ":");
             for (let x = 0; x < schedules.sequence.length; x++) {
                 console.log(String(schedules.sequence[x]));
             }
         }
-        // parseNumArrayToTimes(interviews, schedules.sequence[0], start)
+
+        parseNumArrayToTimes(interviews, schedules.sequence[0], start)
         if (schedules.best < best) {
             best = schedules.best;
             optimalSchedules = schedules.sequence
@@ -100,27 +104,21 @@ async function findTimes(interviews, candidateEmail, token) {
 
 function parseNumArrayToTimes(interviews, solution, blockStart) {
     let interviewConfiguration = JSON.parse(JSON.stringify(interviews));
-    for (let index = 0; index < solution.length; index++) {
-        if (solution[index] == -1) {
-            continue;
-        }
+    for (let i = 0; i < interviews.length; i++) {
+        let start = solution.indexOf(i) * TIME_INTERVAL;
+        let end = start + interviews[i].duration;
 
-        let start = index, end = index;
-        let currentInterview = solution[index];
-        while (solution[index + 1] == currentInterview) {
-            index++;
-        }
-        end = index;
+        DEBUG && console.log("I = " + String(i) + " " + String(start) + " " + String(end));
 
-        DEBUG && console.log("I = " + String(currentInterview) + " " + String(start * TIME_INTERVAL) + " " + String(end * TIME_INTERVAL));
-
-        interviewConfiguration[currentInterview].start = blockStart.clone().add(start * TIME_INTERVAL, 'minute');
-        interviewConfiguration[currentInterview].end = blockStart.clone().add(end + 1 * TIME_INTERVAL, 'minute');
-        DEBUG && console.log(interviewConfiguration[currentInterview].start.format() + "  :  " + interviewConfiguration[currentInterview].end.format())
+        interviewConfiguration[i].start = blockStart.clone().add(start, 'minute');
+        interviewConfiguration[i].end = blockStart.clone().add(end, 'minute');
+        
+        DEBUG && console.log(interviewConfiguration[i].start.format() + "  :  " + interviewConfiguration[i].end.format())
     }
 
     DEBUG && console.log("Interview Configuration:");
     DEBUG && console.log(interviewConfiguration);
+
     return interviewConfiguration;
 }
 
