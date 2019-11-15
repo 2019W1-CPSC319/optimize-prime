@@ -10,7 +10,6 @@ const setupMySql = require('./init/setupMySql');
 const authRouter = require('./routes/auth');
 const userRouter = require('./routes/user');
 const scheduleRouter = require('./routes/schedule');
-const directoryRouter = require('./routes/directory');
 
 const start = async () => {
   let log;
@@ -37,7 +36,6 @@ const start = async () => {
     app.use('/auth', authRouter);
     app.use('/user', userRouter);
     app.use('/schedule', scheduleRouter);
-    app.use('/users', directoryRouter);
     log.info('Setting up user API');
 
     app.get('/hello', (req, res) => {

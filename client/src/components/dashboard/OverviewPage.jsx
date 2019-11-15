@@ -4,7 +4,6 @@ import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import * as user from '../../selectors/AuthSelector';
-import * as userActions from '../../actions/userActions';
 
 const styles = {
   title: {
@@ -16,19 +15,7 @@ const styles = {
 class OverviewPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-
-    };
-  }
-
-  handleChange = (e) => {
-    this.setState({
-    [e.target.id]: e.target.value
-    })
-  }
-
-  sendEmail = () => {
-    this.props.sendEmail(this.state.subject, this.state.body);
+    this.state = {};
   }
 
   findTimes = () => {
