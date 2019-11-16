@@ -171,11 +171,11 @@ router.post('/sendEmail', (req, res) => {
       throw err;
     }
 
-    const uuid = result[0].uuid;
+    const { uuid } = result[0];
 
     try {
-      const subject = "Availability";
-      const body = "Hi " + firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate?key=" + uuid;
+      const subject = 'Availability';
+      const body = `Hi ${firstName},` + '\nPlease fill out your availability by going here: ' + `https://optimize-prime.herokuapp.com/candidate?key=${uuid}`;
       const response = await axios({
         method: 'post',
         url: 'https://graph.microsoft.com/v1.0/me/sendMail',
@@ -184,7 +184,7 @@ router.post('/sendEmail', (req, res) => {
         },
         data: {
           message: {
-            subject: subject,
+            subject,
             body: {
               contentType: 'text',
               content: body,
@@ -204,7 +204,7 @@ router.post('/sendEmail', (req, res) => {
       res.status(500).send({ message: 'Internal server Error.' });
     }
   });
-})
+});
 
 // ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
@@ -264,7 +264,9 @@ router.put('/interviewer/delete/:id', (req, res) => {
 // find all the possible meeting times, given the following constraints/information:
 // attendess, timeConstraints, meetingDuration, locationConstraints
 router.post('/meeting', notAuthMiddleware, async (req, res) => {
-  const { candidate, meetingDuration, required, optional } = req.body;
+  const {
+    candidate, meetingDuration, required, optional,
+  } = req.body;
   const sql = "SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.email = ? AND c.status = 'A' ORDER BY a.id DESC";
   const sqlcmd = connection.format(sql, [candidate]);
 
@@ -276,14 +278,14 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
     console.log(result);
 
     if (result.length === 0) {
-      res.send("No candidate availability found");
+      res.send('No candidate availability found');
     } else {
       try {
-        const timeZone = "Pacific Standard Time";
+        const timeZone = 'Pacific Standard Time';
 
         const timeConstraint = {
-          activityDomain: "work",
-          timeSlots: result.map(time => ({
+          activityDomain: 'work',
+          timeSlots: result.map((time) => ({
             start: {
               dateTime: time.startTime,
               timeZone,
@@ -291,22 +293,22 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
             end: {
               dateTime: time.endTime,
               timeZone,
-            }
-          }))
+            },
+          })),
         };
 
-        const requiredAttendees = required.map(interviewer => ({
-          type: "required",
+        const requiredAttendees = required.map((interviewer) => ({
+          type: 'required',
           emailAddress: {
-            address: interviewer.email
-          }
+            address: interviewer.email,
+          },
         }));
 
-        const optionalAttendees = optional.map(interviewer => ({
-          type: "optional",
+        const optionalAttendees = optional.map((interviewer) => ({
+          type: 'optional',
           emailAddress: {
-            address: interviewer.email
-          }
+            address: interviewer.email,
+          },
         }));
 
         const attendees = requiredAttendees.concat(optionalAttendees);
@@ -318,55 +320,68 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           }
           let locations = [{}];
           if (result.length > 0) {
-            locations = result.map(room => ({
+            locations = result.map((room) => ({
               displayName: room.name,
-              locationEmailAddress: room.email
-            }))
+              locationEmailAddress: room.email,
+            }));
           }
 
-          const data = {
-            attendees,
-            timeConstraint,
-            maxCandidates: 30,
-            meetingDuration,
-            locationConstraint: {
-              isRequired: "true",
-              suggestLocation: "false",
-              locations: locations
-            }
-          }
+          const possibleMeetings = [];
 
-          console.log(JSON.stringify(data));
+          const meetingSuggestionPromises = timeConstraint.timeSlots.map(async (block) => {
+            const formattedTimeBlock = {
+              activityDomain: 'work',
+              timeSlots: [
+                {
+                  start: block.start,
+                  end: block.end,
+                },
+              ],
+            };
 
-          const response = await axios({
-            method: 'post',
-            url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
-            headers: {
-              Authorization: `Bearer ${req.user.accessToken}`,
-            },
-            data
-          });
+            const data = {
+              attendees,
+              timeConstraint: formattedTimeBlock,
+              maxCandidates: 30,
+              meetingDuration,
+              locationConstraint: {
+                isRequired: 'true',
+                suggestLocation: 'false',
+                locations,
+              },
+            };
 
-          const meetingTimeSuggestions = (response.data && response.data.meetingTimeSuggestions) || [];
+            console.log(JSON.stringify(data));
 
-          console.log(JSON.stringify(meetingTimeSuggestions));
+            const response = await axios({
+              method: 'post',
+              url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+              headers: {
+                Authorization: `Bearer ${req.user.accessToken}`,
+              },
+              data,
+            });
 
-          if (meetingTimeSuggestions.length === 0) {
-            res.send([]);
-          } else {
-            let possibleMeetings = [];
-            for (meeting of meetingTimeSuggestions) {
-              for (room of meeting.locations) {
-                possibleMeetings.push({
-                  start: meeting.meetingTimeSlot.start,
-                  end: meeting.meetingTimeSlot.end,
-                  room,
-                  interviewers: meeting.attendeeAvailability.filter(attendee => attendee.availability === "free"),
-                });
+            const meetingTimeSuggestions = (response.data && response.data.meetingTimeSuggestions) || [];
+
+            console.log('MEETING SUGGESTIONS!: ', JSON.stringify(meetingTimeSuggestions));
+
+            if (meetingTimeSuggestions.length > 0) {
+              for (meeting of meetingTimeSuggestions) {
+                for (room of meeting.locations) {
+                  possibleMeetings.push({
+                    start: meeting.meetingTimeSlot.start,
+                    end: meeting.meetingTimeSlot.end,
+                    room,
+                    interviewers: meeting.attendeeAvailability.filter((attendee) => attendee.availability === 'free'),
+                  });
+                }
               }
             }
-            res.send(possibleMeetings);
-          }
+          });
+          await Promise.all(meetingSuggestionPromises);
+
+          res.send(possibleMeetings.sort((a, b) => a.start.dateTime > b.start.dateTime));
         });
       } catch (error) {
         console.log(error);
@@ -379,45 +394,46 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
 router.post('/event', notAuthMiddleware, async (req, res) => {
   try {
+    const {
+      candidate, date, required, optional, room,
+    } = req.body;
 
-    const { candidate, date, required, optional, room } = req.body;
+    const subject = `Interview with ${candidate.firstName} ${candidate.lastName}`;
+    const content = 'Please confirm if you are available during this time.';
 
-    const subject = "Interview with " + candidate.firstName + ' ' + candidate.lastName;
-    const content = "Please confirm if you are available during this time."
-
-    const timeZone = "UTC";
+    const timeZone = 'UTC';
 
     // create candidate as an attendee
     const candidateAttendee = [
       {
-        type: "required",
+        type: 'required',
         emailAddress: {
-          address: candidate.email
-        }
-      }
+          address: candidate.email,
+        },
+      },
     ];
 
     // required attendees
-    const requiredAttendees = required.map(interviewer => ({
-      type: "required",
+    const requiredAttendees = required.map((interviewer) => ({
+      type: 'required',
       emailAddress: {
-        address: interviewer.email
-      }
+        address: interviewer.email,
+      },
     }));
 
     // optional attendees
-    const optionalAttendees = optional.map(interviewer => ({
-      type: "optional",
+    const optionalAttendees = optional.map((interviewer) => ({
+      type: 'optional',
       emailAddress: {
-        address: interviewer.email
-      }
+        address: interviewer.email,
+      },
     }));
 
     const roomAttendee = {
-      type: "required",
+      type: 'required',
       emailAddress: {
-        address: room.email
-      }
+        address: room.email,
+      },
     };
 
     // combine all the attendees aswell as the candidate
@@ -431,10 +447,10 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         Authorization: `Bearer ${req.user.accessToken}`,
       },
       data: {
-        subject: subject,
+        subject,
         body: {
           contentType: 'HTML',
-          content: content,
+          content,
         },
         start: date.startTime,
         end: date.endTime,
@@ -442,12 +458,12 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
           displayName: room.name,
           locationEmailAddress: room.email,
         },
-        attendees: attendees
+        attendees,
       },
     });
 
     // insert the scheduled interview in the candidate table
-    
+
     const sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
     const sqlcmd = connection.format(sql, [room.name]);
 
@@ -457,7 +473,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       }
       // get roomId
       const roomId = result[0].id;
-      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)'
+      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
       const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
       connection.query(sqlcmd, (err, result) => {
         if (err) {
@@ -479,14 +495,14 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
     url: 'https://graph.microsoft.com/beta/me/findRooms',
     headers: {
       Authorization: `Bearer ${req.user.accessToken}`,
-    }
+    },
   });
   res.send(response.data && response.data.value);
 });
 
 // **************************** Get all scheduled interviews ************************************ //
 
-router.get('/interviews', notAuthMiddleware,  (req, res) => {
+router.get('/interviews', notAuthMiddleware, (req, res) => {
   const currDate = new Date();
   const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
   const sqlcmd = connection.format(sql, [currDate]);
