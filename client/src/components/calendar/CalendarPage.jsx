@@ -55,24 +55,24 @@ class CalendarPage extends React.Component {
 
     this.state = {
       ...initialState,
-      events: [],
+      // events: [],
       onSuccess: false,
-      onSlide: false,
-      selected: 0,
+      // onSlide: false,
+      // selected: 0,
       selectedOption: 0,
       background: ['#280e3a', '#fff', '#fff', '#fff'],
       color: ['#fff', '#000', '#000', '#000'],
-      durations: [
-        { minutes: 30 },
-        { minutes: 60 },
-        { minutes: 90 },
-        { minutes: 120 }
-      ]
+      // durations: [
+      //   { minutes: 30 },
+      //   { minutes: 60 },
+      //   { minutes: 90 },
+      //   { minutes: 120 }
+      // ]
     };
   }
 
-  getInterviewDuration = () => {
-    switch (this.state.durations[this.state.selected].minutes) {
+  getInterviewDuration = (minutes) => {
+    switch (minutes) {
       case 30:
         return 'PT30M';
       case 60:
@@ -100,15 +100,16 @@ class CalendarPage extends React.Component {
 
   updateCandidate = (event, candidate) => {
     this.setState({ candidate });
+    console.log(candidate)
   }
 
-  updateRequiredInterviewers = (event, value) => {
-    this.setState({ required: value });
-  }
+  // updateRequiredInterviewers = (event, value) => {
+  //   this.setState({ required: value });
+  // }
 
-  updateOptionalInterviewers = (event, value) => {
-    this.setState({ optional: value });
-  }
+  // updateOptionalInterviewers = (event, value) => {
+  //   this.setState({ optional: value });
+  // }
 
   // updateInterviewer = (event, row, index, required = false, duration = 30) => {
   //   debugger;
@@ -206,13 +207,45 @@ class CalendarPage extends React.Component {
 
   handleNext = async () => {
     const { actions } = this.props;
+    const { candidate, rows } = this.state;
     try {
-      await actions.findMeetingTimes({
-        candidate: this.state.candidate.email,
-        required: this.state.required,
-        optional: this.state.optional,
-        meetingDuration: this.getInterviewDuration(),
-      });
+      // await actions.findMeetingTimes({
+      //   candidate: this.state.candidate.email,
+      //   required: this.state.required,
+      //   optional: this.state.optional,
+      //   meetingDuration: this.getInterviewDuration(),
+      // });
+      const data = {
+        candidate: candidate.email,
+        interviews: [
+          {
+            required: rows.filter(row => row.required && row.duration === 30),
+            optional: rows.filter(row => !row.required && row.duration === 30),
+            room: "",
+            duration: 30
+          },
+          {
+            required: rows.filter(row => row.required && row.duration === 60),
+            optional: rows.filter(row => !row.required && row.duration === 60),
+            room: "",
+            duration: 60
+          },
+          {
+            required: rows.filter(row => row.required && row.duration === 90),
+            optional: rows.filter(row => !row.required && row.duration === 90),
+            room: "",
+            duration: 90
+          },
+          {
+            required: rows.filter(row => row.required && row.duration === 120),
+            optional: rows.filter(row => !row.required && row.duration === 120),
+            room: "",
+            duration: 120
+          }
+        ]
+      };
+      console.log(data)
+      await actions.findAllMeetingTimes(data);
       this.setState({ reqOpen: false });
       this.setState({ optOpen: true });
     } catch (err) {

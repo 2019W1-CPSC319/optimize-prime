@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
 import * as user from '../../selectors/AuthSelector';
+import * as userActions from '../../actions/userActions';
 
 const styles = {
   title: {
@@ -31,7 +32,7 @@ class OverviewPage extends Component {
         required: ["martinjohansen@optimizeprime.onmicrosoft.com"],
         optional: [""],
         room: "",
-        duration: 45 
+        duration: 45
       }
     ];
     this.props.findMeetings("stefan.milosevic.sm@gmail.com", interviews)
@@ -46,7 +47,7 @@ class OverviewPage extends Component {
         </div>
         <div>
           <input type='input' id="subject" onChange={(e) => this.handleChange(e)} value={this.state.subjec} placeholder="Email Subject" />
-          <input type='input' id="body" onChange={(e) => this.handleChange(e)} value={this.state.subjec} placeholder="Email body"/>
+          <input type='input' id="body" onChange={(e) => this.handleChange(e)} value={this.state.subjec} placeholder="Email body" />
           <button onClick={this.sendEmail}>Send email</button>
           <button onClick={this.findTimes}>Find Times</button>
         </div>
