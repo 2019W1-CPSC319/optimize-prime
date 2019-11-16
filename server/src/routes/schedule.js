@@ -326,6 +326,9 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
           const possibleMeetings = [];
 
+          // Need to loop through each availability block because if the duration of time
+          // constraint blocks is equal to the specified meeting duration, only the earliest
+          // meeting suggestion will be returned (i.e. not the full set of solution)
           const meetingSuggestionPromises = timeConstraint.timeSlots.map(async (block) => {
             const formattedTimeBlock = {
               activityDomain: 'work',
