@@ -54,7 +54,7 @@ class AddAvailability extends Component {
 
   componentDidMount() {
     const { actions } = this.props;
-    debugger;
+
     actions.getUsers('candidate');
   }
 

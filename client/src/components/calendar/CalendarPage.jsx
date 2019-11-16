@@ -234,6 +234,9 @@ class CalendarPage extends React.Component {
           updateRequiredInterviewers={this.updateRequiredInterviewers}
           updateOptionalInterviewers={this.updateOptionalInterviewers}
           handleSelectInterviewDuration={this.handleSelectInterviewDuration}
+          candidate={this.state.candidate}
+          required={this.state.required}
+          optional={this.state.optional}
           {...this.props}
           {...this.state}
         />

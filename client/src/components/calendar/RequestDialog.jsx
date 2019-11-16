@@ -76,7 +76,7 @@ class RequestDialog extends Component {
             )}
             style={{ width: '100%' }}
             autoComplete={false}
-            // value={this.props.candidate}
+            value={this.props.candidate}
             onChange={this.props.updateCandidate}
           />
           <Autocomplete
@@ -93,6 +93,7 @@ class RequestDialog extends Component {
                 fullWidth
               />
             )}
+            value={this.props.required}
             onChange={this.props.updateRequiredInterviewers}
           />
           <Autocomplete
@@ -109,6 +110,7 @@ class RequestDialog extends Component {
                 fullWidth
               />
             )}
+            value={this.props.optional}
             onChange={this.props.updateOptionalInterviewers}
           />
           <ButtonGroup fullWidth size="small" aria-label="small outlined button group" className={classes.buttonGroup}>
