@@ -268,16 +268,14 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
     candidate, meetingDuration, required, optional,
   } = req.body;
   const sql = "SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.email = ? AND c.status = 'A' ORDER BY a.id DESC";
-  const sqlcmd = connection.format(sql, [candidate]);
+  const getCandidateAvailabilityCmd = connection.format(sql, [candidate]);
 
-  connection.query(sqlcmd, async (err, result) => {
-    if (err) {
-      throw err;
+  connection.query(getCandidateAvailabilityCmd, async (candidateAvailabilityError, candidateAvailability) => {
+    if (candidateAvailabilityError) {
+      throw candidateAvailabilityError;
     }
 
-    console.log(result);
-
-    if (result.length === 0) {
+    if (candidateAvailability.length === 0) {
       res.send('No candidate availability found');
     } else {
       try {
@@ -285,7 +283,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
         const timeConstraint = {
           activityDomain: 'work',
-          timeSlots: result.map((time) => ({
+          timeSlots: candidateAvailability.map((time) => ({
             start: {
               dateTime: time.startTime,
               timeZone,
@@ -313,14 +311,14 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
         const attendees = requiredAttendees.concat(optionalAttendees);
 
-        const sqlcmd = 'SELECT * FROM Rooms WHERE status="A"';
-        connection.query(sqlcmd, async (err, result) => {
-          if (err) {
-            throw err;
+        const getRoomsCmd = 'SELECT * FROM Rooms WHERE status="A"';
+        connection.query(getRoomsCmd, async (availableRoomsError, availableRooms) => {
+          if (availableRoomsError) {
+            throw availableRoomsError;
           }
           let locations = [{}];
-          if (result.length > 0) {
-            locations = result.map((room) => ({
+          if (availableRooms.length > 0) {
+            locations = availableRooms.map((room) => ({
               displayName: room.name,
               locationEmailAddress: room.email,
             }));
@@ -364,19 +362,17 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
             const meetingTimeSuggestions = (response.data && response.data.meetingTimeSuggestions) || [];
 
-            console.log('MEETING SUGGESTIONS!: ', JSON.stringify(meetingTimeSuggestions));
-
             if (meetingTimeSuggestions.length > 0) {
-              for (meeting of meetingTimeSuggestions) {
-                for (room of meeting.locations) {
+              meetingTimeSuggestions.forEach((meeting) => {
+                meeting.locations.forEach((room) => {
                   possibleMeetings.push({
                     start: meeting.meetingTimeSlot.start,
                     end: meeting.meetingTimeSlot.end,
                     room,
                     interviewers: meeting.attendeeAvailability.filter((attendee) => attendee.availability === 'free'),
                   });
-                }
-              }
+                });
+              });
             }
           });
           await Promise.all(meetingSuggestionPromises);
