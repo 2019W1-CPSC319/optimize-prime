@@ -31,12 +31,13 @@ const App = props => (
 const mapStateToProps = state => ({
   user: state.user,
   candidate: state.directory.candidate,
+  meetingSuggestions: state.user.meetingSuggestions,
+  interviews: state.user.interviews,
   candidates: state.directory.candidates,
   interviewers: state.directory.interviewers,
+  template: state.directory.template,
   rooms: state.rooms.rooms,
   outlookRooms: state.rooms.outlookRooms,
-  meetingSuggestions: state.user.meetingSuggestions,
-  interviews: state.user.interviews
 });
 
 const mapDispatchToProps = dispatch => ({

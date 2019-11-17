@@ -147,7 +147,7 @@ class UserDialog extends Component {
                 firstName,
                 lastName,
                 email,
-                phone,
+                phone: phone.replace(/[\D]/g, ''),
                 role,
               });
               swalWithBootstrapButtons.fire(

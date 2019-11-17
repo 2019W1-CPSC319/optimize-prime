@@ -38,6 +38,17 @@ const DirectoryReducer = (state = initialState, action) => {
         loading: false,
         success: true,
       };
+    case 'GET_EMAIL_TEMPLATE_SUCCESS':
+      const { template } = action;
+      return {
+        ...state,
+        template
+      };
+    case 'UPDATE_EMAIL_TEMPLATE_SUCCESS':
+      return {
+        ...state,
+        loading: false
+      };
     default:
       return state;
   }
