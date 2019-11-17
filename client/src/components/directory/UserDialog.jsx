@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import MaskedInput from 'react-text-mask';
 import InputMask from "react-input-mask";
 import {
   Button,
