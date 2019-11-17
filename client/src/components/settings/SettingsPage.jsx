@@ -10,32 +10,6 @@ import {
 class SettingsPage extends Component {
   constructor(props) {
     super(props);
-    // const {
-    //   template: {
-    //     subject,
-    //     body,
-    //     signature
-    //   }
-    // } = this.props;
-    // this.setState({ subject, body, signature });
-    // this.state = {};
-    // const { actions } = this.props;
-    // actions.getEmailTemplate()
-    //   .then((res) => {
-    //     const { template } = this.props;
-    //     this.state = template;
-    //     // console.log(this.state)
-    //   })
-    //   .catch((err) => {
-    //     this.state = { subject: '', body: '', signature: '' };
-    //     // console.log(this.state)
-    //   })
-    //   .finally(() => console.log(this.state));
-    // this.state = {
-    //   subject: null,
-    //   body: null,
-    //   signature: null,
-    // };
     this.state = { subject: '', body: '', signature: '' };
   }
 
@@ -57,24 +31,16 @@ class SettingsPage extends Component {
   }
 
   render() {
-    // const { classes } = this.props;
-    const { template } = this.props;
     const { subject, body, signature } = this.state;
-    // console.log(template)
     return (
       <div>
         <h1 className="settings-title">Settings</h1>
         <Paper style={{ maxWidth: '700px', margin: '30px', padding: '30px' }}>
           <Typography
             variant='h5'
-          // style={{ marginLeft: '20px' }}
           >Email Template</Typography>
           <TextField
-            // id="outlined-textarea"
             label="Subject"
-            // placeholder="Placeholder"
-            // multiline
-            // className={classes.textField}
             onChange={(event) => this.onChangeTextField('subject', event)}
             margin="normal"
             value={subject}
@@ -85,11 +51,8 @@ class SettingsPage extends Component {
             }}
           />
           <TextField
-            // id="outlined-textarea"
             label="Body"
-            // placeholder="Placeholder"
             multiline
-            // className={classes.textField}
             onChange={(event) => this.onChangeTextField('body', event)}
             margin="normal"
             value={body}
@@ -100,11 +63,8 @@ class SettingsPage extends Component {
             }}
           />
           <TextField
-            // id="outlined-textarea"
             label="Signature"
-            // placeholder="Placeholder"
             multiline
-            // className={classes.textField}
             onChange={(event) => this.onChangeTextField('signature', event)}
             margin="normal"
             value={signature}
