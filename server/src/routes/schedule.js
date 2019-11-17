@@ -498,4 +498,32 @@ router.get('/interviews', notAuthMiddleware,  (req, res) => {
   });
 });
 
+
+// ***************************** Email Config ************************************* //
+
+// get email config
+router.get('/emailconfig', async (req, res) => {
+  const sql = "SELECT * FROM EmailConfig";
+  await connection.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
+
+// update email template config
+router.put('/emailconfig', (req, res) => {
+  const { subject, body, signature } = req.body;
+  const sql = "UPDATE EmailConfig SET subject = ?, body = ?, signature = ? WHERE id = 1";
+  const sqlcmd = connection.format(sql, [subject, body, signature]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
 module.exports = router;
