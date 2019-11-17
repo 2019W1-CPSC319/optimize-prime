@@ -163,6 +163,8 @@ router.put('/candidate/delete/:id', (req, res) => {
   });
 });
 
+
+// send email to candidate with a unique link to fill out availability
 router.post('/sendEmail', (req, res) => {
   const { firstName, email } = req.body;
   const sqlcmd = connection.format("SELECT uuid from Candidate WHERE Email = ? AND status = 'A'", [email]);
@@ -173,9 +175,19 @@ router.post('/sendEmail', (req, res) => {
 
     const uuid = result[0].uuid;
 
+    // Get email template config
+    const sqlcmd = "SELECT * FROM EmailConfig";
+    connection.query(sqlcmd, (err, result) => {
+      if (err) {
+        return res.status(500).send({ message: 'Internal Server error' });
+      }
+      const emailSubject = result[0].subject;
+      const emailBody = result[0].body;
+      const emailSignature = result[0].signature;
     try {
-      const subject = "Availability";
-      const body = "Hi " + firstName + "," + "\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate?key=" + uuid;
+      const subject = emailSubject;
+      const template = "Hi " + firstName + "," + "\n\nPlease fill out your availability by going here: " + "https://optimize-prime.herokuapp.com/candidate?key=" + uuid;
+      const body = template + "\n\n" + emailBody + '\n\n' + emailSignature;
       const response = await axios({
         method: 'post',
         url: 'https://graph.microsoft.com/v1.0/me/sendMail',
@@ -205,6 +217,7 @@ router.post('/sendEmail', (req, res) => {
     }
   });
 })
+});
 
 // ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
