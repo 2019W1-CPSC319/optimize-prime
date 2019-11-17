@@ -126,3 +126,53 @@ export const sendAvailability = (availability, uuid) => async (dispatch) => {
     return dispatch(sendAvailabilityFailure(error.response.data.message));
   }
 };
+
+function getEmailTemplateSuccess(template) {
+  return {
+    type: 'GET_EMAIL_TEMPLATE_SUCCESS',
+    template,
+  };
+}
+
+function getEmailTemplateFailure(error) {
+  return {
+    type: 'GET_EMAIL_TEMPLATE_FAILURE',
+    error,
+  };
+}
+
+export const getEmailTemplate = () => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.get('/schedule/emailconfig');
+    const template = response.data[0];
+    return dispatch(getEmailTemplateSuccess(template));
+  } catch (error) {
+    return dispatch(getEmailTemplateFailure(error));
+  }
+};
+
+function updateEmailTemplateSuccess(data = {}) {
+  return {
+    type: 'UPDATE_EMAIL_TEMPLATE_SUCCESS',
+    payload: data,
+  };
+}
+
+function updateEmailTemplateFailure(error) {
+  return {
+    type: 'UPDATE_EMAIL_TEMPLATE_FAILURE',
+    error,
+  };
+}
+
+export const updateEmailTemplate = (subject, body, signature) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.put('/schedule/emailconfig', { subject, body, signature });
+    const data = response.data;
+    return dispatch(updateEmailTemplateSuccess(data));
+  } catch (error) {
+    return dispatch(updateEmailTemplateFailure(error));
+  }
+};
