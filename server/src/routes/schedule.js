@@ -4,8 +4,6 @@ const axios = require('axios');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
 
-// ***************** ROOMS Endpoints *******************
-
 // get all rooms
 router.get('/rooms', (req, res) => {
   const sql = 'SELECT * FROM Rooms WHERE status="A"';
@@ -50,8 +48,6 @@ router.put('/room/:id', (req, res) => {
     res.send(result);
   });
 });
-
-// ***************** CANDIDATES Endpoints *******************
 
 // get all candidates
 router.get('/candidates', async (req, res) => {
@@ -125,7 +121,6 @@ router.post('/newuser', (req, res) => {
   });
 });
 
-
 // edit the interviewer or candidate user information
 router.put('/edituser', (req, res) => {
   const user = req.body;
@@ -148,7 +143,6 @@ router.put('/edituser', (req, res) => {
     res.send(result);
   });
 });
-
 
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/delete/:id', (req, res) => {
@@ -206,8 +200,6 @@ router.post('/sendEmail', (req, res) => {
   });
 })
 
-// ***************** CANDIDATE AVAILABILITY Endpoints *******************
-
 router.post('/availability', (req, res) => {
   try {
     const { availability, uuid } = req.body;
@@ -234,8 +226,6 @@ router.post('/availability', (req, res) => {
     res.status(error.statusCode).send({ message: error.message });
   }
 });
-
-// ***************** INTERVIEWERS Endpoints *****************************
 
 // get all interviewers
 router.get('/interviewers', (req, res) => {
@@ -375,8 +365,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
   });
 });
 
-// ************* Send out a meeting invite to the attendees and book the room for the duration of the interview **************************
-
 router.post('/event', notAuthMiddleware, async (req, res) => {
   try {
 
@@ -447,7 +435,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
 
     // insert the scheduled interview in the candidate table
-    
+
     const sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
     const sqlcmd = connection.format(sql, [room.name]);
 
@@ -471,8 +459,6 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
   }
 });
 
-// ************* Get meeting rooms from outlook *************** //
-
 router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
   const response = await axios({
     method: 'get',
@@ -484,12 +470,34 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
   res.send(response.data && response.data.value);
 });
 
-// **************************** Get all scheduled interviews ************************************ //
-
-router.get('/interviews', notAuthMiddleware,  (req, res) => {
+router.get('/interviews', notAuthMiddleware, (req, res) => {
   const currDate = new Date();
   const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
   const sqlcmd = connection.format(sql, [currDate]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
+// get email config
+router.get('/emailconfig', (req, res) => {
+  const sql = "SELECT * FROM EmailConfig";
+  connection.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
+// update email template config
+router.put('/emailconfig', (req, res) => {
+  const { subject, body, signature } = req.body;
+  const sql = "UPDATE EmailConfig SET subject = ?, body = ?, signature = ? WHERE id = 1";
+  const sqlcmd = connection.format(sql, [subject, body, signature]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
