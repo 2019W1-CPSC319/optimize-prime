@@ -106,6 +106,9 @@ class DirectoryPage extends Component {
         selectedUser: userId || '',
         openUserDialog: true,
       });
+      console.log(userId)
+      console.log(this.props)
+      console.log(this.state)
     }
   }
 

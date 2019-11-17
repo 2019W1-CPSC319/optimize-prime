@@ -93,6 +93,16 @@ class UserDialog extends Component {
     };
   }
 
+  componentDidMount() {
+    // const { selectedUser } = this.props;
+    // const { candidates, interviewers } = this.props;
+    
+    // // const users = candidates|[].concat(interviewers);
+    // // const user = users.filter(user => user.id === selectedUser);
+    // // const { firstName, lastName, email, role } = user;
+    // // console.log(user);
+  }
+
   initializeUserInfoFields = () => {
     const state = {};
     USER_DIALOG.fields.forEach((field) => {
