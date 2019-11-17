@@ -46,16 +46,13 @@ const styles = {
 class AddAvailability extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      name: 'John Doe',
-      success: false
-    };
   }
 
-  componentDidMount() {
-    const { actions } = this.props;
+  async componentDidMount() {
+    const { actions, uuid } = this.props;
     debugger;
-    actions.getUsers('candidate');
+    // actions.getUsers('candidate');
+    await actions.getCandidate(uuid);
   }
 
   handleSubmit = async (times) => {
@@ -78,7 +75,7 @@ class AddAvailability extends Component {
   }
 
   render() {
-    const { classes, candidates, uuid } = this.props;
+    const { classes, candidate } = this.props;
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" className={classes.title}>
@@ -87,7 +84,7 @@ class AddAvailability extends Component {
         <div className={classes.container}>
           <img className={classes.bigLogo} src={logo_long} alt="Galvanize Logo" />
           <div className={classes.subText}>
-            <Typography>{`Hi ${candidates.find(candidate => candidate.uuid === uuid) ? candidates.find(candidate => candidate.uuid === uuid).firstName : 'John Doe'}, `}</Typography>
+            <Typography>{`Hi ${candidate ? candidate.firstName : ''}, `}</Typography>
             <Typography>
               Please add your availability to come in for an on-site interview at our <b>Vancouver</b> office below.
             </Typography>

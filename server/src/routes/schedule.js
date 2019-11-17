@@ -86,7 +86,7 @@ router.get('/candidate/name/:uuid', (req, res) => {
 });
 
 // get a specific candidate
-router.get('/candidate/:uuid', notAuthMiddleware, (req, res) => {
+router.get('/candidate/:uuid', (req, res) => {
   const { uuid } = req.params;
   const sql = 'SELECT * FROM Candidate WHERE uuid = ?';
   const sqlcmd = connection.format(sql, [uuid]);
@@ -447,7 +447,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
 
     // insert the scheduled interview in the candidate table
-    
+
     const sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
     const sqlcmd = connection.format(sql, [room.name]);
 
@@ -486,7 +486,7 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
 
 // **************************** Get all scheduled interviews ************************************ //
 
-router.get('/interviews', notAuthMiddleware,  (req, res) => {
+router.get('/interviews', notAuthMiddleware, (req, res) => {
   const currDate = new Date();
   const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
   const sqlcmd = connection.format(sql, [currDate]);

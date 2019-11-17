@@ -58,6 +58,31 @@ export const getUsers = (role) => async (dispatch) => {
   }
 };
 
+function getCandidateSuccess(candidate) {
+  return {
+    type: 'GET_CANDIDATE_SUCCESS',
+    candidate
+  };
+}
+
+function getCandidateFailure(error) {
+  return {
+    type: 'GET_CANDIDATE_FAILURE',
+    error,
+  };
+}
+
+export const getCandidate = (uuid) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.get(`/schedule/candidate/${uuid}`);
+    const candidate = response.data[0];
+    return dispatch(getCandidateSuccess(candidate));
+  } catch (error) {
+    return dispatch(getCandidateFailure(error));
+  }
+};
+
 function deleteUserSuccess(role, userId) {
   return {
     type: 'DELETE_USER_SUCCESS',
