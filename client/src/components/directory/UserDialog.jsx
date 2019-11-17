@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import InputMask from "react-input-mask";
 import {
   Button,
   Dialog,
@@ -126,7 +127,7 @@ class UserDialog extends Component {
           firstName,
           lastName,
           email,
-          phone,
+          phone: phone.replace(/[\D]/g, ''),
           role,
         });
         if (role.toLowerCase() === 'candidate') {
@@ -146,7 +147,7 @@ class UserDialog extends Component {
                 firstName,
                 lastName,
                 email,
-                phone,
+                phone: phone.replace(/[\D]/g, ''),
                 role,
               });
               swalWithBootstrapButtons.fire(
@@ -201,7 +202,7 @@ class UserDialog extends Component {
       case 'email':
         return !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value);
       case 'phone':
-        return !/^\d{3}-\d{3}-\d{4}$/g.test(value);
+        return !/^\d{3}\s-\s\d{3}\s-\s\d{4}$/g.test(value);
       default:
         return false;
     }
@@ -301,9 +302,33 @@ class UserDialog extends Component {
             {subtitle}
           </DialogContentText>
           {
-            fields.map(infoField => (
-              this.renderInputComponent(infoField)
-            ))
+            fields.map(infoField => {
+              const { error } = this.state;
+              const { key, helperText } = infoField;
+              if (key === 'phone')
+                return (
+                  <InputMask
+                    key={key}
+                    mask="999 - 999 - 9999"
+                    label={title}
+                    onBlur={e => this.onBlurTextField(key, e)}
+                    onChange={e => this.onChangeTextField(key, e)}
+                    value={this.state[key]}
+                    alwaysShowMask>
+                    <TextField
+                      autoFocus={key === 'firstName'}
+                      error={error[key]}
+                      key={key}
+                      variant="outlined"
+                      className={classes.textField}
+                      label={title}
+                      onKeyPress={e => this.onKeyPress(e)}
+                      helperText={error[key] ? helperText : ''}
+                    ></TextField>
+                  </InputMask>
+                );
+              else return (this.renderInputComponent(infoField));
+            })
           }
           <Button
             color="primary"
