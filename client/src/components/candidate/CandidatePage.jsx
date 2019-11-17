@@ -50,8 +50,6 @@ class AddAvailability extends Component {
 
   async componentDidMount() {
     const { actions, uuid } = this.props;
-    debugger;
-    // actions.getUsers('candidate');
     await actions.getCandidate(uuid);
   }
 
