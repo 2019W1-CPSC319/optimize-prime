@@ -380,7 +380,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           });
           await Promise.all(meetingSuggestionPromises);
 
-          res.send(possibleMeetings.sort((a, b) => a.start.dateTime > b.start.dateTime));
+          res.send(possibleMeetings.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime)));
         });
       } catch (error) {
         console.log(error);
