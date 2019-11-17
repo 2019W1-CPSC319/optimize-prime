@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import MaskedInput from 'react-text-mask';
+import InputMask from "react-input-mask";
 import {
   Button,
   Dialog,
@@ -231,6 +233,27 @@ class UserDialog extends Component {
     const { error } = this.state;
     const { key, title, type, helperText, selectOptions } = infoField;
     const isSelect = type === 'select';
+    const isPhone = key === 'phone';
+
+    // if (key === 'email') {
+    //   return (
+    //     <MaskedInput
+    //       mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
+    //       autoFocus={key === 'firstName'}
+    //       // error={error[key]}
+    //       // select={isSelect}
+    //       value={this.state[key]}
+    //       key={key}
+    //       variant="outlined"
+    //       className={classes.textField}
+    //       label={title}
+    //       onChange={e => this.onChangeTextField(key, e)}
+    //       onKeyPress={e => this.onKeyPress(e)}
+    //       onBlur={e => this.onBlurTextField(key, e)}
+    //       showMask
+    //     // helperText={error[key] ? helperText : ''}
+    //     />)
+    // }
 
     return (
       <TextField
@@ -301,9 +324,37 @@ class UserDialog extends Component {
             {subtitle}
           </DialogContentText>
           {
-            fields.map(infoField => (
-              this.renderInputComponent(infoField)
-            ))
+            fields.map(infoField => {
+              const { error } = this.state;
+              const { key, helperText } = infoField;
+              if (key === 'phone')
+                return (
+                  <InputMask
+                    key={key}
+                    mask="( 999 ) 999 - 9999"
+                    label={title}
+                    onBlur={e => this.onBlurTextField(key, e)}
+                    onChange={e => this.onChangeTextField(key, e)}
+                    value={this.state[key]}
+                    alwaysShowMask>
+                    <TextField
+                      autoFocus={key === 'firstName'}
+                      error={error[key]}
+                      // select={isSelect}
+                      // value={this.state[key]}
+                      key={key}
+                      variant="outlined"
+                      className={classes.textField}
+                      label={title}
+                      // onChange={e => this.onChangeTextField(key, e)}
+                      onKeyPress={e => this.onKeyPress(e)}
+                      // onBlur={e => this.onBlurTextField(key, e)}
+                      helperText={error[key] ? helperText : ''}
+                    ></TextField>
+                  </InputMask>
+                );
+              else return (this.renderInputComponent(infoField));
+            })
           }
           <Button
             color="primary"
