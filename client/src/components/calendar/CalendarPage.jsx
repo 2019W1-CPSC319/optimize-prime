@@ -46,29 +46,16 @@ const initialState = {
   required: [],
   optional: [],
   candidate: { email: '' },
-  rows: []
+  rows: [],
+  onSuccess: false,
+  selectedOption: 0,
 }
 
 class CalendarPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      ...initialState,
-      // events: [],
-      onSuccess: false,
-      // onSlide: false,
-      // selected: 0,
-      selectedOption: 0,
-      background: ['#280e3a', '#fff', '#fff', '#fff'],
-      color: ['#fff', '#000', '#000', '#000'],
-      // durations: [
-      //   { minutes: 30 },
-      //   { minutes: 60 },
-      //   { minutes: 90 },
-      //   { minutes: 120 }
-      // ]
-    };
+    this.state = initialState;
   }
 
   getInterviewDuration = (minutes) => {
@@ -103,56 +90,7 @@ class CalendarPage extends React.Component {
     console.log(candidate)
   }
 
-  // updateRequiredInterviewers = (event, value) => {
-  //   this.setState({ required: value });
-  // }
-
-  // updateOptionalInterviewers = (event, value) => {
-  //   this.setState({ optional: value });
-  // }
-
-  // updateInterviewer = (event, row, index, required = false, duration = 30) => {
-  //   debugger;
-  //   // const { rows } = this.state;
-  //   const rows = this.state.rows;
-  //   rows[index] = { ...row, required, duration };
-  //   // removeInterviewer(index);
-  //   this.setState({ rows });
-  //   console.log(this.state.rows);
-  // }
-
-  // updateInterviewerProfile = (event, row, index) => {
-  //   debugger;
-  //   // const { rows } = this.state;
-  //   const rows = this.state.rows;
-  //   rows[index] = row;
-  //   // removeInterviewer(index);
-  //   this.setState({ rows });
-  //   console.log(this.state.rows);
-  // }
-
-  // updateInterviewerStatus = (event, row, index, required) => {
-  //   debugger;
-  //   // const { rows } = this.state;
-  //   const rows = this.state.rows;
-  //   rows[index] = { ...row, required };
-  //   // removeInterviewer(index);
-  //   this.setState({ rows });
-  //   console.log(this.state.rows);
-  // }
-
-  // updateInterviewerDuration = (event, row, index, duration) => {
-  //   debugger;
-  //   // const { rows } = this.state;
-  //   const rows = this.state.rows;
-  //   rows[index] = { ...row, duration };
-  //   // removeInterviewer(index);
-  //   this.setState({ rows });
-  //   console.log(this.state.rows);
-  // }
-
   handleAddRow = () => {
-    debugger;
     const { rows } = this.state;
     this.setState({
       rows: [...rows, this.createRow()]
@@ -160,89 +98,41 @@ class CalendarPage extends React.Component {
   }
 
   handleRemoveRow = (index) => {
-    debugger;
-    // const { rows } = this.state;
-    const rows = this.state.rows;
+    const { rows } = this.state;
     rows.splice(index, 1);
     this.setState({ rows });
-    console.log(rows)
   }
 
-  createRow = (id = '', firstName = '', lastName = '', email = '', phone = '', status = '', required = false, duration = 30) => {
-    return { id, firstName, lastName, email, phone, status, required, duration };
+  createRow = (required = [], optional = [], duration = 30) => {
+    return { required, optional, duration };
   }
 
-  handleSelectorChange = (event) = (event, index, field) => {
+  handleAutocompleteChange = (event, value, index, field) => {
     event.persist();
-    console.log(event);
-    console.log(index)
-    console.log(field)
-    debugger;
-    const { interviewers } = this.props;
-    const rows = this.state.rows;
-    switch (field) {
-      case FIELD_DURATION:
-        rows[index].duration = event.target.value;
-        break;
-      case FIELD_REQUIRED:
-        rows[index].required = event.target.checked;
-        break;
-      case FIELD_PROFILE:
-        rows[index] = { ...rows[index], ...interviewers[event.target.dataset.optionIndex] };
-        break;
-    }
-    // for (const row of rows) {
-    //   if (row.id == id) {
-    //     if (field == FIELD_FROM) {
-    //       row.from = event.target.value;
-    //     } else {
-    //       row.to = event.target.value;
-    //     }
-    //     row.timeValid = row.from < row.to;
-    //   }
-    // }
+    const { rows } = this.state;
+    rows[index][field] = value;
     this.setState({ rows });
-    console.log(rows)
+  }
+
+  handleSelectorChange = (event, index, field) => {
+    event.persist();
+    const { rows } = this.state;
+    rows[index][field] = event.target.value;
+    this.setState({ rows });
   }
 
   handleNext = async () => {
     const { actions } = this.props;
     const { candidate, rows } = this.state;
     try {
-      // await actions.findMeetingTimes({
-      //   candidate: this.state.candidate.email,
-      //   required: this.state.required,
-      //   optional: this.state.optional,
-      //   meetingDuration: this.getInterviewDuration(),
-      // });
       const data = {
         candidate: candidate.email,
-        interviews: [
-          {
-            required: rows.filter(row => row.required && row.duration === 30),
-            optional: rows.filter(row => !row.required && row.duration === 30),
-            room: "",
-            duration: 30
-          },
-          {
-            required: rows.filter(row => row.required && row.duration === 60),
-            optional: rows.filter(row => !row.required && row.duration === 60),
-            room: "",
-            duration: 60
-          },
-          {
-            required: rows.filter(row => row.required && row.duration === 90),
-            optional: rows.filter(row => !row.required && row.duration === 90),
-            room: "",
-            duration: 90
-          },
-          {
-            required: rows.filter(row => row.required && row.duration === 120),
-            optional: rows.filter(row => !row.required && row.duration === 120),
-            room: "",
-            duration: 120
-          }
-        ]
+        interviews: rows.map(row => ({
+          required: row.required.map(interviewer => interviewer.email),
+          optional: row.optional.map(interviewer => interviewer.email),
+          room: "",
+          duration: row.duration
+        })),
       };
       console.log(data)
       await actions.findAllMeetingTimes(data);
@@ -270,12 +160,7 @@ class CalendarPage extends React.Component {
     this.setState({ ...initialState, onSuccess: true });
   }
 
-  handleSelectInterviewDuration = (i) => {
-    this.setState({ selected: i });
-  }
-
   handleSelectOption = (i) => {
-    // console.log(i)
     this.setState({ selectedOption: i });
   }
 
@@ -360,12 +245,10 @@ class CalendarPage extends React.Component {
           updateRequiredInterviewers={this.updateRequiredInterviewers}
           updateOptionalInterviewers={this.updateOptionalInterviewers}
           handleSelectInterviewDuration={this.handleSelectInterviewDuration}
-          // updateInterviewer={this.updateInterviewer}
-          // addInterviewer={this.addInterviewer}
-          // removeInterviewer={this.removeInterviewer}
-          handleSelectorChange={this.handleSelectorChange}
           handleAddRow={this.handleAddRow}
           handleRemoveRow={this.handleRemoveRow}
+          handleSelectorChange={this.handleSelectorChange}
+          handleAutocompleteChange={this.handleAutocompleteChange}
           {...this.props}
           {...this.state}
         />

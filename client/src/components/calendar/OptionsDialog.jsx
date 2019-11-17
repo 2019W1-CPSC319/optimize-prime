@@ -62,17 +62,17 @@ class OptionsDialog extends Component {
     };
   }
 
-  updateRequiredInterviewers = (event) => {
-    this.setState({ required: event.target.value });
-  }
+  // updateRequiredInterviewers = (event) => {
+  //   this.setState({ required: event.target.value });
+  // }
 
-  updateOptionalInterviewers = (event) => {
-    this.setState({ optional: event.target.value });
-  }
+  // updateOptionalInterviewers = (event) => {
+  //   this.setState({ optional: event.target.value });
+  // }
 
-  updateCandidate = (event) => {
-    this.setState({ candidate: event.target.value });
-  }
+  // updateCandidate = (event) => {
+  //   this.setState({ candidate: event.target.value });
+  // }
 
   handlePopoverOpen = (event) => {
     this.setState(event.target);

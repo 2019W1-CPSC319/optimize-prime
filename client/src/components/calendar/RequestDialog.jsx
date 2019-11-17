@@ -4,29 +4,17 @@ import { Autocomplete } from '@material-ui/lab';
 import PersonIcon from '@material-ui/icons/Person';
 import AddIcon from '@material-ui/icons/Add';
 import {
-  Avatar,
   Box,
   Button,
-  ButtonGroup,
-  FormControl,
-  Chip,
-  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Grid,
   Fab,
   MenuItem,
-  Input,
-  InputAdornment,
-  InputLabel,
   Select,
   TextField,
-  List,
-  ListItem,
-  Paper,
   Table,
   TableHead,
   TableBody,
@@ -34,7 +22,6 @@ import {
   TableCell,
   Typography
 } from '@material-ui/core';
-import { FIELD_DURATION, FIELD_REQUIRED, FIELD_PROFILE } from './CalendarPage';
 
 const styles = theme => ({
   duration: {
@@ -99,16 +86,15 @@ class RequestDialog extends Component {
             renderInput={params => (
               <TextField {...params} label="Candidate" variant="outlined" fullWidth />
             )}
-            style={{ width: '100%' }}
             autoComplete={false}
-            // value={this.props.candidate}
+            value={this.props.candidate}
             onChange={this.props.updateCandidate}
           />
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Interviewer</TableCell>
-                <TableCell>Required?</TableCell>
+                <TableCell>Required</TableCell>
+                <TableCell>Optional</TableCell>
                 <TableCell>Duration</TableCell>
                 <TableCell></TableCell>
               </TableRow>
@@ -117,53 +103,37 @@ class RequestDialog extends Component {
               {rows.map((row, index) => (
                 <TableRow key={index}>
                   <TableCell>
-                    {/* <Autocomplete
+                    <Autocomplete
                       multiple
                       options={interviewers}
-                      getOptionLabel={option => option.email}
+                      getOptionLabel={interviewer => interviewer.email}
                       filterSelectedOptions
                       renderInput={params => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          label="Required interviewer(s)"
-                          margin="normal"
-                          fullWidth
-                        />
+                        <TextField {...params} label="Required interviewer(s)" variant="outlined" fullWidth />
                       )}
-                      onChange={this.props.updateRequiredInterviewers}
-                    /> */}
-                    <Autocomplete
-                      autoFocus
-                      options={interviewers}
-                      getOptionLabel={interviewer => interviewer.email}
-                      // style={{ width: 300 }}
-                      renderInput={params => (
-                        <TextField {...params} label="Interviewer" variant="outlined" fullWidth />
-                      )}
-                      // style={{ width: '100%' }}
                       autoComplete={false}
-                      value={row}
-                      onChange={(event) => this.props.handleSelectorChange(event, index, FIELD_PROFILE)}
-                    // onChange={this.props.updateInterviewer}
+                      value={row.required}
+                      onChange={(event, value) => this.props.handleAutocompleteChange(event, value, index, 'required')}
                     />
                   </TableCell>
                   <TableCell>
-                    <Checkbox
-                      checked={row.required}
-                      onChange={(event) => this.props.handleSelectorChange(event, index, FIELD_REQUIRED)}
-                      value="required"
-                      inputProps={{
-                        'aria-label': 'primary checkbox',
-                      }}
+                    <Autocomplete
+                      multiple
+                      options={interviewers}
+                      getOptionLabel={interviewer => interviewer.email}
+                      filterSelectedOptions
+                      renderInput={params => (
+                        <TextField {...params} label="Optional interviewer(s)" variant="outlined" fullWidth />
+                      )}
+                      autoComplete={false}
+                      value={row.optional}
+                      onChange={(event, value) => this.props.handleAutocompleteChange(event, value, index, 'optional')}
                     />
                   </TableCell>
                   <TableCell>
                     <Select
-                      // labelId="demo-simple-select-label"
-                      // id="demo-simple-select"
                       value={row.duration}
-                      onChange={(event) => this.props.handleSelectorChange(event, index, FIELD_DURATION)}
+                      onChange={(event) => this.props.handleSelectorChange(event, index, 'duration')}
                     >
                       <MenuItem value={30}>0.5 hour</MenuItem>
                       <MenuItem value={60}>1 hour</MenuItem>
@@ -201,7 +171,6 @@ class RequestDialog extends Component {
           {rows.length === 0 &&
             <Box>
               <Typography
-                // variant='h5'
                 align='center'
                 style={{ margin: '100px auto' }}
               >
@@ -215,22 +184,7 @@ class RequestDialog extends Component {
               >
                 Add
               </Button>
-            </Box>
-          }
-          {/* <ButtonGroup fullWidth size="small" aria-label="small outlined button group" className={classes.buttonGroup}>
-            {durations.map(
-              (duration, i) => {
-                return (
-                  <Button key={i} className={classes.duration}
-                    style={{
-                      background: `${selected == i ? '#280e3a' : '#fff'}`,
-                      color: `${selected == i ? '#fff' : '#280e3a'}`
-                    }}
-                    onClick={() => this.props.handleSelectInterviewDuration(i)}>{duration.minutes} min</Button>
-                )
-              }
-            )}
-          </ButtonGroup> */}
+            </Box>}
         </DialogContent>
         <DialogActions>
           <Button onClick={this.props.handleClose} color="primary">Cancel</Button>
