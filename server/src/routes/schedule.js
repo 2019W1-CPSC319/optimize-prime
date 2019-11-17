@@ -497,8 +497,6 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
 });
 
 router.get('/outlook/users', notAuthMiddleware, async (req, res) => {
-  const filter = "personType/class%20eq%20'Person'";
-  const select = "displayName,scoredEmailAddresses";
   try {
     const response = await axios({
       method: 'get',
