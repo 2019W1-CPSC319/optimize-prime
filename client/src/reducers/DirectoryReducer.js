@@ -27,6 +27,7 @@ const DirectoryReducer = (state = initialState, action) => {
       return {
         ...state,
         outlookUsers
+      }
     case 'GET_CANDIDATE_SUCCESS':
       const { candidate } = action;
       return {
