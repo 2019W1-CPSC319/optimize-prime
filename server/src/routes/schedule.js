@@ -177,7 +177,7 @@ router.post('/sendEmail', (req, res) => {
 
     // Get email template config
     const sqlcmd = "SELECT * FROM EmailConfig";
-    connection.query(sqlcmd, (err, result) => {
+    connection.query(sqlcmd, async (err, result) => {
       if (err) {
         return res.status(500).send({ message: 'Internal Server error' });
       }
