@@ -202,7 +202,7 @@ class UserDialog extends Component {
       case 'email':
         return !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value);
       case 'phone':
-        return !/^\d{3}-\d{3}-\d{4}$/g.test(value);
+        return !/^\(\s\d{3}\s\)\s\d{3}\s-\s\d{4}$/g.test(value);
       default:
         return false;
     }
