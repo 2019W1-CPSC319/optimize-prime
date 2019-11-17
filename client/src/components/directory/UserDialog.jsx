@@ -319,15 +319,11 @@ class UserDialog extends Component {
                     <TextField
                       autoFocus={key === 'firstName'}
                       error={error[key]}
-                      // select={isSelect}
-                      // value={this.state[key]}
                       key={key}
                       variant="outlined"
                       className={classes.textField}
                       label={title}
-                      // onChange={e => this.onChangeTextField(key, e)}
                       onKeyPress={e => this.onKeyPress(e)}
-                      // onBlur={e => this.onBlurTextField(key, e)}
                       helperText={error[key] ? helperText : ''}
                     ></TextField>
                   </InputMask>
