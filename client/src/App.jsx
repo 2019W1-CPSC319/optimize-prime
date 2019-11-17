@@ -31,7 +31,7 @@ const App = props => (
 const mapStateToProps = state => ({
   user: state.user,
   candidates: state.directory.candidates,
-  interviewers: state.directory.interviewers,
+  interviewers: state.directory.outlookUsers,
   rooms: state.rooms.rooms,
   outlookRooms: state.rooms.outlookRooms,
   meetingSuggestions: state.user.meetingSuggestions,

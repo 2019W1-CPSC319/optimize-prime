@@ -499,6 +499,30 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
   res.send(response.data && response.data.value);
 });
 
+router.get('/outlook/users', notAuthMiddleware, async (req, res) => {
+  const filter = "personType/class%20eq%20'Person'";
+  const select = "displayName,scoredEmailAddresses";
+  try {
+    const response = await axios({
+      method: 'get',
+      url: 'https://graph.microsoft.com/v1.0/users',
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
+      },
+    });
+    res.send(
+      response.data.value
+        .filter(user => user.givenName !== null)
+        .map(user => ({
+          firstName: user.givenName,
+          lastName: user.surname,
+          email: user.mail,
+        })));
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 // **************************** Get all scheduled interviews ************************************ //
 
 router.get('/interviews', notAuthMiddleware, (req, res) => {

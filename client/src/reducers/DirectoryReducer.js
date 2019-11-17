@@ -21,6 +21,13 @@ const DirectoryReducer = (state = initialState, action) => {
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = action.users;
       return newState;
+    case 'GET_OUTLOOK_USERS_SUCCESS':
+      const { outlookUsers } = action;
+      console.log(outlookUsers)
+      return {
+        ...state,
+        outlookUsers
+      }
     case 'DELETE_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = newState[action.role].filter((user) => user.id !== action.userId);

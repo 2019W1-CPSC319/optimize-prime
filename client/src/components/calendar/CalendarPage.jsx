@@ -184,6 +184,7 @@ class CalendarPage extends React.Component {
     actions.getUsers('candidate');
     actions.getUsers('interviewer');
     actions.getInterviews();
+    actions.getOutlookUsers();
   }
 
   render() {
