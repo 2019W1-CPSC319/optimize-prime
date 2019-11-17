@@ -233,27 +233,6 @@ class UserDialog extends Component {
     const { error } = this.state;
     const { key, title, type, helperText, selectOptions } = infoField;
     const isSelect = type === 'select';
-    const isPhone = key === 'phone';
-
-    // if (key === 'email') {
-    //   return (
-    //     <MaskedInput
-    //       mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-    //       autoFocus={key === 'firstName'}
-    //       // error={error[key]}
-    //       // select={isSelect}
-    //       value={this.state[key]}
-    //       key={key}
-    //       variant="outlined"
-    //       className={classes.textField}
-    //       label={title}
-    //       onChange={e => this.onChangeTextField(key, e)}
-    //       onKeyPress={e => this.onKeyPress(e)}
-    //       onBlur={e => this.onBlurTextField(key, e)}
-    //       showMask
-    //     // helperText={error[key] ? helperText : ''}
-    //     />)
-    // }
 
     return (
       <TextField
