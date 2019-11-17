@@ -128,7 +128,7 @@ class UserDialog extends Component {
           firstName,
           lastName,
           email,
-          phone,
+          phone: phone.replace(/[\D]/g, ''),
           role,
         });
         if (role.toLowerCase() === 'candidate') {
@@ -148,7 +148,7 @@ class UserDialog extends Component {
                 firstName,
                 lastName,
                 email,
-                phone,
+                phone: phone.replace(/[\D]/g, ''),
                 role,
               });
               swalWithBootstrapButtons.fire(
@@ -203,7 +203,7 @@ class UserDialog extends Component {
       case 'email':
         return !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value);
       case 'phone':
-        return !/^\d{3}-\d{3}-\d{4}$/g.test(value);
+        return !/^\d{3}\s-\s\d{3}\s-\s\d{4}$/g.test(value);
       default:
         return false;
     }
@@ -233,27 +233,6 @@ class UserDialog extends Component {
     const { error } = this.state;
     const { key, title, type, helperText, selectOptions } = infoField;
     const isSelect = type === 'select';
-    const isPhone = key === 'phone';
-
-    // if (key === 'email') {
-    //   return (
-    //     <MaskedInput
-    //       mask={['(', /[1-9]/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, /\d/, /\d/]}
-    //       autoFocus={key === 'firstName'}
-    //       // error={error[key]}
-    //       // select={isSelect}
-    //       value={this.state[key]}
-    //       key={key}
-    //       variant="outlined"
-    //       className={classes.textField}
-    //       label={title}
-    //       onChange={e => this.onChangeTextField(key, e)}
-    //       onKeyPress={e => this.onKeyPress(e)}
-    //       onBlur={e => this.onBlurTextField(key, e)}
-    //       showMask
-    //     // helperText={error[key] ? helperText : ''}
-    //     />)
-    // }
 
     return (
       <TextField
@@ -331,7 +310,7 @@ class UserDialog extends Component {
                 return (
                   <InputMask
                     key={key}
-                    mask="( 999 ) 999 - 9999"
+                    mask="999 - 999 - 9999"
                     label={title}
                     onBlur={e => this.onBlurTextField(key, e)}
                     onChange={e => this.onChangeTextField(key, e)}
@@ -340,15 +319,11 @@ class UserDialog extends Component {
                     <TextField
                       autoFocus={key === 'firstName'}
                       error={error[key]}
-                      // select={isSelect}
-                      // value={this.state[key]}
                       key={key}
                       variant="outlined"
                       className={classes.textField}
                       label={title}
-                      // onChange={e => this.onChangeTextField(key, e)}
                       onKeyPress={e => this.onKeyPress(e)}
-                      // onBlur={e => this.onBlurTextField(key, e)}
                       helperText={error[key] ? helperText : ''}
                     ></TextField>
                   </InputMask>

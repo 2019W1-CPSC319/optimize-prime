@@ -167,36 +167,47 @@ router.post('/sendEmail', (req, res) => {
 
     const { uuid } = result[0];
 
-    try {
-      const subject = 'Availability';
-      const body = `Hi ${firstName},` + '\nPlease fill out your availability by going here: ' + `https://optimize-prime.herokuapp.com/candidate?key=${uuid}`;
-      const response = await axios({
-        method: 'post',
-        url: 'https://graph.microsoft.com/v1.0/me/sendMail',
-        headers: {
-          Authorization: `Bearer ${req.user.accessToken}`,
-        },
-        data: {
-          message: {
-            subject,
-            body: {
-              contentType: 'text',
-              content: body,
-            },
-            toRecipients: [
-              {
-                emailAddress: {
-                  address: email,
-                },
-              },
-            ],
+    // get email template config
+    const sqlcmd = "SELECT * FROM EmailConfig";
+    connection.query(sqlcmd, async (err, result) => {
+      if (err) {
+        return res.status(500).send({ message: 'Internal Server error' });
+      }
+      const subject = result[0].subject;
+      const body = result[0].body;
+      const signature = result[0].signature;
+
+      try {
+        // const subject = 'Availability';
+        const content = `Hi ${firstName},\n\nPlease fill out your availability by going here: https://optimize-prime.herokuapp.com/candidate?key=${uuid}\n\n${body}\n\n${signature}`;
+        const response = await axios({
+          method: 'post',
+          url: 'https://graph.microsoft.com/v1.0/me/sendMail',
+          headers: {
+            Authorization: `Bearer ${req.user.accessToken}`,
           },
-        },
-      });
-      res.send(response.data);
-    } catch (error) {
-      res.status(500).send({ message: 'Internal server Error.' });
-    }
+          data: {
+            message: {
+              subject,
+              body: {
+                contentType: 'text',
+                content,
+              },
+              toRecipients: [
+                {
+                  emailAddress: {
+                    address: email,
+                  },
+                },
+              ],
+            },
+          },
+        });
+        res.send(response.data);
+      } catch (error) {
+        res.status(500).send({ message: 'Internal server Error.' });
+      }
+    });
   });
 });
 
