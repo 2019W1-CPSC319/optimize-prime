@@ -99,7 +99,7 @@ export const findMeetingTimes = (data) => async (dispatch) => {
 
 const createEventSuccess = () => (
   {
-    type: 'CREATE_EVENT_SUCCESS'
+    type: 'CREATE_EVENT_SUCCESS',
   }
 );
 
@@ -141,7 +141,7 @@ export const createEvent = (selectedSuggestion, candidate, required, optional) =
 const getInterviewsSuccess = (interviews) => (
   {
     type: 'GET_INTERVIEWS_SUCCESS',
-    payload: interviews
+    payload: interviews,
   }
 );
 
@@ -157,7 +157,6 @@ export const getInterviews = () => async (dispatch) => {
     dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.get('/schedule/interviews');
     const interviews = response.data;
-    debugger;
     return dispatch(getInterviewsSuccess(interviews));
   } catch (error) {
     console.log(error);
