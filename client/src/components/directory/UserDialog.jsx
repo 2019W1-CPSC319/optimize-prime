@@ -87,6 +87,8 @@ const USER_DIALOG = {
 class UserDialog extends Component {
   constructor(props) {
     super(props);
+    // const { selectedUser } = this.props;
+    // console.log(selectedUser)
     const userFields = this.initializeUserInfoFields();
     this.state = {
       ...userFields
@@ -95,8 +97,13 @@ class UserDialog extends Component {
 
   componentDidMount() {
     // const { selectedUser } = this.props;
+    // console.log(selectedUser)
+    // if (selectedUser) {
+    //   this.setState({ ...selectedUser });
+    // }
+    // console.log(this.state)
     // const { candidates, interviewers } = this.props;
-    
+
     // // const users = candidates|[].concat(interviewers);
     // // const user = users.filter(user => user.id === selectedUser);
     // // const { firstName, lastName, email, role } = user;
@@ -285,6 +292,10 @@ class UserDialog extends Component {
     return !firstName || !lastName || !email || !phone || !role;
   }
 
+  onEnter = () => {
+    console.log('on enter')
+  }
+
   render() {
     const { classes, open, onClickCloseDialog } = this.props;
     const dialog = this.getDialogInfoForMode();
@@ -299,6 +310,7 @@ class UserDialog extends Component {
       <Dialog
         open={open}
         onClose={onClickCloseDialog}
+        onEnter={this.onEnter}
       >
         <DialogTitle disableTypography classes={{ root: classes.dialogTitleRoot }}>
           {title}
