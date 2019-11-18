@@ -32,6 +32,31 @@ export const addUser = (role, user) => async (dispatch) => {
   }
 };
 
+function editUserSuccess(data) {
+  return {
+    type: 'EDIT_USER_SUCCESS',
+    data,
+  };
+}
+
+function editUserFailure(error) {
+  return {
+    type: 'EDIT_USER_FAILURE',
+    error,
+  };
+}
+
+export const editUser = (user) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.put('/schedule/edituser', user);
+    const data = response.data;
+    return dispatch(editUserSuccess(data));
+  } catch (error) {
+    return dispatch(editUserFailure(error));
+  }
+};
+
 function getUsersSuccess(role, users) {
   return {
     type: 'GET_USERS_SUCCESS',

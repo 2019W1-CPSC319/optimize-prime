@@ -113,6 +113,7 @@ class UserDialog extends Component {
   onClickSubmit = async () => {
     const { actions, mode, onClickCloseDialog } = this.props;
     const {
+      id,
       firstName,
       lastName,
       email,
@@ -164,21 +165,21 @@ class UserDialog extends Component {
           );
         }
       } else if (mode === 'edit') {
-        // TODO: edit user action
-        // actions.updateUser({
-        //   firstName,
-        //   lastName,
-        //   email,
-        //   role,
-        // });
+        await actions.editUser({
+          id,
+          firstName,
+          lastName,
+          email,
+          phone: phone.replace(/[\D]/g, ''),
+          role,
+        });
+        swalWithBootstrapButtons.fire(
+          'Change has been saved!',
+          'You\'re all set.',
+          'success'
+        );
       }
-
-      // swalWithBootstrapButtons.fire(
-      //   mode === 'add' ? 'Added!' : 'Saved',
-      //   `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
-      //   'success'
-      // )
-      // Clear dialog state
+      // clear dialog state
       this.setState(this.initializeUserInfoFields());
       onClickCloseDialog();
     }
