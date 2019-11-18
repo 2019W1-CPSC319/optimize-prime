@@ -23,7 +23,6 @@ const DirectoryReducer = (state = initialState, action) => {
       return newState;
     case 'GET_OUTLOOK_USERS_SUCCESS':
       const { outlookUsers } = action;
-      console.log(outlookUsers)
       return {
         ...state,
         outlookUsers
