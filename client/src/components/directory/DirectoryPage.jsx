@@ -153,6 +153,7 @@ class DirectoryPage extends Component {
   render() {
     const { classes, actions } = this.props;
     const { value, mode, openUserDialog, selectedUser } = this.state;
+    const role = tabs[value].key;
 
     return (
       <div>
@@ -183,6 +184,7 @@ class DirectoryPage extends Component {
           {this.renderDirectoryTable()}
         </Paper>
         <UserDialog
+          role={role}
           mode={mode}
           open={openUserDialog}
           onClickCloseDialog={() => this.onClickCloseDialog()}

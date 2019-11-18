@@ -275,9 +275,9 @@ class UserDialog extends Component {
   }
 
   onEnter = () => {
-    const { selectedUser } = this.props;
+    const { selectedUser, role } = this.props;
     if (selectedUser) {
-      this.setState({ ...selectedUser })
+      this.setState({ ...selectedUser, role })
     }
   }
 
@@ -311,7 +311,7 @@ class UserDialog extends Component {
           {
             fields.map(infoField => {
               const { error } = this.state;
-              const { key, helperText } = infoField;
+              const { key, title, helperText } = infoField;
               if (key === 'phone')
                 return (
                   <InputMask
