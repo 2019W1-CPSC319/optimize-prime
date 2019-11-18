@@ -86,22 +86,13 @@ export const findAllMeetingTimes = (data) => async (dispatch) => {
   } catch (error) {
     return dispatch(findMeetingTimesFailure(error));
   }
-}
+};
 
 export const findMeetingTimes = (data) => async (dispatch) => {
   try {
-    const {
-      candidate,
-      required,
-      optional,
-      meetingDuration,
-    } = data;
-    const response = await axios.post('/schedule/meeting', {
-      candidate,
-      meetingDuration,
-      required,
-      optional,
-    });
+    const { candidate, interviews } = data;
+    const response = await axios.post('/schedule/meeting', { candidate, interviews });
+    console.log(response);
     return dispatch(findMeetingTimesSuccess(response));
   } catch (error) {
     return dispatch(findMeetingTimesFailure(error));

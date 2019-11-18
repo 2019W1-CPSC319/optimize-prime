@@ -315,9 +315,9 @@ const getPossibleSchedules = (interviews) => {
   //   });
   // });
 
-  const allPossibleMeetings = [];
+  let allPossibleMeetings = [];
   interviews.forEach((interview) => {
-    allPossibleMeetings.concat(interview.possibleMeetings);
+    allPossibleMeetings = allPossibleMeetings.concat(interview.possibleMeetings);
   });
   const allSchedulePermutations = permutator(allPossibleMeetings, interviews.length);
   allSchedulePermutations.forEach((schedule) => {
@@ -325,12 +325,14 @@ const getPossibleSchedules = (interviews) => {
     // 2. Check if schedule has overlapping meeting times
     // 3. Check if # of rooms involved is 1 < x <= 2
     // 4. Sort by start time
-    let isQualified = false;
+    let isQualified = true;
     for (let i = 0; i < schedule.length; i++) {
       const tentativeRoomEmailAddress = schedule[i].room.locationEmailAddress;
       let roomCount = 0;
 
-      for (let j = i + 1; j < schedule.length - 1; j++) {
+      for (let j = i + 1; j < schedule.length; j++) {
+        isQualified = false;
+
         if (schedule[i].interviewIndex === schedule[j].interviewIndex) break;
 
         const iStart = new Date(schedule[i].start.dateTime);
@@ -394,38 +396,40 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           })),
         };
 
-        const interviewsWithPossibleMeetings = interviews.map((interview, index) => {
-          const { meetingDuration, required, optional } = interview;
-          const possibleMeetings = [];
+        const getRoomsCmd = 'SELECT * FROM Rooms WHERE status="A"';
+        connection.query(getRoomsCmd, async (availableRoomsError, availableRooms) => {
+          if (availableRoomsError) {
+            throw availableRoomsError;
+          }
+          let locations = [{}];
+          if (availableRooms.length > 0) {
+            locations = availableRooms.map((room) => ({
+              displayName: room.name,
+              locationEmailAddress: room.email,
+            }));
+          }
 
-          const requiredAttendees = required.map((interviewer) => ({
-            type: 'required',
-            emailAddress: {
-              address: interviewer.email,
-            },
-          }));
+          const interviewsWithPossibleMeetings = [];
 
-          const optionalAttendees = optional.map((interviewer) => ({
-            type: 'optional',
-            emailAddress: {
-              address: interviewer.email,
-            },
-          }));
+          const interviewPromises = interviews.map(async (interview, index) => {
+            const { meetingDuration, required, optional } = interview;
+            const possibleMeetings = [];
 
-          const attendees = requiredAttendees.concat(optionalAttendees);
+            const requiredAttendees = required.map((interviewer) => ({
+              type: 'required',
+              emailAddress: {
+                address: interviewer,
+              },
+            }));
 
-          const getRoomsCmd = 'SELECT * FROM Rooms WHERE status="A"';
-          connection.query(getRoomsCmd, async (availableRoomsError, availableRooms) => {
-            if (availableRoomsError) {
-              throw availableRoomsError;
-            }
-            let locations = [{}];
-            if (availableRooms.length > 0) {
-              locations = availableRooms.map((room) => ({
-                displayName: room.name,
-                locationEmailAddress: room.email,
-              }));
-            }
+            const optionalAttendees = optional.map((interviewer) => ({
+              type: 'optional',
+              emailAddress: {
+                address: interviewer,
+              },
+            }));
+
+            const attendees = requiredAttendees.concat(optionalAttendees);
 
             // Need to loop through each availability block because if the duration of time
             // constraint blocks is equal to the specified meeting duration, only the earliest
@@ -480,17 +484,21 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
                 });
               }
             });
+
             await Promise.all(meetingSuggestionPromises);
+
+            interviewsWithPossibleMeetings.push({
+              ...interview,
+              possibleMeetings,
+            });
           });
 
-          // eslint-disable-next-line prefer-object-spread
-          const interviewWithPossibleMeetings = Object.assign({}, interview, { possibleMeetings });
-          return interviewWithPossibleMeetings;
+          await Promise.all(interviewPromises);
+
+          const possibleSchedules = getPossibleSchedules(interviewsWithPossibleMeetings);
+
+          res.send(possibleSchedules);
         });
-
-        const possibleSchedules = getPossibleSchedules(interviewsWithPossibleMeetings);
-
-        res.send(possibleSchedules);
       } catch (error) {
         console.log(error);
       }

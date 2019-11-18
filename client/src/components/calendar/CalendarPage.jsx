@@ -125,17 +125,29 @@ class CalendarPage extends React.Component {
     const { actions } = this.props;
     const { candidate, rows } = this.state;
     try {
+      // Ben's implementation
+      // const data = {
+      //   candidate: candidate.email,
+      //   interviews: rows.map(row => ({
+      //     required: row.required.map(interviewer => interviewer.email),
+      //     optional: row.optional.map(interviewer => interviewer.email),
+      //     room: "",
+      //     duration: row.duration
+      //   })),
+      // };
       const data = {
         candidate: candidate.email,
         interviews: rows.map(row => ({
           required: row.required.map(interviewer => interviewer.email),
           optional: row.optional.map(interviewer => interviewer.email),
           room: "",
-          duration: row.duration
+          meetingDuration: this.getInterviewDuration(row.duration),
         })),
       };
       console.log(data)
-      await actions.findAllMeetingTimes(data);
+      // Ben's implementation
+      // await actions.findAllMeetingTimes(data);
+      await actions.findMeetingTimes(data);
       this.setState({ reqOpen: false });
       this.setState({ optOpen: true });
     } catch (err) {
