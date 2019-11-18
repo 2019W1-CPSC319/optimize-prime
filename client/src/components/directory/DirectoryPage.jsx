@@ -103,13 +103,11 @@ class DirectoryPage extends Component {
     } else {
       const { candidates, interviewers } = this.props;
       const users = candidates.concat(interviewers);
-      console.log(users.find(user => user.id === userId))
       this.setState({
         mode,
         selectedUser: users.find(user => user.id === userId),
         openUserDialog: true,
       });
-      // console.log(this.state)
     }
   }
 

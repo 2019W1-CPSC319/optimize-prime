@@ -87,27 +87,10 @@ const USER_DIALOG = {
 class UserDialog extends Component {
   constructor(props) {
     super(props);
-    // const { selectedUser } = this.props;
-    // console.log(selectedUser)
     const userFields = this.initializeUserInfoFields();
     this.state = {
       ...userFields
     };
-  }
-
-  componentDidMount() {
-    // const { selectedUser } = this.props;
-    // console.log(selectedUser)
-    // if (selectedUser) {
-    //   this.setState({ ...selectedUser });
-    // }
-    // console.log(this.state)
-    // const { candidates, interviewers } = this.props;
-
-    // // const users = candidates|[].concat(interviewers);
-    // // const user = users.filter(user => user.id === selectedUser);
-    // // const { firstName, lastName, email, role } = user;
-    // // console.log(user);
   }
 
   initializeUserInfoFields = () => {
@@ -159,7 +142,6 @@ class UserDialog extends Component {
           }).then(async (result) => {
             const { value } = result;
             if (value) {
-              // const { value: tabIndex } = this.state;
               await actions.sendEmail({
                 firstName,
                 lastName,
@@ -293,7 +275,10 @@ class UserDialog extends Component {
   }
 
   onEnter = () => {
-    console.log('on enter')
+    const { selectedUser } = this.props;
+    if (selectedUser) {
+      this.setState({ ...selectedUser })
+    }
   }
 
   render() {
