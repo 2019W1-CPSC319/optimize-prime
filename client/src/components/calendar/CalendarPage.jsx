@@ -204,9 +204,9 @@ class CalendarPage extends React.Component {
             </TableHead>
             <TableBody>
               {interviews && interviews.map(
-                interview => {
+                (interview, key) => {
                   return (
-                    <TableRow key={interview.id}>
+                    <TableRow key={key}>
                       <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
                       <TableCell align="center">{interview.name}</TableCell>
                       <TableCell align="center">{interview.seats}</TableCell>
