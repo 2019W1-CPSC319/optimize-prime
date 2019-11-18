@@ -63,10 +63,36 @@ export const sendEmail = (user) => async (dispatch) => {
   }
 };
 
-const findMeetingTimesSuccess = (meetingSuggestions = []) => (
+const findAllMeetingTimesSuccess = (meetingSuggestions = []) => (
+  {
+    type: 'FIND_ALL_MEETING_TIMES_SUCCESS',
+    payload: meetingSuggestions,
+  }
+);
+
+const findAllMeetingTimesFailure = (error) => (
+  {
+    type: 'FIND_ALL_MEETING_TIMES_FAILURE',
+    payload: error,
+  }
+);
+
+export const findAllMeetingTimes = (data) => async (dispatch) => {
+  try {
+    const { candidate, interviews } = data;
+    const response = await axios.post('/schedule/allmeetings', { candidate, interviews });
+    console.log(response);
+    return dispatch(findAllMeetingTimesSuccess(response));
+  } catch (error) {
+    return dispatch(findAllMeetingTimesFailure(error));
+  }
+};
+
+const findMeetingTimesSuccess = (candidate, meetingSuggestions = []) => (
   {
     type: 'FIND_MEETING_TIMES_SUCCESS',
-    payload: meetingSuggestions,
+    candidateEmail: candidate,
+    interviews: meetingSuggestions,
   }
 );
 
@@ -77,23 +103,12 @@ const findMeetingTimesFailure = (error) => (
   }
 );
 
-export const findAllMeetingTimes = (data) => async (dispatch) => {
-  try {
-    const { candidate, interviews } = data;
-    const response = await axios.post('/schedule/allmeetings', { candidate, interviews });
-    console.log(response);
-    return dispatch(findMeetingTimesSuccess(response));
-  } catch (error) {
-    return dispatch(findMeetingTimesFailure(error));
-  }
-};
-
 export const findMeetingTimes = (data) => async (dispatch) => {
   try {
     const { candidate, interviews } = data;
     const response = await axios.post('/schedule/meeting', { candidate, interviews });
     console.log(response);
-    return dispatch(findMeetingTimesSuccess(response));
+    return dispatch(findMeetingTimesSuccess(candidate, response.data));
   } catch (error) {
     return dispatch(findMeetingTimesFailure(error));
   }

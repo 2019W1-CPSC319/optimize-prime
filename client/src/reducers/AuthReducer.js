@@ -33,6 +33,12 @@ const AuthReducer = (state = {}, action) => {
       return {
         ...state,
         loading: false,
+        meetingSuggestions: action.interviews,
+      };
+    case 'FIND_ALL_MEETING_TIMES_SUCCESS':
+      return {
+        ...state,
+        loading: false,
         meetingSuggestions: action.payload,
       };
     case 'EMAIL_SEND_SUCCESS':

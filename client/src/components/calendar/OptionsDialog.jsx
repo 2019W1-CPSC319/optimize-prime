@@ -101,54 +101,64 @@ class OptionsDialog extends Component {
   createOptions = () => {
     const { classes } = this.props;
 
-    if (Array.isArray(this.props.meetingSuggestions.data) && this.props.meetingSuggestions.data.length > 0) {
+    if (Array.isArray(this.props.meetingSuggestions) && this.props.meetingSuggestions.length > 0) {
       return (
         <List dense>
-          {this.props.meetingSuggestions.data.map((option, index) => {
-            const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
-            const labelId = `radio-list-secondary-label-${hash}`;
-            return (
-              <ListItem key={hash}>
-                <ListItemSecondaryAction>
-                  <GreenRadio
-                    checked={this.props.selectedOption === index}
-                    onChange={() => this.props.handleSelectOption(index)}
-                    value={index}
-                  />
-                </ListItemSecondaryAction>
-                <ListItemText
-                  id={labelId}
-                  primary={
-                    <Box>
-                      <Box fontWeight='fontWeightBold'><Moment subtract={{ hours: 8 }} format='ll' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Box>
-                      <Typography>Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Typography>
-                      <Typography>Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.end.dateTime}</Moment></Typography>
-                    </Box>
-                  }
-                  secondary={option.room.displayName} />
-                <Box component='div' display='flex'>
-                  {option.interviewers.map(
-                    interviewer => {
+          {
+            this.props.meetingSuggestions.map((schedule) => {
+              return (
+                <div>
+                  {
+                    schedule.map((option, index) => {
+                      const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
+                      const labelId = `radio-list-secondary-label-${hash}`;
                       return (
-                        <Avatar
-                          key={`${interviewer}-${Math.random() * 1000}`}
-                          // onMouseEnter={this.handlePopoverOpen}
-                          // onMouseLeave={this.handlePopoverClose}
-                          className={classes.avatar}>{interviewer.attendee.emailAddress.address.charAt(0).toUpperCase()}</Avatar>
-                      )
-                    }
-                  )}
-                </Box>
-              </ListItem>
-            );
-          })}
+                        <ListItem key={hash}>
+                          <ListItemSecondaryAction>
+                            <GreenRadio
+                              checked={this.props.selectedOption === index}
+                              onChange={() => this.props.handleSelectOption(index)}
+                              value={index}
+                            />
+                          </ListItemSecondaryAction>
+                          <ListItemText
+                            id={labelId}
+                            primary={
+                              <Box>
+                                <Box fontWeight='fontWeightBold'><Moment subtract={{ hours: 8 }} format='ll' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Box>
+                                <Typography>Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Typography>
+                                <Typography>Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.end.dateTime}</Moment></Typography>
+                              </Box>
+                            }
+                            secondary={option.room.displayName} />
+                          <Box component='div' display='flex'>
+                            {option.interviewers.map(
+                              interviewer => {
+                                return (
+                                  <Avatar
+                                    key={`${interviewer}-${Math.random() * 1000}`}
+                                    // onMouseEnter={this.handlePopoverOpen}
+                                    // onMouseLeave={this.handlePopoverClose}
+                                    className={classes.avatar}>{interviewer.attendee.emailAddress.address.charAt(0).toUpperCase()}</Avatar>
+                                )
+                              }
+                            )}
+                          </Box>
+                        </ListItem>
+                      );
+                    })
+                  }
+                </div>
+              );
+            })
+          }
         </List>
       );
     } else {
       return (
         <Box style={{ padding: '50px' }}>
           <Typography style={{ textAlign: 'center' }}>
-            {Array.isArray(this.props.meetingSuggestions.data) ? 'No options available' : 'Candidate availability has not been submitted'}
+            {Array.isArray(this.props.meetingSuggestions) ? 'No options available' : 'Candidate availability has not been submitted'}
           </Typography>
           <Button
             color='primary'
