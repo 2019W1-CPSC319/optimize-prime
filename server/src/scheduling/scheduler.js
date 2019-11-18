@@ -34,6 +34,10 @@ async function findTimes(interviews, candidateEmail, token) {
     DEBUG && console.log("candidate availability:")
     DEBUG && console.log(availability)
 
+    let rooms = await getRoomList();
+    DEBUG && console.log("Rooms:");
+    DEBUG && console.log(rooms);
+
     /**
      * ** ASSUMPTION **
      * This makes the assumption that all interviews have unique required
@@ -68,6 +72,9 @@ async function findTimes(interviews, candidateEmail, token) {
         DEBUG && console.log("Availabilities: ")
         DEBUG && console.log(avails);
 
+        // Let this one go async as we don't need until later
+        let roomAvail = getInterviewerAvailability(rooms.map(x => x.locationEmailAddress), start, end, token);
+
         let schedules = arrangeInterviews(interviews, avails, best, totalTime / TIME_INTERVAL);
 
         //godlike one-liner to remove duplicates
@@ -75,6 +82,10 @@ async function findTimes(interviews, candidateEmail, token) {
 
         // Make into proper interview sequence objects
         schedules.sequence = schedules.sequence.map((x => parseNumArrayToTimes(interviews, x, start)))
+        // Add rooms
+        roomAvail = await roomAvail;
+        schedules.sequence = schedules.sequence.map((x => assignRooms(rooms, roomAvail, x, start)))
+
 
         if (DEBUG) {
             console.log(String(schedules.sequence.length) + " Schedules for " + String(start) + ":");
@@ -83,7 +94,6 @@ async function findTimes(interviews, candidateEmail, token) {
             }
         }
 
-        parseNumArrayToTimes(interviews, schedules.sequence[0], start)
         if (schedules.best < best) {
             best = schedules.best;
             optimalSchedules = schedules.sequence
@@ -120,6 +130,63 @@ function parseNumArrayToTimes(interviews, solution, blockStart) {
     DEBUG && console.log(interviewConfiguration);
 
     return interviewConfiguration;
+}
+
+async function getRoomList() {
+    const sql = 'SELECT * FROM Rooms WHERE status="A"';
+
+    return new Promise((resolve, reject) => {
+        db.query(sql, async (err, result) => {
+
+            if (err) {
+                throw err;
+            }
+
+            let locations = [{}];
+            if (result.length > 0) {
+                locations = result.map(room => ({
+                displayName: room.name,
+                locationEmailAddress: room.email
+                }))
+                resolve(locations);
+            } else {
+                return reject("No interview rooms found");
+            }
+        });
+    });
+}
+
+function assignRooms(rooms, roomAvailability, interviews, blockStart) {
+    for (let i = 0; i < interviews.length; i++) {
+        let startIndex = moment.duration(interviews[i].start.diff(blockStart)).asMinutes() / TIME_INTERVAL;
+
+        interviews[i].room = "";
+
+        for (let roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
+            let j = startIndex;
+            let roomEmail = rooms[roomIndex].locationEmailAddress;
+            while (roomAvailability.get(roomEmail)[j] && interviews[i].room == "") {
+                j++;
+                if (j >= startIndex + (interviews[i].duration / TIME_INTERVAL)) {
+                    interviews[i].room = rooms[roomIndex];
+                    break;
+                    /**
+                     * NB: We don't have to worry about updating room avail because
+                     *     we know that we will never have two interviews that
+                     *     overlap as the candidate can't be in two places at once.
+                     */
+                }
+            }
+        }
+
+        if (interviews[i].room == "") {
+            console.log("No rooms found for interview!")
+            // DEBUG && console.log("No rooms found for interview!")
+            return null;
+        }
+    }
+    DEBUG && console.log(interviews);
+    return interviews;
 }
 
 function availStringToBoolArray(availabilityString) {
