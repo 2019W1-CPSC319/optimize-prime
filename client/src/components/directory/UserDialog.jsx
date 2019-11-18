@@ -88,8 +88,10 @@ class UserDialog extends Component {
   constructor(props) {
     super(props);
     const userFields = this.initializeUserInfoFields();
+    const errorState = this.initializeErrorState();
     this.state = {
-      ...userFields
+      ...userFields,
+      ...errorState,
     };
   }
 
@@ -100,14 +102,15 @@ class UserDialog extends Component {
     });
     return {
       ...state,
-      error: {
-        firstName: false,
-        lastName: false,
-        email: false,
-        phone: false,
-        role: false
-      }
     };
+  }
+
+  initializeErrorState = () => {
+    const state = {};
+    USER_DIALOG.fields.forEach((field) => {
+      state[field.key] = false;
+    });
+    return { error: state };
   }
 
   onClickSubmit = async () => {
@@ -275,6 +278,15 @@ class UserDialog extends Component {
     return !firstName || !lastName || !email || !phone || !role;
   }
 
+  onExit = () => {
+    const userFields = this.initializeUserInfoFields();
+    const errorState = this.initializeErrorState();
+    this.setState({
+      ...userFields,
+      ...errorState,
+    })
+  }
+
   render() {
     const { classes, open, onClickCloseDialog } = this.props;
     const dialog = this.getDialogInfoForMode();
@@ -289,6 +301,7 @@ class UserDialog extends Component {
       <Dialog
         open={open}
         onClose={onClickCloseDialog}
+        onExit={this.onExit}
       >
         <DialogTitle disableTypography classes={{ root: classes.dialogTitleRoot }}>
           {title}
