@@ -319,6 +319,9 @@ const getPossibleSchedules = (interviews) => {
   interviews.forEach((interview) => {
     allPossibleMeetings = allPossibleMeetings.concat(interview.possibleMeetings);
   });
+
+  const algorithmStartTime = new Date().getTime();
+
   const allSchedulePermutations = permutator(allPossibleMeetings, interviews.length);
   allSchedulePermutations.forEach((schedule) => {
     // 1. Check if schedule contains all interviewIndices (i.e. no duplicates)
@@ -358,6 +361,13 @@ const getPossibleSchedules = (interviews) => {
       possibleSchedules.push(sortedSchedule);
     }
   });
+
+  const algorithmRunTime = new Date().getTime() - algorithmStartTime;
+  console.log(`Found ${
+    String(possibleSchedules.length)
+  } interview schedules in ${
+    String(algorithmRunTime)
+  }ms.`);
 
   return possibleSchedules;
 };
