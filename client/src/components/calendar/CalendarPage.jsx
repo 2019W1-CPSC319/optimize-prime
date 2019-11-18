@@ -26,6 +26,10 @@ function formatDateTime(dateTime) {
   return moment.utc(dateTime).local().format('M/D/YY h:mm A');
 }
 
+export const FIELD_DURATION = 1;
+export const FIELD_REQUIRED = 2;
+export const FIELD_PROFILE = 3;
+
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: 'btn btn-success',
@@ -41,33 +45,21 @@ const initialState = {
   optOpen: false,
   required: [],
   optional: [],
-  candidate: { email: '' }
+  candidate: { email: '' },
+  rows: [],
+  onSuccess: false,
+  selectedOption: 0,
 }
 
 class CalendarPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      ...initialState,
-      events: [],
-      onSuccess: false,
-      onSlide: false,
-      selected: 0,
-      selectedOption: 0,
-      background: ['#280e3a', '#fff', '#fff', '#fff'],
-      color: ['#fff', '#000', '#000', '#000'],
-      durations: [
-        { minutes: 30 },
-        { minutes: 60 },
-        { minutes: 90 },
-        { minutes: 120 }
-      ]
-    };
+    this.state = initialState;
   }
 
-  getInterviewDuration = () => {
-    switch (this.state.durations[this.state.selected].minutes) {
+  getInterviewDuration = (minutes) => {
+    switch (minutes) {
       case 30:
         return 'PT30M';
       case 60:
@@ -95,30 +87,55 @@ class CalendarPage extends React.Component {
 
   updateCandidate = (event, candidate) => {
     this.setState({ candidate });
+    console.log(candidate)
   }
 
-  updateCandidateAutosuggested = (event) => {
+  handleAddRow = () => {
+    const { rows } = this.state;
+    this.setState({
+      rows: [...rows, this.createRow()]
+    });
+  }
+
+  handleRemoveRow = (index) => {
+    const { rows } = this.state;
+    rows.splice(index, 1);
+    this.setState({ rows });
+  }
+
+  createRow = (required = [], optional = [], duration = 30) => {
+    return { required, optional, duration };
+  }
+
+  handleAutocompleteChange = (event, value, index, field) => {
     event.persist();
-    this.setState({ candidate: event.target.textContent });
+    const { rows } = this.state;
+    rows[index][field] = value;
+    this.setState({ rows });
   }
 
-  updateRequiredInterviewers = (event, value) => {
-    this.setState({ required: value });
-  }
-
-  updateOptionalInterviewers = (event, value) => {
-    this.setState({ optional: value });
+  handleSelectorChange = (event, index, field) => {
+    event.persist();
+    const { rows } = this.state;
+    rows[index][field] = event.target.value;
+    this.setState({ rows });
   }
 
   handleNext = async () => {
     const { actions } = this.props;
+    const { candidate, rows } = this.state;
     try {
-      await actions.findMeetingTimes({
-        candidate: this.state.candidate.email,
-        required: this.state.required,
-        optional: this.state.optional,
-        meetingDuration: this.getInterviewDuration(),
-      });
+      const data = {
+        candidate: candidate.email,
+        interviews: rows.map(row => ({
+          required: row.required.map(interviewer => interviewer.email),
+          optional: row.optional.map(interviewer => interviewer.email),
+          room: "",
+          duration: row.duration
+        })),
+      };
+      console.log(data)
+      await actions.findAllMeetingTimes(data);
       this.setState({ reqOpen: false });
       this.setState({ optOpen: true });
     } catch (err) {
@@ -143,12 +160,7 @@ class CalendarPage extends React.Component {
     this.setState({ ...initialState, onSuccess: true });
   }
 
-  handleSelectInterviewDuration = (i) => {
-    this.setState({ selected: i });
-  }
-
   handleSelectOption = (i) => {
-    // console.log(i)
     this.setState({ selectedOption: i });
   }
 
@@ -204,9 +216,9 @@ class CalendarPage extends React.Component {
             </TableHead>
             <TableBody>
               {interviews && interviews.map(
-                interview => {
+                (interview, i) => {
                   return (
-                    <TableRow key={interview.id}>
+                    <TableRow key={i}>
                       <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
                       <TableCell align="center">{interview.name}</TableCell>
                       <TableCell align="center">{interview.seats}</TableCell>
@@ -230,13 +242,13 @@ class CalendarPage extends React.Component {
           handleNext={this.handleNext}
           handleClose={this.handleClose}
           updateCandidate={this.updateCandidate}
-          updateCandidateAutosuggested={this.updateCandidateAutosuggested}
           updateRequiredInterviewers={this.updateRequiredInterviewers}
           updateOptionalInterviewers={this.updateOptionalInterviewers}
           handleSelectInterviewDuration={this.handleSelectInterviewDuration}
-          candidate={this.state.candidate}
-          required={this.state.required}
-          optional={this.state.optional}
+          handleAddRow={this.handleAddRow}
+          handleRemoveRow={this.handleRemoveRow}
+          handleSelectorChange={this.handleSelectorChange}
+          handleAutocompleteChange={this.handleAutocompleteChange}
           {...this.props}
           {...this.state}
         />

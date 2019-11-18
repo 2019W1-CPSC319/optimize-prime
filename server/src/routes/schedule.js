@@ -3,6 +3,7 @@ const uuidv1 = require('uuid/v1');
 const axios = require('axios');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
+const scheduler = require('../scheduling/scheduler');
 
 // ***************** ROOMS Endpoints *******************
 
@@ -62,6 +63,7 @@ router.get('/candidates', async (req, res) => {
     }
     res.send(result);
   });
+  console.log(req.user);
 });
 
 /**
@@ -259,6 +261,12 @@ router.put('/interviewer/delete/:id', (req, res) => {
     }
     res.send(result);
   });
+});
+
+router.post('/allmeetings', notAuthMiddleware, async (req, res) => {
+  const { candidate, interviews } = req.body;
+  const result = await scheduler.findTimes(interviews, candidate, req.user.accessToken);
+  res.send(result);
 });
 
 const permutator = (inputArr, maxLen) => {
@@ -563,7 +571,6 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
 
     // insert the scheduled interview in the candidate table
-
     const sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
     const sqlcmd = connection.format(sql, [room.name]);
 

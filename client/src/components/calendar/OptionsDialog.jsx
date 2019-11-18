@@ -37,6 +37,7 @@ const styles = theme => ({
   }
 });
 
+// TODO: make it a checkbox, instead of radio button to allow multiple selection of events
 const GreenRadio = withStyles({
   root: {
     color: green[400],
@@ -61,17 +62,17 @@ class OptionsDialog extends Component {
     };
   }
 
-  updateRequiredInterviewers = (event) => {
-    this.setState({ required: event.target.value });
-  }
+  // updateRequiredInterviewers = (event) => {
+  //   this.setState({ required: event.target.value });
+  // }
 
-  updateOptionalInterviewers = (event) => {
-    this.setState({ optional: event.target.value });
-  }
+  // updateOptionalInterviewers = (event) => {
+  //   this.setState({ optional: event.target.value });
+  // }
 
-  updateCandidate = (event) => {
-    this.setState({ candidate: event.target.value });
-  }
+  // updateCandidate = (event) => {
+  //   this.setState({ candidate: event.target.value });
+  // }
 
   handlePopoverOpen = (event) => {
     this.setState(event.target);
@@ -108,6 +109,13 @@ class OptionsDialog extends Component {
             const labelId = `radio-list-secondary-label-${hash}`;
             return (
               <ListItem key={hash}>
+                <ListItemSecondaryAction>
+                  <GreenRadio
+                    checked={this.props.selectedOption === index}
+                    onChange={() => this.props.handleSelectOption(index)}
+                    value={index}
+                  />
+                </ListItemSecondaryAction>
                 <ListItemText
                   id={labelId}
                   primary={
@@ -131,13 +139,6 @@ class OptionsDialog extends Component {
                     }
                   )}
                 </Box>
-                <ListItemSecondaryAction>
-                  <GreenRadio
-                    checked={this.props.selectedOption === index}
-                    onChange={() => this.props.handleSelectOption(index)}
-                    value={index}
-                  />
-                </ListItemSecondaryAction>
               </ListItem>
             );
           })}
