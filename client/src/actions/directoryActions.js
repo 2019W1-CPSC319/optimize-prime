@@ -61,7 +61,7 @@ export const getUsers = (role) => async (dispatch) => {
 function getUserSuccess(user) {
   return {
     type: 'GET_USER_SUCCESS',
-    user
+    user,
   };
 }
 
@@ -75,7 +75,6 @@ function getUserFailure(error) {
 export const getUser = (uuid) => async (dispatch) => {
   try {
     dispatch(updateLoadingState('INIT_REQUEST'));
-    debugger;
     const response = await axios.get(`/schedule/candidates/${uuid}`);
     // TODO: add a safety fallback if user with matching uuid not found
     const user = response.data[0];
@@ -112,7 +111,7 @@ export const deleteUser = (role, userId) => async (dispatch) => {
 
 const sendAvailabilitySuccess = (data = {}) => ({
   type: 'SEND_AVAILABILITY_SUCCESS',
-  payload: data
+  payload: data,
 });
 
 const sendAvailabilityFailure = (message) => ({
