@@ -376,7 +376,7 @@ const getPossibleSchedules = (interviews) => {
 // attendess, timeConstraints, meetingDuration, locationConstraints
 router.post('/meeting', notAuthMiddleware, async (req, res) => {
   const {
-    candidate, interviews,
+    candidate, interviews, schedulesPerPage, pageNumber,
   } = req.body;
   const sql = "SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.email = ? AND c.status = 'A' ORDER BY a.id DESC";
   const getCandidateAvailabilityCmd = connection.format(sql, [candidate]);
@@ -506,8 +506,11 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           await Promise.all(interviewPromises);
 
           const possibleSchedules = getPossibleSchedules(interviewsWithPossibleMeetings);
+          const startIndex = schedulesPerPage * pageNumber - schedulesPerPage;
+          const endIndex = startIndex + schedulesPerPage;
+          const paginatedSchedules = possibleSchedules.slice(startIndex, endIndex);
 
-          res.send(possibleSchedules);
+          res.send(paginatedSchedules);
         });
       } catch (error) {
         console.log(error);

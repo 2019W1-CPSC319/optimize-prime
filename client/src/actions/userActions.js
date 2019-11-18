@@ -103,10 +103,15 @@ const findMeetingTimesFailure = (error) => (
   }
 );
 
-export const findMeetingTimes = (data) => async (dispatch) => {
+export const findMeetingTimes = (data, schedulesPerPage, pageNumber) => async (dispatch) => {
   try {
     const { candidate, interviews } = data;
-    const response = await axios.post('/schedule/meeting', { candidate, interviews });
+    const response = await axios.post('/schedule/meeting', {
+      candidate,
+      interviews,
+      schedulesPerPage,
+      pageNumber,
+    });
     console.log(response);
     return dispatch(findMeetingTimesSuccess(candidate, response.data));
   } catch (error) {
