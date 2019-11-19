@@ -34,6 +34,10 @@ async function findTimes(interviews, candidateEmail, token) {
     DEBUG && console.log("candidate availability:")
     DEBUG && console.log(availability)
 
+    let rooms = await getRoomList();
+    DEBUG && console.log("Rooms:");
+    DEBUG && console.log(rooms);
+
     /**
      * ** ASSUMPTION **
      * This makes the assumption that all interviews have unique required
@@ -68,10 +72,20 @@ async function findTimes(interviews, candidateEmail, token) {
         DEBUG && console.log("Availabilities: ")
         DEBUG && console.log(avails);
 
+        // Let this one go async as we don't need until later
+        let roomAvail = getInterviewerAvailability(rooms.map(x => x.locationEmailAddress), start, end, token);
+
         let schedules = arrangeInterviews(interviews, avails, best, totalTime / TIME_INTERVAL);
 
         //godlike one-liner to remove duplicates
         schedules.sequence = Array.from(new Set(schedules.sequence.map(JSON.stringify))).map(JSON.parse);
+
+        // Make into proper interview sequence objects
+        schedules.sequence = schedules.sequence.map((x => parseNumArrayToTimes(interviews, x, start)))
+        // Add rooms
+        roomAvail = await roomAvail;
+        schedules.sequence = schedules.sequence.map((x => assignRooms(rooms, roomAvail, x, start)))
+
 
         if (DEBUG) {
             console.log(String(schedules.sequence.length) + " Schedules for " + String(start) + ":");
@@ -79,7 +93,7 @@ async function findTimes(interviews, candidateEmail, token) {
                 console.log(String(schedules.sequence[x]));
             }
         }
-        // parseNumArrayToTimes(interviews, schedules.sequence[0], start)
+
         if (schedules.best < best) {
             best = schedules.best;
             optimalSchedules = schedules.sequence
@@ -90,38 +104,89 @@ async function findTimes(interviews, candidateEmail, token) {
     //Kept even when debug disabled
     const algorithmRunTime = new Date().getTime() - algorithmStartTime;
     console.log("Found " +
-                String(optimalSchedules.length) +
-                " optimal interview schedules in " +
-                String(algorithmRunTime) +
-                "ms.");
+        String(optimalSchedules.length) +
+        " optimal interview schedules in " +
+        String(algorithmRunTime) +
+        "ms.");
 
     return optimalSchedules;
 }
 
 function parseNumArrayToTimes(interviews, solution, blockStart) {
     let interviewConfiguration = JSON.parse(JSON.stringify(interviews));
-    for (let index = 0; index < solution.length; index++) {
-        if (solution[index] == -1) {
-            continue;
-        }
+    for (let i = 0; i < interviews.length; i++) {
+        let start = solution.indexOf(i) * TIME_INTERVAL;
+        let end = start + interviews[i].duration;
 
-        let start = index, end = index;
-        let currentInterview = solution[index];
-        while (solution[index + 1] == currentInterview) {
-            index++;
-        }
-        end = index;
+        DEBUG && console.log("I = " + String(i) + " " + String(start) + " " + String(end));
 
-        DEBUG && console.log("I = " + String(currentInterview) + " " + String(start * TIME_INTERVAL) + " " + String(end * TIME_INTERVAL));
+        interviewConfiguration[i].start = blockStart.clone().add(start, 'minute');
+        interviewConfiguration[i].end = blockStart.clone().add(end, 'minute');
 
-        interviewConfiguration[currentInterview].start = blockStart.clone().add(start * TIME_INTERVAL, 'minute');
-        interviewConfiguration[currentInterview].end = blockStart.clone().add(end + 1 * TIME_INTERVAL, 'minute');
-        DEBUG && console.log(interviewConfiguration[currentInterview].start.format() + "  :  " + interviewConfiguration[currentInterview].end.format())
+        DEBUG && console.log(interviewConfiguration[i].start.format() + "  :  " + interviewConfiguration[i].end.format())
     }
 
     DEBUG && console.log("Interview Configuration:");
     DEBUG && console.log(interviewConfiguration);
+
     return interviewConfiguration;
+}
+
+async function getRoomList() {
+    const sql = 'SELECT * FROM Rooms WHERE status="A"';
+
+    return new Promise((resolve, reject) => {
+        db.query(sql, async (err, result) => {
+
+            if (err) {
+                throw err;
+            }
+
+            let locations = [{}];
+            if (result.length > 0) {
+                locations = result.map(room => ({
+                    displayName: room.name,
+                    locationEmailAddress: room.email
+                }))
+                resolve(locations);
+            } else {
+                return reject("No interview rooms found");
+            }
+        });
+    });
+}
+
+function assignRooms(rooms, roomAvailability, interviews, blockStart) {
+    for (let i = 0; i < interviews.length; i++) {
+        let startIndex = moment.duration(interviews[i].start.diff(blockStart)).asMinutes() / TIME_INTERVAL;
+
+        interviews[i].room = "";
+
+        for (let roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
+            let j = startIndex;
+            let roomEmail = rooms[roomIndex].locationEmailAddress;
+            while (roomAvailability.get(roomEmail)[j] && interviews[i].room == "") {
+                j++;
+                if (j >= startIndex + (interviews[i].duration / TIME_INTERVAL)) {
+                    interviews[i].room = rooms[roomIndex];
+                    break;
+                    /**
+                     * NB: We don't have to worry about updating room avail because
+                     *     we know that we will never have two interviews that
+                     *     overlap as the candidate can't be in two places at once.
+                     */
+                }
+            }
+        }
+
+        if (interviews[i].room == "") {
+            console.log("No rooms found for interview!")
+            // DEBUG && console.log("No rooms found for interview!")
+            return null;
+        }
+    }
+    DEBUG && console.log(interviews);
+    return interviews;
 }
 
 function availStringToBoolArray(availabilityString) {
@@ -133,19 +198,19 @@ function availStringToBoolArray(availabilityString) {
 }
 
 async function getAvailability(email) {
-  const sql = db.format(GET_AVAILABILITY_SQL, [email]);
+    const sql = db.format(GET_AVAILABILITY_SQL, [email]);
 
-  return new Promise((resolve, reject) => {
-      db.query(sql, async (err, result) => {
-        if (err) {
-            throw err;
-        }
+    return new Promise((resolve, reject) => {
+        db.query(sql, async (err, result) => {
+            if (err) {
+                throw err;
+            }
 
-        if (result.length === 0) {
-            return reject("No candidate availability found");
-        } else {
-            resolve(result);
-        }
+            if (result.length === 0) {
+                return reject("No candidate availability found");
+            } else {
+                resolve(result);
+            }
         });
     }).catch((err) => {
         console.error("Unable to get candidate availability");
@@ -153,36 +218,36 @@ async function getAvailability(email) {
 }
 
 async function getInterviewerAvailability(emails, from, to, token) {
-  try {
-    const response = await axios({
-      url: 'https://graph.microsoft.com/v1.0/me/calendar/getschedule',
-      method: 'post',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      data: {
-          Schedules: emails,
-          StartTime: {
-              dateTime: from.format(),
-              timeZone: "Pacific Standard Time"
-          },
-          EndTime: {
-              dateTime: to.format(),
-              timeZone: "Pacific Standard Time"
-          },
-          availabilityViewInterval: String(TIME_INTERVAL)
-      }
-    });
-    let availMap = new Map();
-    response.data.value.forEach((interviewer) => {
-        availMap.set(interviewer.scheduleId, 
-                     availStringToBoolArray(interviewer.availabilityView));
-    })
-    return availMap;
-  } catch (err) {
-    console.error(err);
-    //response.status(err.response.status).send(err.message);
-  }
+    try {
+        const response = await axios({
+            url: 'https://graph.microsoft.com/v1.0/me/calendar/getschedule',
+            method: 'post',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            data: {
+                Schedules: emails,
+                StartTime: {
+                    dateTime: from.format(),
+                    timeZone: "Pacific Standard Time"
+                },
+                EndTime: {
+                    dateTime: to.format(),
+                    timeZone: "Pacific Standard Time"
+                },
+                availabilityViewInterval: String(TIME_INTERVAL)
+            }
+        });
+        let availMap = new Map();
+        response.data.value.forEach((interviewer) => {
+            availMap.set(interviewer.scheduleId,
+                availStringToBoolArray(interviewer.availabilityView));
+        })
+        return availMap;
+    } catch (err) {
+        console.error(err);
+        //response.status(err.response.status).send(err.message);
+    }
 }
 
 function fitInterview(currentSolution, availability, interview, interviewId, startIndex = 0, backwards = false) {
@@ -204,7 +269,7 @@ function checkInterviewFits(currentSolution, availability, interview, startIndex
         }
 
         for (let interviewer = 0; interviewer < interview.required.length; interviewer++) {
-            if(!availability.get(interview.required[interviewer])[i]) {
+            if (!availability.get(interview.required[interviewer])[i]) {
                 DEBUG && console.log(String(interview.required[interviewer]) + " busy at " + String(i))
                 return false;
             }
@@ -238,20 +303,20 @@ function getTotalTime(sequence) {
 
 function getPermutations(indexes) {
     let perms = [];
-  
+
     for (let i = 0; i < indexes.length; i = i + 1) {
-      let rest = getPermutations(indexes.slice(0, i).concat(indexes.slice(i + 1)));
-  
-      if(!rest.length) {
-        perms.push([indexes[i]])
-      } else {
-        for(let j = 0; j < rest.length; j = j + 1) {
-          perms.push([indexes[i]].concat(rest[j]))
+        let rest = getPermutations(indexes.slice(0, i).concat(indexes.slice(i + 1)));
+
+        if (!rest.length) {
+            perms.push([indexes[i]])
+        } else {
+            for (let j = 0; j < rest.length; j = j + 1) {
+                perms.push([indexes[i]].concat(rest[j]))
+            }
         }
-      }
     }
     return perms;
-  }
+}
 
 /**
  * @param {[Interview...]} interviews 
@@ -276,10 +341,10 @@ function arrangeInterviews(interviews, availability, bestTime, totalInterviewLen
             //Fit each interview
             for (let interviewIndex = 0; interviewIndex < n; interviewIndex++) {
                 solution = fitInterview(solution,
-                                        availability,
-                                        interviews[perm[interviewIndex]],
-                                        perm[interviewIndex],
-                                        startIndex + interviewIndex);
+                    availability,
+                    interviews[perm[interviewIndex]],
+                    perm[interviewIndex],
+                    startIndex + interviewIndex);
 
                 // Break if we couldn't fit that interview
                 if (solution == null) {
@@ -301,7 +366,7 @@ function arrangeInterviews(interviews, availability, bestTime, totalInterviewLen
             }
         }
     }
-    return {best: bestTime, sequence: solutions};
+    return { best: bestTime, sequence: solutions };
 }
 
 module.exports.findTimes = findTimes;

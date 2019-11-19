@@ -19,6 +19,10 @@ import {
   Typography,
   Radio,
   Popover,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel
 } from '@material-ui/core';
 
 const styles = theme => ({
@@ -99,48 +103,82 @@ class OptionsDialog extends Component {
   }
 
   createOptions = () => {
-    const { classes } = this.props;
+    const { classes, meetingSuggestions, handleOpen, selectedOption, handleSelectOption } = this.props;
+    // console.log(meetingSuggestions.data.filter(suggestion => suggestion[0].room === undefined))
 
-    if (Array.isArray(this.props.meetingSuggestions.data) && this.props.meetingSuggestions.data.length > 0) {
+    if (Array.isArray(meetingSuggestions.data) && meetingSuggestions.data.length > 0) {
       return (
         <List dense>
-          {this.props.meetingSuggestions.data.map((option, index) => {
-            const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
-            const labelId = `radio-list-secondary-label-${hash}`;
-            return (
-              <ListItem key={hash}>
-                <ListItemSecondaryAction>
-                  <GreenRadio
-                    checked={this.props.selectedOption === index}
-                    onChange={() => this.props.handleSelectOption(index)}
-                    value={index}
-                  />
-                </ListItemSecondaryAction>
-                <ListItemText
-                  id={labelId}
-                  primary={
-                    <Box>
-                      <Box fontWeight='fontWeightBold'><Moment subtract={{ hours: 8 }} format='ll' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Box>
-                      <Typography>Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Typography>
-                      <Typography>Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.end.dateTime}</Moment></Typography>
-                    </Box>
-                  }
-                  secondary={option.room.displayName} />
-                <Box component='div' display='flex'>
-                  {option.interviewers.map(
-                    interviewer => {
-                      return (
-                        <Avatar
-                          key={`${interviewer}-${Math.random() * 1000}`}
-                          // onMouseEnter={this.handlePopoverOpen}
-                          // onMouseLeave={this.handlePopoverClose}
-                          className={classes.avatar}>{interviewer.attendee.emailAddress.address.charAt(0).toUpperCase()}</Avatar>
-                      )
+          {meetingSuggestions.data.map((block, index) => {
+            return block.map((option, key) => {
+              // const hash = `${option.start}-${option.end}-${option.room.displayName}`;
+              // const labelId = `radio-list-secondary-label-${hash}`;
+              console.log(option)
+              return (
+                <ListItem key={key}>
+                  <ListItemText
+                    // id={labelId}
+                    primary={
+                      <Box>
+                        <Box fontWeight='fontWeightBold'>
+                          <Moment
+                            subtract={{ hours: 8 }}
+                            format='ll'
+                            tz='America/Los_Angeles'
+                          >
+                            {option.start}
+                          </Moment>
+                        </Box>
+                        <Typography>
+                          Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'> {option.start}</Moment>
+                        </Typography>
+                        <Typography>
+                          Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'> {option.end}</Moment>
+                        </Typography>
+                      </Box>
                     }
-                  )}
-                </Box>
-              </ListItem>
-            );
+                    secondary={option.room.displayName}
+                  />
+                  <Box component='div' display='flex'>
+                    {option.required.map(
+                      interviewer => {
+                        return (
+                          <Avatar
+                            key={`${interviewer}-${Math.random() * 1000}`}
+                            // onMouseEnter={this.handlePopoverOpen}
+                            // onMouseLeave={this.handlePopoverClose}
+                            className={classes.avatar}
+                          >
+                            {interviewer.charAt(0).toUpperCase()}
+                          </Avatar>
+                        )
+                      }
+                    )}
+                    {option.optional.map(
+                      interviewer => {
+                        return (
+                          <Avatar
+                            key={`${interviewer}-${Math.random() * 1000}`}
+                            // onMouseEnter={this.handlePopoverOpen}
+                            // onMouseLeave={this.handlePopoverClose}
+                            className={classes.avatar}
+                          >
+                            {interviewer.charAt(0).toUpperCase()}
+                          </Avatar>
+                        )
+                      }
+                    )}
+                  </Box>
+                  <ListItemSecondaryAction>
+                    <GreenRadio
+                      checked={selectedOption === key}
+                      onChange={() => handleSelectOption(key)}
+                      value={key}
+                    />
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            });
           })}
         </List>
       );
@@ -148,12 +186,12 @@ class OptionsDialog extends Component {
       return (
         <Box style={{ padding: '50px' }}>
           <Typography style={{ textAlign: 'center' }}>
-            {Array.isArray(this.props.meetingSuggestions.data) ? 'No options available' : 'Candidate availability has not been submitted'}
+            {Array.isArray(meetingSuggestions.data) ? 'No options available' : 'Candidate availability has not been submitted'}
           </Typography>
           <Button
             color='primary'
             style={{ display: 'block', margin: 'auto' }}
-            onClick={this.props.handleOpen}
+            onClick={handleOpen}
           >Go back</Button>
         </Box>
       );
@@ -163,6 +201,7 @@ class OptionsDialog extends Component {
 
   displayPopover = () => {
     const { classes } = this.props;
+    const { popover } = this.state;
     return (
       <Popover
         id='mouse-over-popover'
@@ -170,8 +209,8 @@ class OptionsDialog extends Component {
         classes={{
           paper: classes.paper,
         }}
-        open={Boolean(this.state.popover)}
-        anchorEl={this.state.popover}
+        open={Boolean(popover)}
+        anchorEl={popover}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
@@ -189,20 +228,34 @@ class OptionsDialog extends Component {
   }
 
   render() {
-    // const { classes } = this.props;
+    const { optOpen, meetingSuggestions, handleOpen, handleSave, classes, handleSelectOption } = this.props;
     return (
-      <Dialog open={this.props.optOpen} aria-labelledby='form-options'>
+      <Dialog open={optOpen} aria-labelledby='form-options'>
         <DialogTitle id='form-options'>Select Interview Slot</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Select an interview slot to schedule an interview.
             Upon submission, emails will be sent out to the candidate and interviewers.
-                    </DialogContentText>
-          {this.props.meetingSuggestions && this.createOptions()}
+          </DialogContentText>
+          <FormControl component="fieldset" className={classes.formControl}>
+            <FormLabel component="legend">Gender</FormLabel>
+            <RadioGroup aria-label="gender" name="gender1" value={0} onChange={handleSelectOption}>
+              <FormControlLabel value="female" control={<Radio />} label="Female" />
+              <FormControlLabel value="male" control={<Radio />} label="Male" />
+              <FormControlLabel value="other" control={<Radio />} label="Other" />
+              <FormControlLabel
+                value="disabled"
+                disabled
+                control={<Radio />}
+                label="(Disabled option)"
+              />
+            </RadioGroup>
+          </FormControl>
+          {meetingSuggestions && this.createOptions()}
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.props.handleOpen} color='primary'>Back</Button>
-          <Button onClick={this.props.handleSave} color='primary'>Save</Button>
+          <Button onClick={handleOpen} color='primary'>Back</Button>
+          <Button onClick={handleSave} color='primary'>Save</Button>
         </DialogActions>
       </Dialog>
     );
