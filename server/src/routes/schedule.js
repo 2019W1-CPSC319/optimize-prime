@@ -290,7 +290,7 @@ const permutator = (inputArr, maxLen) => {
 };
 
 const getPossibleSchedules = (interviews) => {
-  const possibleSchedules = [];
+  let possibleSchedules = [];
 
   // interviews.forEach((currentInterview, i) => {
   //   currentInterview.possibleMeetings.forEach((currentTimeSlot, i) => {
@@ -323,11 +323,13 @@ const getPossibleSchedules = (interviews) => {
   const algorithmStartTime = new Date().getTime();
 
   const allSchedulePermutations = permutator(allPossibleMeetings, interviews.length);
+  let shortestElapsedTime = Number.MAX_SAFE_INTEGER;
   allSchedulePermutations.forEach((schedule) => {
     // 1. Check if schedule contains all interviewIndices (i.e. no duplicates)
     // 2. Check if schedule has overlapping meeting times
     // 3. Check if # of rooms involved is 1 < x <= 2
-    // 4. Sort by start time
+    // 4. Sort schedule by start time
+    // 5. Check if schedule has the shortest total duration
     let isQualified = true;
     for (let i = 0; i < schedule.length; i++) {
       const tentativeRoomEmailAddress = schedule[i].room.locationEmailAddress;
@@ -358,7 +360,19 @@ const getPossibleSchedules = (interviews) => {
 
     if (isQualified) {
       const sortedSchedule = schedule.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime));
-      possibleSchedules.push(sortedSchedule);
+      const startTime = new Date(schedule[0].start.dateTime);
+      const endTime = new Date(schedule[schedule.length - 1].end.dateTime);
+      const elapsedTime = endTime - startTime;
+      if (elapsedTime < shortestElapsedTime) {
+        // Current schedule has shorter elapsed time, so from now on we only
+        // return schedules that can do as well as the current schedule
+        shortestElapsedTime = elapsedTime;
+        possibleSchedules = [];
+        possibleSchedules.push(sortedSchedule);
+      } else if (elapsedTime === shortestElapsedTime) {
+        // Only return schedules that can do as well as the optimal schedule
+        possibleSchedules.push(sortedSchedule);
+      }
     }
   });
 
