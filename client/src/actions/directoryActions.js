@@ -48,8 +48,7 @@ function editUserFailure(error) {
 export const editUser = (user) => async (dispatch) => {
   try {
     dispatch(updateLoadingState('INIT_REQUEST'));
-    const response = await axios.put('/schedule/edituser', user);
-    const data = response.data;
+    await axios.put('/schedule/edituser', user);
     return dispatch(editUserSuccess());
   } catch (error) {
     return dispatch(editUserFailure(error));
