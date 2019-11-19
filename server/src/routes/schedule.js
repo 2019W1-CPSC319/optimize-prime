@@ -632,13 +632,38 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
 
 router.get('/interviews', notAuthMiddleware, (req, res) => {
   const currDate = new Date();
-  const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
+  const sql = 'SELECT s.id, startTime, endTime, c.id AS candidateId, firstName, lastName, r.id AS roomId, name, seats FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
   const sqlcmd = connection.format(sql, [currDate]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
     }
-    res.send(result);
+    const formattedInterviews = result.map((interview) => {
+      const {
+        candidateId,
+        firstName,
+        lastName,
+        roomId,
+        name,
+        seats,
+        ...interviewDetails
+      } = interview;
+
+      return {
+        ...interviewDetails,
+        candidate: {
+          id: candidateId,
+          firstName,
+          lastName,
+        },
+        room: {
+          id: roomId,
+          name,
+          seats,
+        },
+      };
+    });
+    res.send(formattedInterviews);
   });
 });
 

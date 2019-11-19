@@ -240,9 +240,9 @@ class CalendarPage extends React.Component {
                 (interview, i) => {
                   return (
                     <TableRow key={i}>
-                      <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
-                      <TableCell align="center">{interview.name}</TableCell>
-                      <TableCell align="center">{interview.seats}</TableCell>
+                      <TableCell align="center">{interview.candidate.firstName + ' ' + interview.candidate.lastName}</TableCell>
+                      <TableCell align="center">{interview.room.name}</TableCell>
+                      <TableCell align="center">{interview.room.seats}</TableCell>
                       <TableCell align="center">{moment(interview.startTime).format('MMM Do YYYY, hh:mma')}</TableCell>
                       <TableCell align="center">{moment(interview.endTime).format('MMM Do YYYY, hh:mma')}</TableCell>
                     </TableRow>
