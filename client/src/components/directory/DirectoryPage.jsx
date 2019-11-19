@@ -56,6 +56,7 @@ const ALLOWED_USER_ACTIONS = [
 const tabs = [
   { key: 'candidate', title: 'Candidates' },
   { key: 'interviewer', title: 'Interviewers' },
+  { key: 'administrator', title: 'Administrators'}
 ]
 
 class DirectoryPage extends Component {
@@ -73,6 +74,7 @@ class DirectoryPage extends Component {
     const { actions } = this.props;
     actions.getUsers('candidate');
     actions.getUsers('interviewer');
+    actions.getUsers('administrator');
   }
 
   onClickUserAction = (mode, userId) => {
@@ -91,6 +93,7 @@ class DirectoryPage extends Component {
       }).then(async (result) => {
         const { value } = result;
         if (value) {
+          console.log('deleting')
           const { value: tabIndex } = this.state;
           await actions.deleteUser(tabs[tabIndex].key, userId);
           swalWithBootstrapButtons.fire(
@@ -121,16 +124,18 @@ class DirectoryPage extends Component {
   }
 
   renderDirectoryTable = () => {
-    const { candidates, interviewers } = this.props;
+    const { candidates, interviewers, administrators } = this.props;
     const { value } = this.state;
     const key = tabs[value].key;
-
+    
     if (key === 'candidate') {
       return (
         <DirectoryTable
           headers={CANDIDATE_TABLE_HEADER}
           rows={candidates}
           onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+          type={key}
+          userProfile={this.props.user.profile}
         />
       );
     }
@@ -141,8 +146,21 @@ class DirectoryPage extends Component {
           headers={EMPLOYEE_TABLE_HEADER}
           rows={interviewers}
           onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+          type={key}
+          userProfile={this.props.user.profile}
         />
       );
+    }
+    else if (key === 'administrator') {
+      return (
+        <DirectoryTable 
+          headers={EMPLOYEE_TABLE_HEADER}
+          rows={administrators}
+          onClickUserAction={(action, userId) => this.onClickUserAction(action,userId)}
+          type={key}
+          userProfile={this.props.user.profile}
+        />
+      )
     }
 
     return null;
@@ -186,6 +204,7 @@ class DirectoryPage extends Component {
           onClickCloseDialog={() => this.onClickCloseDialog()}
           selectedUser={selectedUser}
           actions={actions}
+          errorMessage={this.props.directoryErrorMessage}
         />
       </div>
     );

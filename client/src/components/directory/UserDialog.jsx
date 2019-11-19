@@ -72,7 +72,6 @@ const USER_DIALOG = {
       helperText: '',
       selectOptions: [
         { key: 'admin', title: 'Administrator' },
-        { key: 'interviewer', title: 'Interviewer' },
         { key: 'candidate', title: 'Candidate' },
       ],
     },
@@ -110,7 +109,7 @@ class UserDialog extends Component {
   }
 
   onClickSubmit = async () => {
-    const { actions, mode, onClickCloseDialog } = this.props;
+    const { actions, mode, onClickCloseDialog, errorMessage } = this.props;
     const {
       firstName,
       lastName,
@@ -157,11 +156,17 @@ class UserDialog extends Component {
             }
           });
         } else {
-          swalWithBootstrapButtons.fire(
-            'A new user profile has been created!',
-            'You\'re all set.',
-            'success'
-          );
+          if(errorMessage) {
+            swalWithBootstrapButtons.fire(
+              errorMessage
+            );
+          } else {
+            swalWithBootstrapButtons.fire(
+              'A new user profile has been created!',
+              'You\'re all set.',
+              'success'
+            );
+          }
         }
       } else if (mode === 'edit') {
         // TODO: edit user action
@@ -231,7 +236,6 @@ class UserDialog extends Component {
     const { error } = this.state;
     const { key, title, type, helperText, selectOptions } = infoField;
     const isSelect = type === 'select';
-
     return (
       <TextField
         autoFocus={key === 'firstName'}

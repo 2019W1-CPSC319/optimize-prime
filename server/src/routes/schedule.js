@@ -99,32 +99,25 @@ router.get('/candidate/:uuid', notAuthMiddleware, (req, res) => {
 });
 
 // add a new user in either the candidates table or interview table based on the selected type
-router.post('/newuser', (req, res) => {
-  const user = req.body;
-  const type = user.role;
-  // status Active as default when adding
-  const status = 'A';
-  const uuid = uuidv1();
-  let sql = '';
-  switch (type) {
-    case 'candidate':
-      sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';
-      break;
-    case 'interviewer':
-      sql = 'INSERT INTO Interviewer(firstName, lastName, email, phone, status) VALUES (?, ?, ?, ?, ?)';
-      break;
-    default: return;
-  }
-  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
-  connection.query(sqlcmd, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    const addedUser = { ...user, id: result.insertId };
-    res.send(addedUser);
-  });
-});
 
+router.post('/newcandidate', notAuthMiddleware, (req, res) => {
+  try {
+    const user = req.body;
+    const status = 'A';
+    const uuid = uuidv1();
+    const sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';
+    const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
+    connection.query(sqlcmd, (err, result) => {
+      if (err) {
+        res.status(500).res.send({ message: 'Internal Server error' });
+      }
+      const addedUser = { ...user, id: result.insertId };
+      res.send(addedUser);
+    });
+  } catch (error) {
+    res.status(error.statusCode).send({ message: error.message });
+  }
+});
 
 // edit the interviewer or candidate user information
 router.put('/edituser', (req, res) => {
@@ -238,14 +231,31 @@ router.post('/availability', (req, res) => {
 // ***************** INTERVIEWERS Endpoints *****************************
 
 // get all interviewers
-router.get('/interviewers', (req, res) => {
-  const sql = "SELECT * FROM Interviewer WHERE status <> 'D'";
-  connection.query(sql, (err, result) => {
-    if (err) {
-      throw err;
-    }
-    res.send(result);
-  });
+router.get('/interviewers', notAuthMiddleware, async (req, res) => {
+  // const sql = "SELECT * FROM Interviewer WHERE status <> 'D'";
+  // connection.query(sql, (err, result) => {
+  //   if (err) {
+  //     throw err;
+  //   }
+  //   res.send(result);
+  try {
+    const response = await axios({
+      url: 'https://graph.microsoft.com/v1.0/users',
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
+      },
+    });
+    const users = response.data.value.filter((user) => !user.displayName.includes('Room'));
+    const parsedUsers = users.map((user) => ({
+      firstName: user.givenName,
+      lastName: user.surname,
+      email: user.mail,
+      phone: user.mobilePhone,
+    }));
+    res.send(parsedUsers);
+  } catch (error) {
+    res.status(error.statusCode).send({ message: error.message });
+  }
 });
 
 // update the status of a interviewer to disabled, in the interviewer table
@@ -486,6 +496,21 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
   }
 });
 
+router.get('/administrators', notAuthMiddleware, async (req, res) => {
+  try {
+    const sql = 'SELECT * FROM adminUsers';
+    const sqlcmd = connection.format(sql);
+    connection.query(sqlcmd, async (err, result) => {
+      if (err) {
+        return res.status(500).send({ message: 'Internal Server error' });
+      }
+      res.send(result);
+    });
+  } catch (error) {
+    res.status(error.statusCode).send({ message: error.message });
+  }
+});
+
 // ************* Get meeting rooms from outlook *************** //
 
 router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
@@ -508,6 +533,56 @@ router.get('/interviews', notAuthMiddleware, (req, res) => {
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
+    }
+    res.send(result);
+  });
+});
+
+// ************************** Admin endpoints *********************** //
+router.post('/newadmin', notAuthMiddleware, async (req, res) => {
+  try {
+    // check if user is not part of the org.
+    const user = req.body;
+    const response = await axios({
+      url: `https://graph.microsoft.com/v1.0/users?$filter=startswith(mail,'${user.email}')`,
+      headers: {
+        Authorization: req.user.accessToken,
+      },
+    });
+    if (response.data.value.length === 0) {
+      return res.status(400).send({ message: 'You have tried to create an admin that is not part of the organization.' });
+    }
+    const sqlQuery = 'SELECT email FROM adminUsers WHERE email= ?';
+    const sqlcmd = connection.format(sqlQuery, [user.email]);
+    await connection.query(sqlcmd, (err, result) => {
+      if (err) {
+        return res.status(500).send({ message: 'Internal server error' });
+      }
+      if (result.length > 0) {
+        return res.status(400).send({ message: 'User is already an admin' });
+      }
+      const sql = 'INSERT INTO adminUsers(firstName, lastName, email, phone) VALUES(?, ?, ?, ?)';
+      const sqlcmd2 = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone]);
+      connection.query(sqlcmd2, (error, r) => {
+        if (error) {
+          return res.status(500).send({ message: 'Internal Server error.' });
+        }
+        const addedUser = { ...user, id: r.insertId };
+        return res.send(addedUser);
+      });
+    });
+  } catch (error) {
+    res.status(error.statusCode).send({ message: error.message });
+  }
+});
+
+router.put('/administrator/delete/:id', notAuthMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const sql = 'DELETE FROM adminUsers WHERE id = ?';
+  const sqlcmd = connection.format(sql, [id]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      res.status(500).send({ message: 'Internal server error.' });
     }
     res.send(result);
   });

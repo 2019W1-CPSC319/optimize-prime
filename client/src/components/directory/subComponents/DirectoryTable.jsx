@@ -30,7 +30,7 @@ class DirectoryTable extends Component {
   }
 
   render() {
-    const { classes, headers, rows, onClickUserAction } = this.props;
+    const { classes, headers, rows, onClickUserAction, type, userProfile } = this.props;
 
     return (
       <Table className={classes.table}>
@@ -55,14 +55,18 @@ class DirectoryTable extends Component {
                   {row.firstName}
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone}</TableCell>
+                <TableCell>{row.phone ? row.phone : `N/A`}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => onClickUserAction('edit', row.id)}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton onClick={() => onClickUserAction('delete', row.id)}>
-                    <Icon>delete</Icon>
-                  </IconButton>
+                  {(type !== 'interviewer' && userProfile.mail !== row.email)  &&
+                    <div>
+                      <IconButton onClick={() => onClickUserAction('edit', row.id)}>
+                        <Icon>edit</Icon>
+                      </IconButton>
+                      <IconButton onClick={() => onClickUserAction('delete', row.id)}>
+                        <Icon>delete</Icon>
+                      </IconButton>
+                    </div>
+                  }
                 </TableCell>
               </TableRow>
             ))
