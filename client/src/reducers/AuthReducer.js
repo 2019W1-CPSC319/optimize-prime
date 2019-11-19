@@ -1,4 +1,6 @@
+/* eslint-disable prefer-object-spread */
 const AuthReducer = (state = {}, action) => {
+  let newState = {};
   switch (action.type) {
     case 'INIT_REQUEST':
       return {
@@ -24,11 +26,9 @@ const AuthReducer = (state = {}, action) => {
         hasTriedLogin: true,
       };
     case 'CREATE_EVENT_SUCCESS':
-      return {
-        ...state,
-        loading: false,
-        interviews: state.interviews.slice().push(action.interview),
-      };
+      newState = Object.assign({}, state, { loading: false });
+      newState.interviews.push(action.interview);
+      return newState;
     case 'GET_INTERVIEWS_SUCCESS':
       return {
         ...state,
@@ -52,11 +52,6 @@ const AuthReducer = (state = {}, action) => {
         ...state,
         loading: false,
         status: action.payload,
-      };
-    case 'CREATE_EVENT_SUCCESS':
-      return {
-        ...state,
-        loading: false,
       };
     default:
       return state;

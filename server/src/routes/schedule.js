@@ -600,7 +600,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         if (err) {
           throw err;
         }
-        sql = 'SELECT * FROM ScheduledInterview WHERE id = ?';
+        sql = 'SELECT s.id, startTime, endTime, c.id AS candidateId, firstName, lastName, r.id AS roomId, name, seats FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE s.id = ?';
         sqlcmd = connection.format(sql, [scheduledInterview.insertId]);
         connection.query(sqlcmd, (err, newScheduledInterview) => {
           if (err) {
