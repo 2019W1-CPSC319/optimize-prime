@@ -17,6 +17,7 @@ const App = props => (
   <BrowserRouter>
     <Switch>
       <Route exact path="/login" render={() => <LoginPage {...props} />} />
+      <Route exact path="/unauthorized" render={() => <div>Unauthorized</div>} />
       <Route exact path="/candidate" render={(routeProps) => <CandidatePage {...props} uuid={new URLSearchParams(routeProps.location.search).get('key')} />} />
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
       <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
@@ -32,10 +33,12 @@ const mapStateToProps = state => ({
   user: state.user,
   candidates: state.directory.candidates,
   interviewers: state.directory.interviewers,
+  administrators: state.directory.administrators,
   rooms: state.rooms.rooms,
   outlookRooms: state.rooms.outlookRooms,
   meetingSuggestions: state.user.meetingSuggestions,
-  interviews: state.user.interviews
+  interviews: state.user.interviews,
+  directoryErrorMessage: state.directory.errorMessage,
 });
 
 const mapDispatchToProps = dispatch => ({
