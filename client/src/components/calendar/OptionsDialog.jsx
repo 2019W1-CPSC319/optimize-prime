@@ -99,28 +99,21 @@ class OptionsDialog extends Component {
   }
 
   createOptions = () => {
-    const { classes, meetingSuggestions } = this.props;
+    const { classes, meetingSuggestions, selectedOption, handleSelectOption } = this.props;
 
     if (Array.isArray(meetingSuggestions) && meetingSuggestions.length > 0) {
       return (
         <List dense>
           {
-            meetingSuggestions.map((schedule) => {
+            meetingSuggestions.map((schedule, index) => {
               return (
                 <ListItem>
                   {
-                    schedule.map((option, index) => {
+                    schedule.map((option) => {
                       const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
                       const labelId = `radio-list-secondary-label-${hash}`;
                       return (
                         <ListItem key={hash}>
-                          <ListItemSecondaryAction>
-                            <GreenRadio
-                              checked={this.props.selectedOption === index}
-                              onChange={() => this.props.handleSelectOption(index)}
-                              value={index}
-                            />
-                          </ListItemSecondaryAction>
                           <ListItemText
                             id={labelId}
                             primary={
@@ -148,6 +141,13 @@ class OptionsDialog extends Component {
                       );
                     })
                   }
+                  <ListItemSecondaryAction>
+                    <GreenRadio
+                      checked={selectedOption === index}
+                      onChange={() => this.props.handleSelectOption(index)}
+                      value={index}
+                    />
+                  </ListItemSecondaryAction>
                 </ListItem>
               );
             })
