@@ -122,7 +122,6 @@ class UserDialog extends Component {
       role,
       error
     } = this.state;
-
     if (Object.values(error).filter(value => value).length === 0) {
       if (mode === 'add') {
         await actions.addUser(role, {
@@ -160,9 +159,9 @@ class UserDialog extends Component {
             }
           });
         } else {
-          if(errorMessage) {
+          if(this.props.errorMessage) {
             swalWithBootstrapButtons.fire(
-              errorMessage
+              this.props.errorMessage
             );
           } else {
             swalWithBootstrapButtons.fire(
@@ -292,6 +291,7 @@ class UserDialog extends Component {
   }
 
   render() {
+    console.log(this.props.errorMessage);
     const { classes, open, onClickCloseDialog } = this.props;
     const dialog = this.getDialogInfoForMode();
     const {
