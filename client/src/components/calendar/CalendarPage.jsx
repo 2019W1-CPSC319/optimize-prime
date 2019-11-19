@@ -157,12 +157,19 @@ class CalendarPage extends React.Component {
     }
   }
 
-  handleSave = () => {
-    const { selectedOption, candidate: selectedCandidate, required, optional } = this.state;
+  handleSave = async () => {
+    const { selectedOption, candidate: selectedCandidate, rows } = this.state;
     const { meetingSuggestions, actions, candidates } = this.props;
-    const selectedSuggestion = meetingSuggestions[selectedOption];
+    const selectedSchedule = meetingSuggestions[selectedOption];
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
-    actions.createEvent(selectedSuggestion, candidateUser, required, optional);
+    const interviewPromises = selectedSchedule.map(async (interview) => {
+      const { interviewIndex } = interview;
+      const row = rows[interviewIndex];
+      const { required, optional } = row;
+      await actions.createEvent(interview, candidateUser, required, optional);
+    });
+
+    await Promise.all(interviewPromises);
 
     swalWithBootstrapButtons.fire(
       'Success',
