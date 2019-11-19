@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Moment from 'react-moment';
 import 'moment-timezone';
+import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import {
@@ -12,6 +13,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   List,
   ListItem,
   ListItemText,
@@ -21,13 +23,32 @@ import {
   Popover,
 } from '@material-ui/core';
 
-const styles = theme => ({
-  duration: {
-    padding: '5px 30px',
-    borderColor: '#765ea8',
+const styles = {
+  schedule: {
+    width: '50%',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px',
   },
-  chip: {
-    marginRight: '5px',
+  date: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  year: {
+    fontSize: '10px',
+  },
+  month: {
+    fontSize: '14px',
+  },
+  day: {
+    fontSize: '16px',
+  },
+  time: {
+    display: 'flex',
+    flexDirection: 'column',
   },
   avatar: {
     fontSize: 'x-small',
@@ -35,7 +56,7 @@ const styles = theme => ({
     height: '20px',
     backgroundColor: `${'#' + Math.floor(Math.random() * 16777215).toString(16)}`
   }
-});
+};
 
 // TODO: make it a checkbox, instead of radio button to allow multiple selection of events
 const GreenRadio = withStyles({
@@ -107,23 +128,27 @@ class OptionsDialog extends Component {
           {
             meetingSuggestions.map((schedule, index) => {
               return (
-                <ListItem>
+                <ListItem key={index}>
                   {
                     schedule.map((option) => {
                       const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
                       const labelId = `radio-list-secondary-label-${hash}`;
+                      const date = new Date(option.start.dateTime);
+                      const startTime = moment(option.start.dateTime).format('hh:mmA');
+                      const endTime = moment(option.end.dateTime).format('hh:mmA')
+
                       return (
-                        <ListItem key={hash}>
-                          <ListItemText
-                            id={labelId}
-                            primary={
-                              <Box>
-                                <Box fontWeight='fontWeightBold'><Moment subtract={{ hours: 8 }} format='ll' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Box>
-                                <Typography>Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Typography>
-                                <Typography>Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.end.dateTime}</Moment></Typography>
-                              </Box>
-                            }
-                            secondary={option.room.displayName} />
+                        <div key={hash} className={classes.schedule}>
+                          <div className={classes.date}>
+                            <Typography className={classes.year}>{moment(date).format('YYYY')}</Typography>
+                            <Typography className={classes.month}>{moment(date).format('MMM')}</Typography>
+                            <Typography className={classes.day}>{moment(date).format('DD')}</Typography>
+                          </div>
+                          <Divider orientation="vertical" />
+                          <div className={classes.time}>
+                            <Typography>{startTime} - {endTime}</Typography>
+                            <Typography>{option.room.displayName}</Typography>
+                          </div>
                           <Box component='div' display='flex'>
                             {option.interviewers.map(
                               interviewer => {
@@ -137,14 +162,14 @@ class OptionsDialog extends Component {
                               }
                             )}
                           </Box>
-                        </ListItem>
+                        </div>
                       );
                     })
                   }
                   <ListItemSecondaryAction>
                     <GreenRadio
                       checked={selectedOption === index}
-                      onChange={() => this.props.handleSelectOption(index)}
+                      onChange={() => handleSelectOption(index)}
                       value={index}
                     />
                   </ListItemSecondaryAction>
