@@ -23,6 +23,12 @@ const AuthReducer = (state = {}, action) => {
         loading: false,
         hasTriedLogin: true,
       };
+    case 'CREATE_EVENT_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+        interviews: state.interviews.slice().push(action.interview),
+      };
     case 'GET_INTERVIEWS_SUCCESS':
       return {
         ...state,

@@ -119,9 +119,10 @@ export const findMeetingTimes = (data, schedulesPerPage, pageNumber) => async (d
   }
 };
 
-const createEventSuccess = () => (
+const createEventSuccess = (interview) => (
   {
     type: 'CREATE_EVENT_SUCCESS',
+    interview,
   }
 );
 
@@ -153,8 +154,8 @@ export const createEvent = (selectedSuggestion, candidate, required, optional) =
   };
   try {
     dispatch(initRequest());
-    await axios.post('/schedule/event', body);
-    return dispatch(createEventSuccess());
+    const response = await axios.post('/schedule/event', body);
+    return dispatch(createEventSuccess(response.data));
   } catch (error) {
     return dispatch(createEventFailure(error));
   }

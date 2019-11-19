@@ -585,8 +585,8 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
 
     // insert the scheduled interview in the candidate table
-    const sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
-    const sqlcmd = connection.format(sql, [room.name]);
+    let sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
+    let sqlcmd = connection.format(sql, [room.name]);
 
     connection.query(sqlcmd, (err, result) => {
       if (err) {
@@ -594,15 +594,22 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       }
       // get roomId
       const roomId = result[0].id;
-      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
-      const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
-      connection.query(sqlcmd, (err, result) => {
+      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
+      sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
+      connection.query(sqlcmd, (err, scheduledInterview) => {
         if (err) {
           throw err;
         }
+        sql = 'SELECT * FROM ScheduledInterview WHERE id = ?';
+        sqlcmd = connection.format(sql, [scheduledInterview.insertId]);
+        connection.query(sqlcmd, (err, newScheduledInterview) => {
+          if (err) {
+            throw err;
+          }
+          res.send(newScheduledInterview[0]);
+        });
       });
     });
-    res.send(response.data);
   } catch (error) {
     console.log(error);
   }
