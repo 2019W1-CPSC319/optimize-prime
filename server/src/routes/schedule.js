@@ -522,7 +522,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     const subject = `Interview with ${candidate.firstName} ${candidate.lastName}`;
     const content = 'Please confirm if you are available during this time.';
 
-    const timeZone = 'UTC';
+    const timeZone = 'Pacific Standard Time';
 
     // create candidate as an attendee
     const candidateAttendee = [
@@ -566,6 +566,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       url: 'https://graph.microsoft.com/v1.0/me/events',
       headers: {
         Authorization: `Bearer ${req.user.accessToken}`,
+        Prefer: `outlook.timezone="${timeZone}"`,
       },
       data: {
         subject,
