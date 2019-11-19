@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-
 import company from '../../images/galvanize_long.png';
-import galvanize from '../../images/galvanize.png';
 import microsoft from '../../images/microsoft.png';
 import {
   Typography,
@@ -60,9 +58,7 @@ const styles = {
 class LoginPage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-
-    };
+    this.state = {};
   }
 
   render() {
