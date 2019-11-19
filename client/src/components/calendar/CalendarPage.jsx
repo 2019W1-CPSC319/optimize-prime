@@ -148,7 +148,6 @@ class CalendarPage extends React.Component {
   }
 
   handleSelectOption = (i) => {
-    // console.log(i)
     this.setState({ selectedOption: i });
   }
 
@@ -184,13 +183,14 @@ class CalendarPage extends React.Component {
     actions.getUsers('candidate');
     actions.getUsers('interviewer');
     actions.getInterviews();
+    actions.getOutlookUsers();
   }
 
   render() {
     const { interviews } = this.props;
     return (
       <div>
-        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Calendar</h1>
+        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Upcoming Interviews</h1>
         <Paper>
           <Table>
             <TableHead>
@@ -204,9 +204,9 @@ class CalendarPage extends React.Component {
             </TableHead>
             <TableBody>
               {interviews && interviews.map(
-                interview => {
+                (interview, key) => {
                   return (
-                    <TableRow key={interview.id}>
+                    <TableRow key={key}>
                       <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
                       <TableCell align="center">{interview.name}</TableCell>
                       <TableCell align="center">{interview.seats}</TableCell>
