@@ -292,29 +292,6 @@ const permutator = (inputArr, maxLen) => {
 const getPossibleSchedules = (interviews) => {
   let possibleSchedules = [];
 
-  // interviews.forEach((currentInterview, i) => {
-  //   currentInterview.possibleMeetings.forEach((currentTimeSlot, i) => {
-  //     const currentTimeSlotPermutations = [];
-  //     // Each interview is a column and each timeslot is a row
-  //     // Generate an array that contains all non-overlapping timeslots in all columns
-  //     // other than the column that the current time slot is in
-  //     interviews.slice(i + 1).forEach((interview) => {
-  //       interview.possibleMeetings.forEach((otherTimeSlot) => {
-  //         const currentStart = new Date(currentTimeSlot.start.dateTime);
-  //         const currentEnd = new Date(currentTimeSlot.end.dateTime);
-  //         const otherStart = new Date(otherTimeSlot.start.dateTime);
-  //         const otherEnd = new Date(otherTimeSlot.end.dateTime);
-  //         if ((currentStart > otherEnd) || (currentEnd < otherStart)) {
-  //           // Only non-overlapping timeslots are pushed because a candidate
-  //           // can only be in one place at a time
-  //           currentTimeSlotPermutations.push(otherTimeSlot);
-  //         }
-  //       });
-  //     });
-  //     permutator(currentTimeSlotPermutations);
-  //   });
-  // });
-
   let allPossibleMeetings = [];
   interviews.forEach((interview) => {
     allPossibleMeetings = allPossibleMeetings.concat(interview.possibleMeetings);
