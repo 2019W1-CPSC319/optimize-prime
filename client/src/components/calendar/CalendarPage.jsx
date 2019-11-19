@@ -159,7 +159,7 @@ class CalendarPage extends React.Component {
   handleSave = () => {
     const { selectedOption, candidate: selectedCandidate, required, optional } = this.state;
     const { meetingSuggestions, actions, candidates } = this.props;
-    const selectedSuggestion = meetingSuggestions.data[selectedOption];
+    const selectedSuggestion = meetingSuggestions[selectedOption];
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
     actions.createEvent(selectedSuggestion, candidateUser, required, optional);
 
