@@ -167,9 +167,8 @@ router.post('/sendEmail', (req, res) => {
       if (err) {
         return res.status(500).send({ message: 'Internal Server error' });
       }
-      const { subject } = result[0];
-      const { body } = result[0];
-      const { signature } = result[0];
+
+      const { subject, body, signature } = result[0];
 
       try {
         // const subject = 'Availability';
@@ -232,34 +231,6 @@ router.post('/availability', (req, res) => {
   }
 });
 
-// get all interviewers
-router.get('/interviewers', notAuthMiddleware, async (req, res) => {
-  // const sql = "SELECT * FROM Interviewer WHERE status <> 'D'";
-  // connection.query(sql, (err, result) => {
-  //   if (err) {
-  //     throw err;
-  //   }
-  //   res.send(result);
-  try {
-    const response = await axios({
-      url: 'https://graph.microsoft.com/v1.0/users',
-      headers: {
-        Authorization: `Bearer ${req.user.accessToken}`,
-      },
-    });
-    const users = response.data.value.filter((user) => !user.displayName.includes('Room'));
-    const parsedUsers = users.map((user) => ({
-      firstName: user.givenName,
-      lastName: user.surname,
-      email: user.mail,
-      phone: user.mobilePhone,
-    }));
-    res.send(parsedUsers);
-  } catch (error) {
-    res.status(error.statusCode).send({ message: error.message });
-  }
-});
-
 // update the status of a interviewer to disabled, in the interviewer table
 router.put('/interviewer/delete/:id', (req, res) => {
   const { id } = req.params;
@@ -267,7 +238,7 @@ router.put('/interviewer/delete/:id', (req, res) => {
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      res.status(500).send({ message: 'Internal server error.' });
     }
     res.send(result);
   });
@@ -284,7 +255,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
   connection.query(getCandidateAvailabilityCmd, async (candidateAvailabilityError, candidateAvailability) => {
     if (candidateAvailabilityError) {
-      throw candidateAvailabilityError;
+      res.status(500).send(candidateAvailabilityError);
     }
 
     if (candidateAvailability.length === 0) {
@@ -326,7 +297,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         const getRoomsCmd = 'SELECT * FROM Rooms WHERE status="A"';
         connection.query(getRoomsCmd, async (availableRoomsError, availableRooms) => {
           if (availableRoomsError) {
-            throw availableRoomsError;
+            res.status(500).send(availableRoomsError);
           }
           let locations = [{}];
           if (availableRooms.length > 0) {
@@ -395,7 +366,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           res.send(possibleMeetings.sort((a, b) => new Date(a.start.dateTime) - new Date(b.start.dateTime)));
         });
       } catch (error) {
-        console.log(error);
+        res.status(error.statusCode).send({ message: error.message });
       }
     }
   });
@@ -478,7 +449,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
 
     connection.query(sqlcmd, (err, result) => {
       if (err) {
-        throw err;
+        return res.status(500).send({ message: 'Internal server error.' });
       }
       // get roomId
       const roomId = result[0].id;
@@ -486,7 +457,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
       connection.query(sqlcmd, (err, result) => {
         if (err) {
-          throw err;
+          return res.status(500).send({ message: 'Internal server error.' });
         }
       });
     });
@@ -543,7 +514,7 @@ router.get('/outlook/users', notAuthMiddleware, async (req, res) => {
         })),
     );
   } catch (err) {
-    console.error(err);
+    res.status(err.statusCode).send({ message: err.message });
   }
 });
 
@@ -556,7 +527,7 @@ router.get('/interviews', notAuthMiddleware, (req, res) => {
   const sqlcmd = connection.format(sql, [currDate]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      res.status(500).send({ message: 'Internal server error.' });
     }
     res.send(result);
   });
@@ -618,7 +589,7 @@ router.get('/emailconfig', (req, res) => {
   const sql = 'SELECT * FROM EmailConfig';
   connection.query(sql, (err, result) => {
     if (err) {
-      throw err;
+      return res.status(500).send({ message: 'Internal server error.' });
     }
     res.send(result);
   });
@@ -631,7 +602,7 @@ router.put('/emailconfig', (req, res) => {
   const sqlcmd = connection.format(sql, [subject, body, signature]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      return res.status(500).send({ message: 'Internal server error.' });
     }
     res.send(result);
   });
