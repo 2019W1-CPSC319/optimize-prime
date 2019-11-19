@@ -168,7 +168,6 @@ class UserDialog extends Component {
           );
         }
       } else if (mode === 'edit') {
-        debugger;
         await actions.editUser({
           id,
           firstName,
@@ -232,7 +231,7 @@ class UserDialog extends Component {
   }
 
   renderInputComponent = (infoField) => {
-    const { classes } = this.props;
+    const { classes, mode } = this.props;
     const { error } = this.state;
     const { key, title, type, helperText, selectOptions } = infoField;
     const isSelect = type === 'select';
@@ -251,6 +250,9 @@ class UserDialog extends Component {
         onKeyPress={e => this.onKeyPress(e)}
         onBlur={e => this.onBlurTextField(key, e)}
         helperText={error[key] ? helperText : ''}
+        InputProps={{
+          readOnly: mode === 'edit' && key === 'role',
+        }}
       >
         {
           isSelect
