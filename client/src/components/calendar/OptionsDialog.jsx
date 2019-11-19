@@ -99,15 +99,15 @@ class OptionsDialog extends Component {
   }
 
   createOptions = () => {
-    const { classes } = this.props;
+    const { classes, meetingSuggestions } = this.props;
 
-    if (Array.isArray(this.props.meetingSuggestions) && this.props.meetingSuggestions.length > 0) {
+    if (Array.isArray(meetingSuggestions) && meetingSuggestions.length > 0) {
       return (
         <List dense>
           {
-            this.props.meetingSuggestions.map((schedule) => {
+            meetingSuggestions.map((schedule) => {
               return (
-                <div>
+                <ListItem>
                   {
                     schedule.map((option, index) => {
                       const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
@@ -148,7 +148,7 @@ class OptionsDialog extends Component {
                       );
                     })
                   }
-                </div>
+                </ListItem>
               );
             })
           }
@@ -158,7 +158,7 @@ class OptionsDialog extends Component {
       return (
         <Box style={{ padding: '50px' }}>
           <Typography style={{ textAlign: 'center' }}>
-            {Array.isArray(this.props.meetingSuggestions) ? 'No options available' : 'Candidate availability has not been submitted'}
+            {Array.isArray(meetingSuggestions) ? 'No options available' : 'Candidate availability has not been submitted'}
           </Typography>
           <Button
             color='primary'
