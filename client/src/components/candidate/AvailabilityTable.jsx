@@ -218,7 +218,6 @@ class AvailabilityTable extends Component {
         (row.to % 1) * 60)
       times.push({ start: start, end: end });
     }
-    console.log(times);
     this.state.submitHandler(times);
   }
 

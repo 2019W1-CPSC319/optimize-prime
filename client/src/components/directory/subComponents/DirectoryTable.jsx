@@ -46,8 +46,8 @@ class DirectoryTable extends Component {
         </TableHead>
         <TableBody>
           {
-            rows.map(row => (
-              <TableRow key={row.id}>
+            rows.map((row, key) => (
+              <TableRow key={key}>
                 <TableCell component="th" scope="row">
                   {row.lastName}
                 </TableCell>

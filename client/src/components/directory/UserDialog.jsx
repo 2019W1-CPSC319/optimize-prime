@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import InputMask from "react-input-mask";
 import {
   Button,
   Dialog,
@@ -86,8 +87,10 @@ class UserDialog extends Component {
   constructor(props) {
     super(props);
     const userFields = this.initializeUserInfoFields();
+    const errorState = this.initializeErrorState();
     this.state = {
-      ...userFields
+      ...userFields,
+      ...errorState,
     };
   }
 
@@ -98,14 +101,15 @@ class UserDialog extends Component {
     });
     return {
       ...state,
-      error: {
-        firstName: false,
-        lastName: false,
-        email: false,
-        phone: false,
-        role: false
-      }
     };
+  }
+
+  initializeErrorState = () => {
+    const state = {};
+    USER_DIALOG.fields.forEach((field) => {
+      state[field.key] = false;
+    });
+    return { error: state };
   }
 
   onClickSubmit = async () => {
@@ -125,7 +129,7 @@ class UserDialog extends Component {
           firstName,
           lastName,
           email,
-          phone,
+          phone: phone.replace(/[\D]/g, ''),
           role,
         });
         if (role.toLowerCase() === 'candidate') {
@@ -145,7 +149,7 @@ class UserDialog extends Component {
                 firstName,
                 lastName,
                 email,
-                phone,
+                phone: phone.replace(/[\D]/g, ''),
                 role,
               });
               swalWithBootstrapButtons.fire(
@@ -206,7 +210,7 @@ class UserDialog extends Component {
       case 'email':
         return !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value);
       case 'phone':
-        return !/^\d{3}-\d{3}-\d{4}$/g.test(value);
+        return !/^\d{3}\s-\s\d{3}\s-\s\d{4}$/g.test(value);
       default:
         return false;
     }
@@ -278,6 +282,15 @@ class UserDialog extends Component {
     return !firstName || !lastName || !email || !phone || !role;
   }
 
+  onExit = () => {
+    const userFields = this.initializeUserInfoFields();
+    const errorState = this.initializeErrorState();
+    this.setState({
+      ...userFields,
+      ...errorState,
+    })
+  }
+
   render() {
     const { classes, open, onClickCloseDialog } = this.props;
     const dialog = this.getDialogInfoForMode();
@@ -292,6 +305,7 @@ class UserDialog extends Component {
       <Dialog
         open={open}
         onClose={onClickCloseDialog}
+        onExit={this.onExit}
       >
         <DialogTitle disableTypography classes={{ root: classes.dialogTitleRoot }}>
           {title}
@@ -305,9 +319,33 @@ class UserDialog extends Component {
             {subtitle}
           </DialogContentText>
           {
-            fields.map(infoField => (
-              this.renderInputComponent(infoField)
-            ))
+            fields.map(infoField => {
+              const { error } = this.state;
+              const { key, helperText } = infoField;
+              if (key === 'phone')
+                return (
+                  <InputMask
+                    key={key}
+                    mask="999 - 999 - 9999"
+                    label={title}
+                    onBlur={e => this.onBlurTextField(key, e)}
+                    onChange={e => this.onChangeTextField(key, e)}
+                    value={this.state[key]}
+                    alwaysShowMask>
+                    <TextField
+                      autoFocus={key === 'firstName'}
+                      error={error[key]}
+                      key={key}
+                      variant="outlined"
+                      className={classes.textField}
+                      label={title}
+                      onKeyPress={e => this.onKeyPress(e)}
+                      helperText={error[key] ? helperText : ''}
+                    ></TextField>
+                  </InputMask>
+                );
+              else return (this.renderInputComponent(infoField));
+            })
           }
           <Button
             color="primary"

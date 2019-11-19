@@ -44,7 +44,6 @@ const EMPLOYEE_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
   { key: 'email', title: 'Email' },
-  { key: 'phone', title: 'Phone Number' },
 ];
 
 const ALLOWED_USER_ACTIONS = [
@@ -73,8 +72,8 @@ class DirectoryPage extends Component {
   componentDidMount() {
     const { actions } = this.props;
     actions.getUsers('candidate');
-    actions.getUsers('interviewer');
     actions.getUsers('administrator');
+    actions.getOutlookUsers();
   }
 
   onClickUserAction = (mode, userId) => {

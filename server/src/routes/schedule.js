@@ -4,8 +4,6 @@ const axios = require('axios');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
 
-// ***************** ROOMS Endpoints *******************
-
 // get all rooms
 router.get('/rooms', (req, res) => {
   const sql = 'SELECT * FROM Rooms WHERE status="A"';
@@ -51,8 +49,6 @@ router.put('/room/:id', (req, res) => {
   });
 });
 
-// ***************** CANDIDATES Endpoints *******************
-
 // get all candidates
 router.get('/candidates', async (req, res) => {
   const sql = "SELECT * FROM Candidate WHERE status <> 'D'";
@@ -86,7 +82,7 @@ router.get('/candidate/name/:uuid', (req, res) => {
 });
 
 // get a specific candidate
-router.get('/candidate/:uuid', notAuthMiddleware, (req, res) => {
+router.get('/candidate/:uuid', (req, res) => {
   const { uuid } = req.params;
   const sql = 'SELECT * FROM Candidate WHERE uuid = ?';
   const sqlcmd = connection.format(sql, [uuid]);
@@ -142,7 +138,6 @@ router.put('/edituser', (req, res) => {
   });
 });
 
-
 // update the status of a candidate to disabled, in the candidate table
 router.put('/candidate/delete/:id', (req, res) => {
   const { id } = req.params;
@@ -166,40 +161,49 @@ router.post('/sendEmail', (req, res) => {
 
     const { uuid } = result[0];
 
-    try {
-      const subject = 'Availability';
-      const body = `Hi ${firstName},` + '\nPlease fill out your availability by going here: ' + `https://optimize-prime.herokuapp.com/candidate?key=${uuid}`;
-      const response = await axios({
-        method: 'post',
-        url: 'https://graph.microsoft.com/v1.0/me/sendMail',
-        headers: {
-          Authorization: `Bearer ${req.user.accessToken}`,
-        },
-        data: {
-          message: {
-            subject,
-            body: {
-              contentType: 'text',
-              content: body,
-            },
-            toRecipients: [
-              {
-                emailAddress: {
-                  address: email,
-                },
-              },
-            ],
+    // get email template config
+    const sqlcmd = 'SELECT * FROM EmailConfig';
+    connection.query(sqlcmd, async (err, result) => {
+      if (err) {
+        return res.status(500).send({ message: 'Internal Server error' });
+      }
+      const { subject } = result[0];
+      const { body } = result[0];
+      const { signature } = result[0];
+
+      try {
+        // const subject = 'Availability';
+        const content = `Hi ${firstName},\n\nPlease fill out your availability by going here: https://optimize-prime.herokuapp.com/candidate?key=${uuid}\n\n${body}\n\n${signature}`;
+        const response = await axios({
+          method: 'post',
+          url: 'https://graph.microsoft.com/v1.0/me/sendMail',
+          headers: {
+            Authorization: `Bearer ${req.user.accessToken}`,
           },
-        },
-      });
-      res.send(response.data);
-    } catch (error) {
-      res.status(500).send({ message: 'Internal server Error.' });
-    }
+          data: {
+            message: {
+              subject,
+              body: {
+                contentType: 'text',
+                content,
+              },
+              toRecipients: [
+                {
+                  emailAddress: {
+                    address: email,
+                  },
+                },
+              ],
+            },
+          },
+        });
+        res.send(response.data);
+      } catch (error) {
+        res.status(500).send({ message: 'Internal server Error.' });
+      }
+    });
   });
 });
-
-// ***************** CANDIDATE AVAILABILITY Endpoints *******************
 
 router.post('/availability', (req, res) => {
   try {
@@ -227,8 +231,6 @@ router.post('/availability', (req, res) => {
     res.status(error.statusCode).send({ message: error.message });
   }
 });
-
-// ***************** INTERVIEWERS Endpoints *****************************
 
 // get all interviewers
 router.get('/interviewers', notAuthMiddleware, async (req, res) => {
@@ -399,8 +401,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
   });
 });
 
-// ************* Send out a meeting invite to the attendees and book the room for the duration of the interview **************************
-
 router.post('/event', notAuthMiddleware, async (req, res) => {
   try {
     const {
@@ -524,8 +524,32 @@ router.get('/outlook/rooms', notAuthMiddleware, async (req, res) => {
   res.send(response.data && response.data.value);
 });
 
+router.get('/outlook/users', notAuthMiddleware, async (req, res) => {
+  try {
+    const response = await axios({
+      method: 'get',
+      url: 'https://graph.microsoft.com/v1.0/users',
+      headers: {
+        Authorization: `Bearer ${req.user.accessToken}`,
+      },
+    });
+    res.send(
+      response.data.value
+        .filter((user) => user.givenName !== null)
+        .map((user) => ({
+          firstName: user.givenName,
+          lastName: user.surname,
+          email: user.mail,
+        })),
+    );
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 // **************************** Get all scheduled interviews ************************************ //
 
+// get a list of interviews
 router.get('/interviews', notAuthMiddleware, (req, res) => {
   const currDate = new Date();
   const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
@@ -582,7 +606,32 @@ router.put('/administrator/delete/:id', notAuthMiddleware, async (req, res) => {
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      res.status(500).send({ message: 'Internal server error.' });
+      return res.status(500).send({ message: 'Internal server error.' });
+    }
+    res.send(result);
+  });
+});
+
+
+// get email config
+router.get('/emailconfig', (req, res) => {
+  const sql = 'SELECT * FROM EmailConfig';
+  connection.query(sql, (err, result) => {
+    if (err) {
+      throw err;
+    }
+    res.send(result);
+  });
+});
+
+// update email template config
+router.put('/emailconfig', (req, res) => {
+  const { subject, body, signature } = req.body;
+  const sql = 'UPDATE EmailConfig SET subject = ?, body = ?, signature = ? WHERE id = 1';
+  const sqlcmd = connection.format(sql, [subject, body, signature]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      throw err;
     }
     res.send(result);
   });
