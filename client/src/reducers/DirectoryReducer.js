@@ -26,6 +26,12 @@ const DirectoryReducer = (state = initialState, action) => {
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = action.users;
       return newState;
+    case 'GET_OUTLOOK_USERS_SUCCESS':
+      const { outlookUsers } = action;
+      return {
+        ...state,
+        outlookUsers
+      }
     case 'GET_CANDIDATE_SUCCESS':
       const { candidate } = action;
       return {
