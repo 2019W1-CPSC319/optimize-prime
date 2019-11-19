@@ -131,7 +131,7 @@ class UserDialog extends Component {
           firstName,
           lastName,
           email,
-          phone: phone.replace(/[\D]/g, ''),
+          phone: phone.replace(/[\s]/g, ''),
           role,
         });
         if (role.toLowerCase() === 'candidate') {
@@ -150,7 +150,7 @@ class UserDialog extends Component {
                 firstName,
                 lastName,
                 email,
-                phone: phone.replace(/[\D]/g, ''),
+                phone: phone.replace(/[\s]/g, ''),
                 role,
               });
               swalWithBootstrapButtons.fire(
@@ -168,12 +168,13 @@ class UserDialog extends Component {
           );
         }
       } else if (mode === 'edit') {
+        debugger;
         await actions.editUser({
           id,
           firstName,
           lastName,
           email,
-          phone: phone.replace(/[\D]/g, ''),
+          phone: phone.replace(/[\s]/g, ''),
           role,
         });
         swalWithBootstrapButtons.fire(

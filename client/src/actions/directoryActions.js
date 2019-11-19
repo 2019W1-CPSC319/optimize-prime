@@ -32,10 +32,9 @@ export const addUser = (role, user) => async (dispatch) => {
   }
 };
 
-function editUserSuccess(data) {
+function editUserSuccess() {
   return {
     type: 'EDIT_USER_SUCCESS',
-    data,
   };
 }
 
@@ -51,7 +50,7 @@ export const editUser = (user) => async (dispatch) => {
     dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.put('/schedule/edituser', user);
     const data = response.data;
-    return dispatch(editUserSuccess(data));
+    return dispatch(editUserSuccess());
   } catch (error) {
     return dispatch(editUserFailure(error));
   }
