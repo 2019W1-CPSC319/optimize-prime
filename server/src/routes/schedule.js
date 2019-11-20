@@ -456,6 +456,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
                   suggestLocation: 'false',
                   locations,
                 },
+                isOrganizerOptional: true,
               };
 
               console.log(JSON.stringify(data));
