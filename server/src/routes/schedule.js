@@ -476,6 +476,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
               if (meetingTimeSuggestions.length > 0) {
                 meetingTimeSuggestions.forEach((meeting) => {
                   meeting.locations.forEach((room) => {
+                    if (meeting.attendeeAvailability.find((attendee) => attendee.availability !== 'free')) return;
                     possibleMeetings.push({
                       start: meeting.meetingTimeSlot.start,
                       end: meeting.meetingTimeSlot.end,
