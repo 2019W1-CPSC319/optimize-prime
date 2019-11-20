@@ -63,7 +63,6 @@ router.get('/candidates', async (req, res) => {
     }
     res.send(result);
   });
-  console.log(req.user);
 });
 
 /**
@@ -281,8 +280,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
       throw err;
     }
 
-    console.log(result);
-
     if (result.length === 0) {
       res.send("No candidate availability found");
     } else {
@@ -344,8 +341,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
             }
           }
 
-          console.log(JSON.stringify(data));
-
           const response = await axios({
             method: 'post',
             url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
@@ -356,8 +351,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           });
 
           const meetingTimeSuggestions = (response.data && response.data.meetingTimeSuggestions) || [];
-
-          console.log(JSON.stringify(meetingTimeSuggestions));
 
           if (meetingTimeSuggestions.length === 0) {
             res.send([]);
