@@ -111,7 +111,7 @@ class OptionsDialog extends Component {
     if (Array.isArray(meetingSuggestions.data) && meetingSuggestions.data.length > 0) {
       return (
         <List dense>
-          {meetingSuggestions.data.slice(0, 20).map((block, value) => {
+          {meetingSuggestions.data.slice(0, 20).filter(suggestion => suggestion !== null).map((block, value) => {
             return (
               <Paper
                 key={value}

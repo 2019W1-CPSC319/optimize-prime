@@ -120,7 +120,10 @@ const createEventFailure = (error) => (
   }
 );
 
-export const createEvent = (selectedSuggestion, candidate, required, optional) => async (dispatch) => {
+export const createEvent = (selectedSuggestion, candidate) => async (dispatch) => {
+  const { required, optional, start, end, room } = selectedSuggestion;
+  console.log(selectedSuggestion)
+  console.log(candidate)
   const body = {
     candidate: {
       id: candidate.id,
@@ -129,12 +132,12 @@ export const createEvent = (selectedSuggestion, candidate, required, optional) =
       email: candidate.email,
     },
     room: {
-      email: selectedSuggestion.room.locationEmailAddress,
-      name: selectedSuggestion.room.displayName,
+      email: room.locationEmailAddress,
+      name: room.displayName,
     },
     date: {
-      startTime: selectedSuggestion.start,
-      endTime: selectedSuggestion.end,
+      startTime: start,
+      endTime: end,
     },
     required,
     optional,
