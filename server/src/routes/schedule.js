@@ -488,7 +488,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
                       start: meeting.meetingTimeSlot.start,
                       end: meeting.meetingTimeSlot.end,
                       room,
-                      interviewers: meeting.attendeeAvailability.filter((attendee) => attendee.availability === 'free'),
+                      interviewers: meeting.attendeeAvailability,
                       interviewIndex: index,
                     });
                   });
