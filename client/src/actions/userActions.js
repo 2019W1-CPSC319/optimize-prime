@@ -136,8 +136,14 @@ export const createEvent = (selectedSuggestion, candidate) => async (dispatch) =
       name: room.displayName,
     },
     date: {
-      startTime: start,
-      endTime: end,
+      startTime: {
+        dateTime: start,
+        timeZone: 'Pacific Standard Time',
+      },
+      endTime: {
+        dateTime: end,
+        timeZone: 'Pacific Standard Time',
+      },
     },
     required,
     optional,
