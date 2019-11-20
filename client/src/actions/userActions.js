@@ -122,8 +122,6 @@ const createEventFailure = (error) => (
 
 export const createEvent = (selectedSuggestion, candidate) => async (dispatch) => {
   const { required, optional, start, end, room } = selectedSuggestion;
-  console.log(selectedSuggestion)
-  console.log(candidate)
   const body = {
     candidate: {
       id: candidate.id,

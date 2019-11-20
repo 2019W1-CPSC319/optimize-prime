@@ -75,7 +75,6 @@ function getUserFailure(error) {
 export const getUser = (uuid) => async (dispatch) => {
   try {
     dispatch(updateLoadingState('INIT_REQUEST'));
-    debugger;
     const response = await axios.get(`/schedule/candidates/${uuid}`);
     // TODO: add a safety fallback if user with matching uuid not found
     const user = response.data[0];

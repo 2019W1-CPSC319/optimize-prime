@@ -20,7 +20,6 @@ const DirectoryReducer = (state = initialState, action) => {
       return newState;
     case 'GET_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false, user });
-      debugger;
       return newState;
     case 'GET_USERS_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
