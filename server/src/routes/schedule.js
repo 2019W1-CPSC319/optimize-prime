@@ -593,9 +593,9 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         throw err;
       }
       // get roomId
-      const roomId = result[0].id;
+      const newRoomId = result[0].id;
       sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
-      sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
+      sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, newRoomId]);
       connection.query(sqlcmd, (err, scheduledInterview) => {
         if (err) {
           throw err;
@@ -606,7 +606,32 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
           if (err) {
             throw err;
           }
-          res.send(newScheduledInterview[0]);
+
+          const {
+            candidateId,
+            firstName,
+            lastName,
+            roomId,
+            name,
+            seats,
+            ...interviewDetails
+          } = newScheduledInterview[0];
+
+          const formattedInterview = {
+            ...interviewDetails,
+            candidate: {
+              id: candidateId,
+              firstName,
+              lastName,
+            },
+            room: {
+              id: roomId,
+              name,
+              seats,
+            },
+          };
+
+          res.send(formattedInterview);
         });
       });
     });
