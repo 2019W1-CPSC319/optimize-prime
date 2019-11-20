@@ -360,7 +360,7 @@ const getPossibleSchedules = (interviews) => {
     String(algorithmRunTime)
   }ms.`);
 
-  return possibleSchedules;
+  return possibleSchedules.sort((a, b) => new Date(a[0].start.dateTime) - new Date(b[0].start.dateTime));
 };
 
 // find all the possible meeting times, given the following constraints/information:
@@ -612,6 +612,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(error.response.status).send(error.message);
   }
 });
 
