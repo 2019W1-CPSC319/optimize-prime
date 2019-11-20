@@ -130,7 +130,6 @@ class OptionsDialog extends Component {
                             <Box>
                               <Box fontWeight='fontWeightBold'>
                                 <Moment
-                                  subtract={{ hours: 8 }}
                                   format='ll'
                                   tz='America/Los_Angeles'
                                 >
@@ -138,10 +137,10 @@ class OptionsDialog extends Component {
                                 </Moment>
                               </Box>
                               <Typography>
-                                Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'> {option.start}</Moment>
+                                Starts at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.start}</Moment>
                               </Typography>
                               <Typography>
-                                Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'> {option.end}</Moment>
+                                Ends at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.end}</Moment>
                               </Typography>
                             </Box>
                           }
@@ -241,20 +240,6 @@ class OptionsDialog extends Component {
             Select an interview slot to schedule an interview.
             Upon submission, emails will be sent out to the candidate and interviewers.
           </DialogContentText>
-          {/* <FormControl component="fieldset" className={classes.formControl}>
-            <FormLabel component="legend">Gender</FormLabel>
-            <RadioGroup aria-label="gender" name="gender1" value={0} onChange={handleSelectOption}>
-              <FormControlLabel value="female" control={<Radio />} label="Female" />
-              <FormControlLabel value="male" control={<Radio />} label="Male" />
-              <FormControlLabel value="other" control={<Radio />} label="Other" />
-              <FormControlLabel
-                value="disabled"
-                disabled
-                control={<Radio />}
-                label="(Disabled option)"
-              />
-            </RadioGroup>
-          </FormControl> */}
           {meetingSuggestions && this.createOptions()}
         </DialogContent>
         <DialogActions>
