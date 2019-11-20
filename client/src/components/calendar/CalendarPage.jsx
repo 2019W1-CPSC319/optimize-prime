@@ -217,13 +217,14 @@ class CalendarPage extends React.Component {
     actions.getUsers('candidate');
     actions.getUsers('interviewer');
     actions.getInterviews();
+    actions.getOutlookUsers();
   }
 
   render() {
     const { interviews } = this.props;
     return (
       <div>
-        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Calendar</h1>
+        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Upcoming Interviews</h1>
         <Paper>
           <Table>
             <TableHead>

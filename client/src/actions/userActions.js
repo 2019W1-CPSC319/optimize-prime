@@ -186,3 +186,29 @@ export const getInterviews = () => async (dispatch) => {
     return dispatch(getInterviewsFailure(error));
   }
 };
+
+const getOutlookUsersSuccess = (outlookUsers) => (
+  {
+    type: 'GET_OUTLOOK_USERS_SUCCESS',
+    outlookUsers,
+  }
+);
+
+const getOutlookUsersFailure = (error) => (
+  {
+    type: 'GET_OUTLOOK_USERS_FAILURE',
+    payload: error,
+  }
+);
+
+export const getOutlookUsers = () => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.get('/schedule/outlook/users');
+    const outlookUsers = response.data;
+    return dispatch(getOutlookUsersSuccess(outlookUsers));
+  } catch (error) {
+    console.log(error);
+    return dispatch(getOutlookUsersFailure(error));
+  }
+};
