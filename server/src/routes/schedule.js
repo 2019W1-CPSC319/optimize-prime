@@ -170,14 +170,14 @@ router.post('/sendEmail', (req, res) => {
     const { uuid } = result[0];
 
     // get email template config
-    const sqlcmd = "SELECT * FROM EmailConfig";
+    const sqlcmd = 'SELECT * FROM EmailConfig';
     connection.query(sqlcmd, async (err, result) => {
       if (err) {
         return res.status(500).send({ message: 'Internal Server error' });
       }
-      const subject = result[0].subject;
-      const body = result[0].body;
-      const signature = result[0].signature;
+      const { subject } = result[0];
+      const { body } = result[0];
+      const { signature } = result[0];
 
       try {
         // const subject = 'Availability';
@@ -462,15 +462,21 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
               console.log(JSON.stringify(data));
 
-              const response = await axios({
-                method: 'post',
-                url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
-                headers: {
-                  Authorization: `Bearer ${req.user.accessToken}`,
-                  Prefer: `outlook.timezone="${timeZone}"`,
-                },
-                data,
-              });
+              let response;
+
+              try {
+                response = await axios({
+                  method: 'post',
+                  url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
+                  headers: {
+                    Authorization: `Bearer ${req.user.accessToken}`,
+                    Prefer: `outlook.timezone="${timeZone}"`,
+                  },
+                  data,
+                });
+              } catch (error) {
+                console.log(error);
+              }
 
               const meetingTimeSuggestions = (response.data && response.data.meetingTimeSuggestions) || [];
 
@@ -664,12 +670,13 @@ router.get('/outlook/users', notAuthMiddleware, async (req, res) => {
     });
     res.send(
       response.data.value
-        .filter(user => user.givenName !== null)
-        .map(user => ({
+        .filter((user) => user.givenName !== null)
+        .map((user) => ({
           firstName: user.givenName,
           lastName: user.surname,
           email: user.mail,
-        })));
+        })),
+    );
   } catch (err) {
     console.error(err);
   }
@@ -717,7 +724,7 @@ router.get('/interviews', notAuthMiddleware, (req, res) => {
 
 // get email config
 router.get('/emailconfig', (req, res) => {
-  const sql = "SELECT * FROM EmailConfig";
+  const sql = 'SELECT * FROM EmailConfig';
   connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -729,7 +736,7 @@ router.get('/emailconfig', (req, res) => {
 // update email template config
 router.put('/emailconfig', (req, res) => {
   const { subject, body, signature } = req.body;
-  const sql = "UPDATE EmailConfig SET subject = ?, body = ?, signature = ? WHERE id = 1";
+  const sql = 'UPDATE EmailConfig SET subject = ?, body = ?, signature = ? WHERE id = 1';
   const sqlcmd = connection.format(sql, [subject, body, signature]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
