@@ -149,7 +149,7 @@ class CalendarPage extends React.Component {
       // Ben's implementation
       // await actions.findAllMeetingTimes(data);
       // TODO: Add controls for 1. displayed schedules per page and 2. current page number
-      await actions.findMeetingTimes(data, 5, 1);
+      await actions.findMeetingTimes(data, 20, 1);
       this.setState({ reqOpen: false });
       this.setState({ optOpen: true });
     } catch (err) {
