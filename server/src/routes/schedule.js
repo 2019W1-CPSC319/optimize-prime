@@ -387,13 +387,9 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
 
 router.post('/event', notAuthMiddleware, async (req, res) => {
   try {
-
     const { candidate, date, required, optional, room } = req.body;
-
     const subject = "Interview with " + candidate.firstName + ' ' + candidate.lastName;
     const content = "Please confirm if you are available during this time."
-
-    const timeZone = "UTC";
 
     // create candidate as an attendee
     const candidateAttendee = [
@@ -409,7 +405,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     const requiredAttendees = required.map(interviewer => ({
       type: "required",
       emailAddress: {
-        address: interviewer.email
+        address: interviewer
       }
     }));
 
@@ -417,7 +413,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     const optionalAttendees = optional.map(interviewer => ({
       type: "optional",
       emailAddress: {
-        address: interviewer.email
+        address: interviewer
       }
     }));
 
@@ -455,7 +451,6 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
 
     // insert the scheduled interview in the candidate table
-    
     const sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
     const sqlcmd = connection.format(sql, [room.name]);
 
@@ -463,10 +458,12 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       if (err) {
         throw err;
       }
+
       // get roomId
       const roomId = result[0].id;
-      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)'
-      const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
+      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, STR_TO_DATE(?, ?), STR_TO_DATE(?, ?), ?)'
+      const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, '%Y-%m-%dT%H:%i:%s.%fZ', date.endTime.dateTime, '%Y-%m-%dT%H:%i:%s.%fZ', roomId]);
+
       connection.query(sqlcmd, (err, result) => {
         if (err) {
           throw err;
