@@ -71,6 +71,9 @@ class RequestDialog extends Component {
 
   render() {
     const { classes, candidates, interviewers, rows, reqOpen, durations, selected } = this.props;
+
+    if (!rows) return null;
+
     return (
       <Dialog open={reqOpen} aria-labelledby="form-dialog-title" fullWidth maxWidth="lg">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
