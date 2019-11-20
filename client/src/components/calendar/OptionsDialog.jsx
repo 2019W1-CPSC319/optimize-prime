@@ -18,6 +18,7 @@ import {
   ListItemSecondaryAction,
   Typography,
   Radio,
+  Paper,
   Popover,
   FormControl,
   FormLabel,
@@ -37,7 +38,7 @@ const styles = theme => ({
     fontSize: 'x-small',
     width: '20px',
     height: '20px',
-    backgroundColor: `${'#' + Math.floor(Math.random() * 16777215).toString(16)}`
+    backgroundColor: 'orange'
   }
 });
 
@@ -45,6 +46,7 @@ const styles = theme => ({
 const GreenRadio = withStyles({
   root: {
     color: green[400],
+    marginLeft: '15px',
     '&$checked': {
       color: green[600],
     },
@@ -109,76 +111,78 @@ class OptionsDialog extends Component {
     if (Array.isArray(meetingSuggestions.data) && meetingSuggestions.data.length > 0) {
       return (
         <List dense>
-          {meetingSuggestions.data.map((block, index) => {
-            return block.map((option, key) => {
-              // const hash = `${option.start}-${option.end}-${option.room.displayName}`;
-              // const labelId = `radio-list-secondary-label-${hash}`;
-              console.log(option)
-              return (
-                <ListItem key={key}>
-                  <ListItemText
-                    // id={labelId}
-                    primary={
-                      <Box>
-                        <Box fontWeight='fontWeightBold'>
-                          <Moment
-                            subtract={{ hours: 8 }}
-                            format='ll'
-                            tz='America/Los_Angeles'
-                          >
-                            {option.start}
-                          </Moment>
+          {meetingSuggestions.data.slice(0, 20).map((block, value) => {
+            return (
+              <Paper
+                key={value}
+                style={{ marginBottom: '20px' }}>
+                <GreenRadio
+                  checked={selectedOption === value}
+                  onChange={() => handleSelectOption(value)}
+                  value={value}
+                />
+                <Box style={{ width: '100%' }}>
+                  {block.map((option, key) => {
+                    return (
+                      <ListItem key={key}>
+                        <ListItemText
+                          primary={
+                            <Box>
+                              <Box fontWeight='fontWeightBold'>
+                                <Moment
+                                  subtract={{ hours: 8 }}
+                                  format='ll'
+                                  tz='America/Los_Angeles'
+                                >
+                                  {option.start}
+                                </Moment>
+                              </Box>
+                              <Typography>
+                                Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'> {option.start}</Moment>
+                              </Typography>
+                              <Typography>
+                                Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'> {option.end}</Moment>
+                              </Typography>
+                            </Box>
+                          }
+                          secondary={option.room.displayName}
+                        />
+                        <Box component='div' display='flex'>
+                          {option.required.map(
+                            interviewer => {
+                              return (
+                                <Avatar
+                                  key={`${interviewer}-${Math.random() * 1000}`}
+                                  // onMouseEnter={this.handlePopoverOpen}
+                                  // onMouseLeave={this.handlePopoverClose}
+                                  className={classes.avatar}
+                                >
+                                  {interviewer.charAt(0).toUpperCase()}
+                                </Avatar>
+                              )
+                            }
+                          )}
+                          {option.optional.map(
+                            interviewer => {
+                              return (
+                                <Avatar
+                                  key={`${interviewer}-${Math.random() * 1000}`}
+                                  // onMouseEnter={this.handlePopoverOpen}
+                                  // onMouseLeave={this.handlePopoverClose}
+                                  className={classes.avatar}
+                                >
+                                  {interviewer.charAt(0).toUpperCase()}
+                                </Avatar>
+                              )
+                            }
+                          )}
                         </Box>
-                        <Typography>
-                          Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'> {option.start}</Moment>
-                        </Typography>
-                        <Typography>
-                          Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'> {option.end}</Moment>
-                        </Typography>
-                      </Box>
-                    }
-                    secondary={option.room.displayName}
-                  />
-                  <Box component='div' display='flex'>
-                    {option.required.map(
-                      interviewer => {
-                        return (
-                          <Avatar
-                            key={`${interviewer}-${Math.random() * 1000}`}
-                            // onMouseEnter={this.handlePopoverOpen}
-                            // onMouseLeave={this.handlePopoverClose}
-                            className={classes.avatar}
-                          >
-                            {interviewer.charAt(0).toUpperCase()}
-                          </Avatar>
-                        )
-                      }
-                    )}
-                    {option.optional.map(
-                      interviewer => {
-                        return (
-                          <Avatar
-                            key={`${interviewer}-${Math.random() * 1000}`}
-                            // onMouseEnter={this.handlePopoverOpen}
-                            // onMouseLeave={this.handlePopoverClose}
-                            className={classes.avatar}
-                          >
-                            {interviewer.charAt(0).toUpperCase()}
-                          </Avatar>
-                        )
-                      }
-                    )}
-                  </Box>
-                  <ListItemSecondaryAction>
-                    <GreenRadio
-                      checked={selectedOption === key}
-                      onChange={() => handleSelectOption(key)}
-                      value={key}
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              );
-            });
+                      </ListItem>
+                    );
+                  })}
+                </Box>
+              </Paper>
+            );
           })}
         </List>
       );
@@ -237,7 +241,7 @@ class OptionsDialog extends Component {
             Select an interview slot to schedule an interview.
             Upon submission, emails will be sent out to the candidate and interviewers.
           </DialogContentText>
-          <FormControl component="fieldset" className={classes.formControl}>
+          {/* <FormControl component="fieldset" className={classes.formControl}>
             <FormLabel component="legend">Gender</FormLabel>
             <RadioGroup aria-label="gender" name="gender1" value={0} onChange={handleSelectOption}>
               <FormControlLabel value="female" control={<Radio />} label="Female" />
@@ -250,7 +254,7 @@ class OptionsDialog extends Component {
                 label="(Disabled option)"
               />
             </RadioGroup>
-          </FormControl>
+          </FormControl> */}
           {meetingSuggestions && this.createOptions()}
         </DialogContent>
         <DialogActions>
