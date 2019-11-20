@@ -15,15 +15,10 @@ import {
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
   Typography,
   Radio,
   Paper,
   Popover,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel
 } from '@material-ui/core';
 
 const styles = theme => ({
@@ -42,7 +37,6 @@ const styles = theme => ({
   }
 });
 
-// TODO: make it a checkbox, instead of radio button to allow multiple selection of events
 const GreenRadio = withStyles({
   root: {
     color: green[400],
@@ -67,18 +61,6 @@ class OptionsDialog extends Component {
       popover: null,
     };
   }
-
-  // updateRequiredInterviewers = (event) => {
-  //   this.setState({ required: event.target.value });
-  // }
-
-  // updateOptionalInterviewers = (event) => {
-  //   this.setState({ optional: event.target.value });
-  // }
-
-  // updateCandidate = (event) => {
-  //   this.setState({ candidate: event.target.value });
-  // }
 
   handlePopoverOpen = (event) => {
     this.setState(event.target);
@@ -106,7 +88,6 @@ class OptionsDialog extends Component {
 
   createOptions = () => {
     const { classes, meetingSuggestions, handleOpen, selectedOption, handleSelectOption } = this.props;
-    // console.log(meetingSuggestions.data.filter(suggestion => suggestion[0].room === undefined))
 
     if (Array.isArray(meetingSuggestions.data) && meetingSuggestions.data.length > 0) {
       return (

@@ -22,14 +22,6 @@ import {
   Slide,
 } from '@material-ui/core';
 
-function formatDateTime(dateTime) {
-  return moment.utc(dateTime).local().format('M/D/YY h:mm A');
-}
-
-export const FIELD_DURATION = 1;
-export const FIELD_REQUIRED = 2;
-export const FIELD_PROFILE = 3;
-
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: 'btn btn-success',
@@ -58,19 +50,6 @@ class CalendarPage extends React.Component {
     this.state = initialState;
   }
 
-  getInterviewDuration = (minutes) => {
-    switch (minutes) {
-      case 30:
-        return 'PT30M';
-      case 60:
-        return 'PT1H';
-      case 90:
-        return 'PT1H30M';
-      case 120:
-        return 'PT2H';
-    }
-  }
-
   handleOpen = () => {
     this.setState({ reqOpen: true });
     this.setState({ optOpen: false });
@@ -87,7 +66,6 @@ class CalendarPage extends React.Component {
 
   updateCandidate = (event, candidate) => {
     this.setState({ candidate });
-    console.log(candidate)
   }
 
   handleAddRow = () => {
@@ -133,7 +111,6 @@ class CalendarPage extends React.Component {
           duration: row.duration
         })),
       };
-      console.log(data)
       await actions.findAllMeetingTimes(data);
       this.setState({ reqOpen: false });
       this.setState({ optOpen: true });
@@ -217,9 +194,9 @@ class CalendarPage extends React.Component {
             </TableHead>
             <TableBody>
               {interviews && interviews.map(
-                (interview, i) => {
+                (interview, key) => {
                   return (
-                    <TableRow key={i}>
+                    <TableRow key={key}>
                       <TableCell align="center">{interview.firstName + ' ' + interview.lastName}</TableCell>
                       <TableCell align="center">{interview.name}</TableCell>
                       <TableCell align="center">{interview.seats}</TableCell>
