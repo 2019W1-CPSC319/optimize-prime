@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import Moment from 'react-moment';
-import 'moment-timezone';
 import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
@@ -18,11 +16,12 @@ import {
   Icon,
   List,
   ListItem,
-  ListItemText,
   ListItemSecondaryAction,
+  MenuItem,
   Typography,
   Radio,
   Popover,
+  Select,
 } from '@material-ui/core';
 
 const styles = {
@@ -125,7 +124,7 @@ class OptionsDialog extends Component {
     this.setState({ background: background });
   }
 
-  handlePageChange = (mode) => {
+  handlePageChange = (mode, event) => {
     const { pageNumber, onClickChangePage } = this.props;
     let newPage = 1;
 
@@ -135,6 +134,8 @@ class OptionsDialog extends Component {
       newPage = pageNumber + 1;
     } else if (mode === 'prev') {
       newPage = pageNumber - 1;
+    } else if (mode === 'select') {
+      newPage = event.target.value;
     }
 
     onClickChangePage(newPage);
@@ -266,6 +267,26 @@ class OptionsDialog extends Component {
     )
   }
 
+  renderSelectOptions = () => {
+    const totalNumberOfPages = this.getTotalNumberOfPages();
+    const options = [];
+
+    for (let i = 0; i < totalNumberOfPages; i++) {
+      options.push({ key: i + 1, text: `Page ${i + 1}` });
+    }
+
+    return (
+      options.map(option => (
+        <MenuItem
+          key={option.key}
+          value={option.key}
+        >
+          {option.text}
+        </MenuItem>
+      )
+    ));
+  }
+
   render() {
     const { meetingSuggestions, classes, pageNumber } = this.props;
 
@@ -290,7 +311,12 @@ class OptionsDialog extends Component {
           >
             <Icon>chevron_left</Icon>
           </IconButton>
-          <Typography>{pageNumber}</Typography>
+          <Select
+            value={pageNumber}
+            onChange={(e) => this.handlePageChange('select', e)}
+          >
+            {this.renderSelectOptions()}
+          </Select>
           <IconButton
             disabled={this.isPageButtonDisabled('next')}
             onClick={() => this.handlePageChange('next')}
