@@ -347,13 +347,13 @@ const getPossibleSchedules = (interviews) => {
         // return schedules that can do as well as the current schedule
         shortestElapsedTime = elapsedTime;
         possibleSchedules = [];
-        possibleSchedules.push(sortedSchedule);
+        possibleSchedules.push({ id: scheduleKey, options: sortedSchedule });
         lookup.add(scheduleKey);
       } else if (elapsedTime === shortestElapsedTime) {
         // 1. Only return schedules that can do as well as the optimal schedule
         // 2. Only add current schedule as a possible option if it is unique
         if (!lookup.has(scheduleKey)) {
-          possibleSchedules.push(sortedSchedule);
+          possibleSchedules.push({ id: scheduleKey, options: sortedSchedule });
           lookup.add(scheduleKey);
         }
       }
@@ -367,14 +367,14 @@ const getPossibleSchedules = (interviews) => {
     String(algorithmRunTime)
   }ms.`);
 
-  return possibleSchedules.sort((a, b) => new Date(a[0].start.dateTime) - new Date(b[0].start.dateTime));
+  return possibleSchedules.sort((a, b) => new Date(a.options[0].start.dateTime) - new Date(b.options[0].start.dateTime));
 };
 
 // find all the possible meeting times, given the following constraints/information:
 // attendess, timeConstraints, meetingDuration, locationConstraints
 router.post('/meeting', notAuthMiddleware, async (req, res) => {
   const {
-    candidate, interviews, schedulesPerPage, pageNumber,
+    candidate, interviews,
   } = req.body;
   const sql = "SELECT * FROM Candidate c INNER JOIN CandidateAvailability a ON c.id = a.candidateID WHERE c.email = ? AND c.status = 'A' ORDER BY a.id DESC";
   const getCandidateAvailabilityCmd = connection.format(sql, [candidate]);

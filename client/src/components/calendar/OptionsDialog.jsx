@@ -142,7 +142,7 @@ class OptionsDialog extends Component {
   }
 
   isPageButtonDisabled = (mode) => {
-    const { meetingSuggestions, pageNumber, schedulesPerPage } = this.props;
+    const { pageNumber } = this.props;
     const totalNumberOfPages = this.getTotalNumberOfPages();
 
     if (mode === 'next') {
@@ -174,9 +174,8 @@ class OptionsDialog extends Component {
               return (
                 <ListItem key={index}>
                   {
-                    schedule.map((option) => {
+                    schedule.options.map((option) => {
                       const hash = `${option.start.dateTime}-${option.end.dateTime}-${option.room.displayName}`;
-                      const labelId = `radio-list-secondary-label-${hash}`;
                       const date = new Date(option.start.dateTime);
                       const startTime = moment(option.start.dateTime).format('hh:mmA');
                       const endTime = moment(option.end.dateTime).format('hh:mmA')
@@ -212,9 +211,9 @@ class OptionsDialog extends Component {
                   }
                   <ListItemSecondaryAction>
                     <GreenRadio
-                      checked={selectedOption === index}
-                      onChange={() => handleSelectOption(index)}
-                      value={index}
+                      checked={selectedOption === schedule.id}
+                      onChange={() => handleSelectOption(schedule.id)}
+                      value={schedule.id}
                     />
                   </ListItemSecondaryAction>
                 </ListItem>

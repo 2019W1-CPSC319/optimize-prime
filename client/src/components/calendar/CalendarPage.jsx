@@ -50,7 +50,7 @@ const initialState = {
   rows: [],
   onSuccess: false,
   selectedOption: 0,
-  schedulesPerPage: 20,
+  schedulesPerPage: 5,
   pageNumber: 1,
 };
 
@@ -166,9 +166,9 @@ class CalendarPage extends React.Component {
   handleSave = async () => {
     const { selectedOption, candidate: selectedCandidate, rows } = this.state;
     const { meetingSuggestions, actions, candidates } = this.props;
-    const selectedSchedule = meetingSuggestions[selectedOption];
+    const selectedSchedule = meetingSuggestions.find(schedule => schedule.id === selectedOption);
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
-    const interviewPromises = selectedSchedule.map(async (interview) => {
+    const interviewPromises = selectedSchedule.options.map(async (interview) => {
       const { interviewIndex } = interview;
       const row = rows[interviewIndex];
       const { required, optional } = row;
