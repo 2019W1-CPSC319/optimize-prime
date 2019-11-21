@@ -50,7 +50,9 @@ const initialState = {
   rows: [],
   onSuccess: false,
   selectedOption: 0,
-}
+  schedulesPerPage: 20,
+  pageNumber: 1,
+};
 
 class CalendarPage extends React.Component {
   constructor(props) {

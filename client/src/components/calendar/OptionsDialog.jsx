@@ -120,13 +120,24 @@ class OptionsDialog extends Component {
   }
 
   createOptions = () => {
-    const { classes, meetingSuggestions, selectedOption, handleSelectOption } = this.props;
+    const {
+      classes,
+      meetingSuggestions,
+      selectedOption,
+      handleSelectOption,
+      schedulesPerPage,
+      pageNumber,
+    } = this.props;
 
     if (Array.isArray(meetingSuggestions) && meetingSuggestions.length > 0) {
+      const startIndex = schedulesPerPage * pageNumber - schedulesPerPage;
+      const endIndex = startIndex + schedulesPerPage;
+      const paginatedSchedules = meetingSuggestions.slice(startIndex, endIndex);
+
       return (
         <List dense>
           {
-            meetingSuggestions.map((schedule, index) => {
+            paginatedSchedules.map((schedule, index) => {
               return (
                 <ListItem key={index}>
                   {
