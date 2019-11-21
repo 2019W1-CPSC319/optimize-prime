@@ -513,11 +513,8 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
           await Promise.all(interviewPromises);
 
           const possibleSchedules = getPossibleSchedules(interviewsWithPossibleMeetings);
-          const startIndex = schedulesPerPage * pageNumber - schedulesPerPage;
-          const endIndex = startIndex + schedulesPerPage;
-          const paginatedSchedules = possibleSchedules.slice(startIndex, endIndex);
 
-          res.send(paginatedSchedules);
+          res.send(possibleSchedules);
         });
       } catch (error) {
         console.log(error);
