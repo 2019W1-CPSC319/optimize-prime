@@ -121,71 +121,68 @@ class UserDialog extends Component {
       lastName,
       email,
       phone,
-      role,
-      error
+      role
     } = this.state;
 
-    if (Object.values(error).filter(value => value).length === 0) {
-      if (mode === 'add') {
-        await actions.addUser(role, {
-          firstName,
-          lastName,
-          email,
-          phone: phone.replace(/[\s]/g, ''),
-          role,
+    if (mode === 'add') {
+      await actions.addUser(role, {
+        firstName,
+        lastName,
+        email,
+        phone: phone.replace(/[\s]/g, ''),
+        role,
+      });
+      if (role.toLowerCase() === 'candidate') {
+        swalWithBootstrapButtons.fire({
+          title: 'A new user profile has been created!',
+          text: "Do you want to send an email to collect candidate\'s availability?",
+          type: 'success',
+          showCancelButton: true,
+          confirmButtonText: 'Send Email',
+          cancelButtonText: 'Cancel',
+          reverseButtons: true
+        }).then(async (result) => {
+          const { value } = result;
+          if (value) {
+            await actions.sendEmail({
+              firstName,
+              lastName,
+              email,
+              phone: phone.replace(/[\s]/g, ''),
+              role,
+            });
+            swalWithBootstrapButtons.fire(
+              'Email is sent!',
+              'You\'re all set.',
+              'success'
+            );
+          }
         });
-        if (role.toLowerCase() === 'candidate') {
-          swalWithBootstrapButtons.fire({
-            title: 'A new user profile has been created!',
-            text: "Do you want to send an email to collect candidate\'s availability?",
-            type: 'success',
-            showCancelButton: true,
-            confirmButtonText: 'Send Email',
-            cancelButtonText: 'Cancel',
-            reverseButtons: true
-          }).then(async (result) => {
-            const { value } = result;
-            if (value) {
-              await actions.sendEmail({
-                firstName,
-                lastName,
-                email,
-                phone: phone.replace(/[\s]/g, ''),
-                role,
-              });
-              swalWithBootstrapButtons.fire(
-                'Email is sent!',
-                'You\'re all set.',
-                'success'
-              );
-            }
-          });
-        } else {
-          swalWithBootstrapButtons.fire(
-            'A new user profile has been created!',
-            'You\'re all set.',
-            'success'
-          );
-        }
-      } else if (mode === 'edit') {
-        await actions.editUser({
-          id,
-          firstName,
-          lastName,
-          email,
-          phone: phone.replace(/[\s]/g, ''),
-          role,
-        });
+      } else {
         swalWithBootstrapButtons.fire(
-          'Change has been saved!',
+          'A new user profile has been created!',
           'You\'re all set.',
           'success'
         );
       }
-      // clear dialog state
-      this.setState(this.initializeUserInfoFields());
-      onClickCloseDialog();
+    } else if (mode === 'edit') {
+      await actions.editUser({
+        id,
+        firstName,
+        lastName,
+        email,
+        phone: phone.replace(/[\s]/g, ''),
+        role,
+      });
+      swalWithBootstrapButtons.fire(
+        'Change has been saved!',
+        'You\'re all set.',
+        'success'
+      );
     }
+    // clear dialog state
+    this.setState(this.initializeUserInfoFields());
+    onClickCloseDialog();
   }
 
   onChangeTextField = (fieldKey, event) => {
@@ -276,9 +273,10 @@ class UserDialog extends Component {
       email,
       phone,
       role,
+      error
     } = this.state;
 
-    return !firstName || !lastName || !email || !phone || !role;
+    return !firstName || !lastName || !email || !phone || !role || Object.values(error).filter(value => value).length > 0;
   }
 
 
@@ -295,7 +293,7 @@ class UserDialog extends Component {
     this.setState({
       ...userFields,
       ...errorState,
-    })
+    });
   }
 
   render() {

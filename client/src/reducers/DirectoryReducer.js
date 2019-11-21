@@ -18,10 +18,9 @@ const DirectoryReducer = (state = initialState, action) => {
       newState[action.role].push(action.user);
       return newState;
     case 'EDIT_USER_SUCCESS':
-      return {
-        ...state,
-        loading: false,
-      };
+      newState = Object.assign({}, state, { loading: false });
+      newState[action.role].find(user => user.id === action.userId);
+      return newState;
     case 'GET_USERS_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = action.users;
