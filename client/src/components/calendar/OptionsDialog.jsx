@@ -14,6 +14,8 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  IconButton,
+  Icon,
   List,
   ListItem,
   ListItemText,
@@ -55,7 +57,13 @@ const styles = {
     width: '20px',
     height: '20px',
     backgroundColor: `${'#' + Math.floor(Math.random() * 16777215).toString(16)}`
-  }
+  },
+  pagination: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 };
 
 // TODO: make it a checkbox, instead of radio button to allow multiple selection of events
@@ -83,17 +91,15 @@ class OptionsDialog extends Component {
     };
   }
 
-  // updateRequiredInterviewers = (event) => {
-  //   this.setState({ required: event.target.value });
-  // }
-
-  // updateOptionalInterviewers = (event) => {
-  //   this.setState({ optional: event.target.value });
-  // }
-
-  // updateCandidate = (event) => {
-  //   this.setState({ candidate: event.target.value });
-  // }
+  getTotalNumberOfPages = () => {
+    const { meetingSuggestions, schedulesPerPage } = this.props;
+    const totalResults = meetingSuggestions.length;
+    const numberOfPages = totalResults / schedulesPerPage;
+    if (totalResults % schedulesPerPage > 0) {
+      return Math.floor(numberOfPages) + 1;
+    }
+    return numberOfPages;
+  }
 
   handlePopoverOpen = (event) => {
     this.setState(event.target);
@@ -117,6 +123,32 @@ class OptionsDialog extends Component {
       }
 
     this.setState({ background: background });
+  }
+
+  handlePageChange = (mode) => {
+    const { pageNumber, onClickChangePage } = this.props;
+    let newPage = 1;
+
+    if (this.isPageButtonDisabled(mode)) return;
+
+    if (mode === 'next') {
+      newPage = pageNumber + 1;
+    } else if (mode === 'prev') {
+      newPage = pageNumber - 1;
+    }
+
+    onClickChangePage(newPage);
+  }
+
+  isPageButtonDisabled = (mode) => {
+    const { meetingSuggestions, pageNumber, schedulesPerPage } = this.props;
+    const totalNumberOfPages = this.getTotalNumberOfPages();
+
+    if (mode === 'next') {
+      return pageNumber + 1 > totalNumberOfPages;
+    } else if (mode === 'prev') {
+      return pageNumber - 1 < 1;
+    }
   }
 
   createOptions = () => {
@@ -235,7 +267,12 @@ class OptionsDialog extends Component {
   }
 
   render() {
-    // const { classes } = this.props;
+    const { meetingSuggestions, classes, pageNumber } = this.props;
+
+    if (!meetingSuggestions) {
+      return null;
+    }
+
     return (
       <Dialog open={this.props.optOpen} aria-labelledby='form-options'>
         <DialogTitle id='form-options'>Select Interview Slot</DialogTitle>
@@ -243,9 +280,24 @@ class OptionsDialog extends Component {
           <DialogContentText>
             Select an interview slot to schedule an interview.
             Upon submission, emails will be sent out to the candidate and interviewers.
-                    </DialogContentText>
+          </DialogContentText>
           {this.props.meetingSuggestions && this.createOptions()}
         </DialogContent>
+        <div className={classes.pagination}>
+          <IconButton
+            disabled={this.isPageButtonDisabled('prev')}
+            onClick={() => this.handlePageChange('prev')}
+          >
+            <Icon>chevron_left</Icon>
+          </IconButton>
+          <Typography>{pageNumber}</Typography>
+          <IconButton
+            disabled={this.isPageButtonDisabled('next')}
+            onClick={() => this.handlePageChange('next')}
+          >
+            <Icon>chevron_right</Icon>
+          </IconButton>
+        </div>
         <DialogActions>
           <Button onClick={this.props.handleOpen} color='primary'>Back</Button>
           <Button onClick={this.props.handleSave} color='primary'>Save</Button>

@@ -124,6 +124,10 @@ class CalendarPage extends React.Component {
     this.setState({ rows });
   }
 
+  onClickChangePage = (num) => {
+    this.setState({ pageNumber: num });
+  }
+
   handleNext = async () => {
     const { actions } = this.props;
     const { candidate, rows } = this.state;
@@ -280,6 +284,7 @@ class CalendarPage extends React.Component {
           handleOpen={this.handleOpen}
           handleSave={this.handleSave}
           handleSelectOption={this.handleSelectOption}
+          onClickChangePage={this.onClickChangePage}
           {...this.props}
           {...this.state}
         />
