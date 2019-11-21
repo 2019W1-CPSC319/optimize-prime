@@ -283,8 +283,15 @@ const permutator = (inputArr, maxLen) => {
   return result;
 };
 
+const generateKey = (schedule) => {
+  const keys = schedule.map((interview) => `${interview.start.dateTime}-${interview.end.dateTime}-${interview.room.locationEmailAddress}`);
+  return keys.join();
+};
+
 const getPossibleSchedules = (interviews) => {
   let possibleSchedules = [];
+  // Use set to keep track of duplicated schedules
+  const lookup = new Set();
 
   let allPossibleMeetings = [];
   interviews.forEach((interview) => {
@@ -315,7 +322,7 @@ const getPossibleSchedules = (interviews) => {
         const iEnd = new Date(schedule[i].end.dateTime);
         const jStart = new Date(schedule[j].start.dateTime);
         const jEnd = new Date(schedule[j].end.dateTime);
-        if ((iStart <= jEnd) && (iEnd >= jStart)) break;
+        if ((iStart < jEnd) && (iEnd > jStart)) break;
 
         if (roomCount > 2) break;
 
@@ -334,15 +341,21 @@ const getPossibleSchedules = (interviews) => {
       const startTime = new Date(schedule[0].start.dateTime);
       const endTime = new Date(schedule[schedule.length - 1].end.dateTime);
       const elapsedTime = endTime - startTime;
+      const scheduleKey = generateKey(sortedSchedule);
       if (elapsedTime < shortestElapsedTime) {
         // Current schedule has shorter elapsed time, so from now on we only
         // return schedules that can do as well as the current schedule
         shortestElapsedTime = elapsedTime;
         possibleSchedules = [];
         possibleSchedules.push(sortedSchedule);
+        lookup.add(scheduleKey);
       } else if (elapsedTime === shortestElapsedTime) {
-        // Only return schedules that can do as well as the optimal schedule
-        possibleSchedules.push(sortedSchedule);
+        // 1. Only return schedules that can do as well as the optimal schedule
+        // 2. Only add current schedule as a possible option if it is unique
+        if (!lookup.has(scheduleKey)) {
+          possibleSchedules.push(sortedSchedule);
+          lookup.add(scheduleKey);
+        }
       }
     }
   });
