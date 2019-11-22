@@ -166,7 +166,7 @@ class UserDialog extends Component {
         );
       }
     } else if (mode === 'edit') {
-      await actions.editUser({
+      await actions.editUser(role, {
         id,
         firstName,
         lastName,
