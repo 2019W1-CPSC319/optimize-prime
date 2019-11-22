@@ -4,11 +4,6 @@ const connection = require('../init/setupMySql');
 
 const router = express.Router();
 
-const checkIfUserAdmin = (req, res) => {
-
-};
-
-
 router.get('/signin', (req, res, next) => {
   passport.authenticate('azure-connect', {
 
