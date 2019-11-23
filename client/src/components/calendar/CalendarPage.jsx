@@ -75,8 +75,11 @@ class CalendarPage extends React.Component {
   }
 
   handleOpen = () => {
-    this.setState({ reqOpen: true });
-    this.setState({ optOpen: false });
+    this.setState({
+      reqOpen: true,
+      optOpen: false,
+      pageNumber: 1,
+    });
   }
 
   handleClose = () => {
