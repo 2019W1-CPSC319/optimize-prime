@@ -24,7 +24,7 @@ const styles = {
   container: {
     display: 'inline-block',
     border: '4px solid grey',
-    margin: 'auto',
+    margin: 'auto 30px auto auto',
     maxWidth: '70%',
     maxHeight: '100%',
     borderRadius: '20px',

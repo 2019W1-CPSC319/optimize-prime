@@ -193,7 +193,7 @@ class CalendarPage extends React.Component {
     return (
       <div>
         <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Upcoming Interviews</h1>
-        <Paper>
+        <Paper style={{ margin: '0 30px' }}>
           <Table>
             <TableHead>
               <TableRow>

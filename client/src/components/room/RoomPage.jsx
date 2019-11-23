@@ -159,7 +159,7 @@ export default class RoomPage extends React.Component {
     return (
       <div>
         <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Room</h1>
-        <Paper square>
+        <Paper style={{ margin: '0 30px' }}>
           <Table>
             <TableHead>
               <TableRow>

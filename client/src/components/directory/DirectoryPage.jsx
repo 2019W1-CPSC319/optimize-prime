@@ -22,14 +22,14 @@ const swalWithBootstrapButtons = Swal.mixin({
 const styles = {
   title: {
     fontWeight: 'normal',
-    marginLeft: '30px',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    margin: '0 30px',
   },
   tableContainer: {
-    margin: '40px 10px',
+    margin: '0 30px',
   },
 };
 
