@@ -30,7 +30,7 @@ class DirectoryTable extends Component {
   }
 
   render() {
-    const { classes, headers, rows, onClickUserAction } = this.props;
+    const { classes, headers, rows, allowedActions, onClickUserAction } = this.props;
 
     return (
       <Table className={classes.table}>
@@ -57,15 +57,19 @@ class DirectoryTable extends Component {
                 <TableCell>{row.email}</TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => onClickUserAction('mail', row.id)}>
-                    <Icon>mail</Icon>
-                  </IconButton>
-                  <IconButton onClick={() => onClickUserAction('edit', row.id)}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton onClick={() => onClickUserAction('delete', row.id)}>
-                    <Icon>delete</Icon>
-                  </IconButton>
+                  {
+                    allowedActions.map(action => {
+                      const { key, icon } = action;
+                      return (
+                        <IconButton
+                          key={key}
+                          onClick={() => onClickUserAction(key, row.id)}
+                        >
+                          <Icon>{icon}</Icon>
+                        </IconButton>
+                      );
+                    })
+                  }
                 </TableCell>
               </TableRow>
             ))

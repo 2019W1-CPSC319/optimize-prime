@@ -46,16 +46,21 @@ const EMPLOYEE_TABLE_HEADER = [
   { key: 'email', title: 'Email' },
 ];
 
-const ALLOWED_USER_ACTIONS = [
-  'add',
-  'mail',
-  'edit',
-  'delete',
-];
-
 const tabs = [
-  { key: 'candidate', title: 'Candidates' },
-  { key: 'interviewer', title: 'Interviewers' },
+  {
+    key: 'candidate',
+    title: 'Candidates',
+    allowedActions: [
+      { key: 'mail', icon: 'mail' },
+      { key: 'edit', icon: 'edit' },
+      { key: 'delete', icon: 'delete' },
+    ],
+  },
+  {
+    key: 'interviewer',
+    title: 'Interviewers',
+    allowedActions: [],
+  },
 ]
 
 class DirectoryPage extends Component {
@@ -77,7 +82,18 @@ class DirectoryPage extends Component {
   }
 
   onClickUserAction = (mode, userId) => {
-    if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
+    const { value: tabIndex } = this.state;
+
+    // Add is by default available regardless of tab
+    if (mode === 'add') {
+      this.setState({
+        mode,
+        selectedUserId: '',
+        openUserDialog: true,
+      });
+    }
+
+    if (!tabs[tabIndex].allowedActions.includes(mode)) return;
     const { actions } = this.props;
 
     if (mode === 'delete') {
@@ -92,7 +108,6 @@ class DirectoryPage extends Component {
       }).then(async (result) => {
         const { value } = result;
         if (value) {
-          const { value: tabIndex } = this.state;
           const response = await actions.deleteUser(tabs[tabIndex].key, userId);
           if (response && !response.error) {
             swalWithBootstrapButtons.fire(
@@ -141,9 +156,10 @@ class DirectoryPage extends Component {
         }
       });
     } else {
+      // Edit user
       this.setState({
         mode,
-        selectedUserId: userId || '',
+        selectedUserId: userId,
         openUserDialog: true,
       });
     }
@@ -181,6 +197,7 @@ class DirectoryPage extends Component {
         <DirectoryTable
           headers={CANDIDATE_TABLE_HEADER}
           rows={candidates}
+          allowedActions={tabs[value].allowedActions}
           onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
         />
       );
@@ -191,6 +208,7 @@ class DirectoryPage extends Component {
         <DirectoryTable
           headers={EMPLOYEE_TABLE_HEADER}
           rows={interviewers}
+          allowedActions={tabs[value].allowedActions}
           onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
         />
       );
