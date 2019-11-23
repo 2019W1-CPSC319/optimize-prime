@@ -95,7 +95,6 @@ router.get('/candidate/:uuid', (req, res) => {
 });
 
 // add a new user in either the candidates table or interview table based on the selected type
-
 router.post('/newcandidate', notAuthMiddleware, (req, res) => {
   try {
     const user = req.body;
@@ -113,7 +112,7 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
   }
-  
+
   const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
