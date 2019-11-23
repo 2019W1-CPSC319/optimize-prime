@@ -22,14 +22,14 @@ const swalWithBootstrapButtons = Swal.mixin({
 const styles = {
   title: {
     fontWeight: 'normal',
-    marginLeft: '30px',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    margin: '0 30px',
   },
   tableContainer: {
-    margin: '40px 10px',
+    margin: '0 30px',
   },
 };
 
@@ -48,6 +48,7 @@ const EMPLOYEE_TABLE_HEADER = [
 
 const ALLOWED_USER_ACTIONS = [
   'add',
+  'mail',
   'edit',
   'delete',
 ];
@@ -65,7 +66,7 @@ class DirectoryPage extends Component {
       value: 0,
       mode: '',
       openUserDialog: false,
-      selectedUser: '',
+      selectedUserId: '',
     };
   }
 
@@ -78,9 +79,9 @@ class DirectoryPage extends Component {
 
   onClickUserAction = (mode, userId) => {
     if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
+    const { actions } = this.props;
 
     if (mode === 'delete') {
-      const { actions } = this.props;
       swalWithBootstrapButtons.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -94,18 +95,57 @@ class DirectoryPage extends Component {
         if (value) {
           console.log('deleting')
           const { value: tabIndex } = this.state;
-          await actions.deleteUser(tabs[tabIndex].key, userId);
-          swalWithBootstrapButtons.fire(
-            'Deleted',
-            'The user has been deleted.',
-            'success'
-          );
+          const response = await actions.deleteUser(tabs[tabIndex].key, userId);
+          if (response && !response.error) {
+            swalWithBootstrapButtons.fire(
+              'Deleted',
+              'The user has been deleted.',
+              'success'
+            );
+          }
+        }
+      });
+    } else if (mode === 'mail') {
+      const { candidates } = this.props;
+      const candidate = candidates.find(c => c.id === userId);
+      if (!candidate) return;
+      const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        role,
+      } = candidate;
+      swalWithBootstrapButtons.fire({
+        text: "Do you want to send an email to collect candidate\'s availability?",
+        type: 'success',
+        showCancelButton: true,
+        confirmButtonText: 'Send Email',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then(async (result) => {
+        const { value } = result;
+        if (value) {
+          const response = await actions.sendEmail({
+            firstName,
+            lastName,
+            email,
+            phone,
+            role,
+          });
+          if (response && !response.error) {
+            swalWithBootstrapButtons.fire(
+              'Email is sent!',
+              'You\'re all set.',
+              'success'
+            );
+          }
         }
       });
     } else {
       this.setState({
         mode,
-        selectedUser: userId || '',
+        selectedUserId: userId || '',
         openUserDialog: true,
       });
     }
@@ -120,6 +160,17 @@ class DirectoryPage extends Component {
 
   onChangeTab = (e, index) => {
     this.setState({ value: index });
+  }
+
+  getSelectedUser = () => {
+    const { value, selectedUserId } = this.state;
+    const selectedUserType = tabs[value].key;
+    const selectedUser = this.props[`${selectedUserType}s`].find(user => user.id === selectedUserId) || {};
+    const formattedUser = {
+      ...selectedUser,
+      role: selectedUserType,
+    };
+    return formattedUser;
   }
 
   renderDirectoryTable = () => {
@@ -167,7 +218,7 @@ class DirectoryPage extends Component {
 
   render() {
     const { classes, actions } = this.props;
-    const { value, mode, openUserDialog, selectedUser } = this.state;
+    const { value, mode, openUserDialog } = this.state;
 
     return (
       <div>
@@ -197,14 +248,22 @@ class DirectoryPage extends Component {
           </Tabs>
           {this.renderDirectoryTable()}
         </Paper>
-        <UserDialog
-          mode={mode}
-          open={openUserDialog}
-          onClickCloseDialog={() => this.onClickCloseDialog()}
-          selectedUser={selectedUser}
-          actions={actions}
-          errorMessage={this.props.directoryErrorMessage}
-        />
+        {
+          // This condition is necessary to make sure UserDialog is
+          // only rendered when we actually set openUserDialog to true.
+          // Otherwise, edit mode wouldn't work because when Directory
+          // Page first renders, it does not have a selected user.
+          openUserDialog
+            && (
+              <UserDialog
+                mode={mode}
+                open={openUserDialog}
+                onClickCloseDialog={() => this.onClickCloseDialog()}
+                selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
+                actions={actions}
+              />
+            )
+        }
       </div>
     );
   }

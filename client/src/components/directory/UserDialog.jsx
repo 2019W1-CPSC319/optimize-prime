@@ -95,9 +95,10 @@ class UserDialog extends Component {
   }
 
   initializeUserInfoFields = () => {
+    const { selectedUser } = this.props;
     const state = {};
     USER_DIALOG.fields.forEach((field) => {
-      state[field.key] = '';
+      state[field.key] = selectedUser[field.key] || '';
     });
     return {
       ...state,
@@ -113,83 +114,85 @@ class UserDialog extends Component {
   }
 
   onClickSubmit = async () => {
-    const { actions, mode, onClickCloseDialog, errorMessage } = this.props;
+    const { actions, mode, selectedUser, onClickCloseDialog, errorMessage } = this.props;
     const {
       firstName,
       lastName,
       email,
       phone,
-      role,
-      error
+      role
     } = this.state;
-    if (Object.values(error).filter(value => value).length === 0) {
-      if (mode === 'add') {
-        await actions.addUser(role, {
-          firstName,
-          lastName,
-          email,
-          phone: phone.replace(/[\D]/g, ''),
-          role,
-        });
-        if (role.toLowerCase() === 'candidate') {
-          swalWithBootstrapButtons.fire({
-            title: 'A new user profile has been created!',
-            text: "Do you want to send an email to collect candidate\'s availability?",
-            type: 'success',
-            showCancelButton: true,
-            confirmButtonText: 'Send Email',
-            cancelButtonText: 'Cancel',
-            reverseButtons: true
-          }).then(async (result) => {
-            const { value } = result;
-            if (value) {
-              // const { value: tabIndex } = this.state;
-              await actions.sendEmail({
-                firstName,
-                lastName,
-                email,
-                phone: phone.replace(/[\D]/g, ''),
-                role,
-              });
+
+    if (mode === 'add') {
+      let response = await actions.addUser(role, {
+        firstName,
+        lastName,
+        email,
+        phone: phone.replace(/[\s]/g, ''),
+        role,
+      });
+
+      if (response && response.error) return;
+
+      if (role.toLowerCase() === 'candidate') {
+        swalWithBootstrapButtons.fire({
+          title: 'A new user profile has been created!',
+          text: "Do you want to send an email to collect candidate\'s availability?",
+          type: 'success',
+          showCancelButton: true,
+          confirmButtonText: 'Send Email',
+          cancelButtonText: 'Cancel',
+          reverseButtons: true
+        }).then(async (result) => {
+          const { value } = result;
+          if (value) {
+            response = await actions.sendEmail({
+              firstName,
+              lastName,
+              email,
+              phone: phone.replace(/[\s]/g, ''),
+              role,
+            });
+            if (response && !response.error) {
               swalWithBootstrapButtons.fire(
                 'Email is sent!',
                 'You\'re all set.',
                 'success'
               );
             }
-          });
-        } else {
-          if(this.props.errorMessage) {
-            swalWithBootstrapButtons.fire(
-              this.props.errorMessage
-            );
-          } else {
-            swalWithBootstrapButtons.fire(
-              'A new user profile has been created!',
-              'You\'re all set.',
-              'success'
-            );
           }
-        }
-      } else if (mode === 'edit') {
-        // TODO: edit user action
-        // actions.updateUser({
-        //   firstName,
-        //   lastName,
-        //   email,
-        //   role,
-        // });
+        });
+      } else if (errorMessage) {
+        swalWithBootstrapButtons.fire(
+          errorMessage
+        );
+      } else {
+        swalWithBootstrapButtons.fire(
+          'A new user profile has been created!',
+          'You\'re all set.',
+          'success'
+        );
       }
-
-      // swalWithBootstrapButtons.fire(
-      //   mode === 'add' ? 'Added!' : 'Saved',
-      //   `That user has been ${mode === 'add' ? 'added' : 'saved'}`,
-      //   'success'
-      // )
-      // Clear dialog state
-      this.setState(this.initializeUserInfoFields());
-      onClickCloseDialog();
+    } else if (mode === 'edit') {
+      const response = await actions.editUser(role, {
+        id: selectedUser.id,
+        firstName,
+        lastName,
+        email,
+        phone: phone.replace(/[\s]/g, ''),
+        role,
+      });
+      if (response && !response.error) {
+        swalWithBootstrapButtons.fire(
+          'Change has been saved!',
+          'You\'re all set.',
+          'success'
+        );
+      }
     }
+    // clear dialog state
+    this.setState(this.initializeUserInfoFields());
+    onClickCloseDialog();
   }
 
   onChangeTextField = (fieldKey, event) => {
@@ -197,7 +200,12 @@ class UserDialog extends Component {
   }
 
   onBlurTextField = (fieldKey, event) => {
-    this.setState({ error: { ...this.state.error, [fieldKey]: this.onValidate(fieldKey, event.target.value) } });
+    this.setState({
+      error: {
+        ...this.state.error,
+        [fieldKey]: this.onValidate(fieldKey, event.target.value)
+      },
+    });
   }
 
   onValidate = (fieldKey, value) => {
@@ -209,7 +217,7 @@ class UserDialog extends Component {
       case 'email':
         return !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value);
       case 'phone':
-        return !/^\d{3}\s-\s\d{3}\s-\s\d{4}$/g.test(value);
+        return !/^\d{3}-\d{3}-\d{4}$/g.test(value);
       default:
         return false;
     }
@@ -235,7 +243,7 @@ class UserDialog extends Component {
   }
 
   renderInputComponent = (infoField) => {
-    const { classes } = this.props;
+    const { classes, mode } = this.props;
     const { error } = this.state;
     const { key, title, type, helperText, selectOptions } = infoField;
     const isSelect = type === 'select';
@@ -253,6 +261,7 @@ class UserDialog extends Component {
         onKeyPress={e => this.onKeyPress(e)}
         onBlur={e => this.onBlurTextField(key, e)}
         helperText={error[key] ? helperText : ''}
+        disabled={mode === 'edit' && key === 'role'}
       >
         {
           isSelect
@@ -276,18 +285,10 @@ class UserDialog extends Component {
       email,
       phone,
       role,
+      error
     } = this.state;
 
-    return !firstName || !lastName || !email || !phone || !role;
-  }
-
-  onExit = () => {
-    const userFields = this.initializeUserInfoFields();
-    const errorState = this.initializeErrorState();
-    this.setState({
-      ...userFields,
-      ...errorState,
-    })
+    return !firstName || !lastName || !email || !phone || !role || Object.values(error).filter(value => value).length > 0;
   }
 
   render() {
@@ -305,7 +306,6 @@ class UserDialog extends Component {
       <Dialog
         open={open}
         onClose={onClickCloseDialog}
-        onExit={this.onExit}
       >
         <DialogTitle disableTypography classes={{ root: classes.dialogTitleRoot }}>
           {title}
@@ -321,12 +321,12 @@ class UserDialog extends Component {
           {
             fields.map(infoField => {
               const { error } = this.state;
-              const { key, helperText } = infoField;
+              const { key, title, helperText } = infoField;
               if (key === 'phone')
                 return (
                   <InputMask
                     key={key}
-                    mask="999 - 999 - 9999"
+                    mask="999-999-9999"
                     label={title}
                     onBlur={e => this.onBlurTextField(key, e)}
                     onChange={e => this.onChangeTextField(key, e)}

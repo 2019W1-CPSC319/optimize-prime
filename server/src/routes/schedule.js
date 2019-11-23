@@ -113,6 +113,15 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
   }
+  
+  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
+  connection.query(sqlcmd, (err, result) => {
+    if (err) {
+      res.status(400).send('The user already exists.');
+    }
+    const addedUser = { ...user, id: result.insertId };
+    res.send(addedUser);
+  });
 });
 
 // edit the interviewer or candidate user information
@@ -129,12 +138,30 @@ router.put('/edituser', (req, res) => {
       break;
     default: return;
   }
-  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, user.id]);
+  let sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, user.id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
     }
-    res.send(result);
+
+    switch (type) {
+      case 'candidate':
+        sql = 'SELECT * FROM Candidate WHERE id = ?';
+        break;
+      case 'interviewer':
+        sql = 'SELECT * FROM Interviewer WHERE id = ?';
+        break;
+      default: return;
+    }
+
+    sqlcmd = connection.format(sql, [user.id]);
+    connection.query(sqlcmd, (err, updatedUser) => {
+      if (err) {
+        throw err;
+      }
+
+      res.send(updatedUser[0]);
+    });
   });
 });
 
