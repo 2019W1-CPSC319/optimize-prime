@@ -362,8 +362,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
               },
             };
 
-            console.log(JSON.stringify(data));
-
             const response = await axios({
               method: 'post',
               url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
