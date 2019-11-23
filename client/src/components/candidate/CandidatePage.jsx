@@ -62,7 +62,10 @@ class AddAvailability extends Component {
       endTime: time.end.toISOString().slice(0, 19).replace('T', ' ')
     }))
 
-    await actions.sendAvailability(availability, this.props.uuid);
+    const response = await actions.sendAvailability(availability, this.props.uuid);
+
+    if (response && response.error) return;
+
     swalWithBootstrapButtons.fire(
       'Successfully submitted!',
       'We\'ll get back to you with an interview invitation in the next few days.',

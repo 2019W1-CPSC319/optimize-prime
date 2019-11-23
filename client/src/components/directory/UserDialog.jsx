@@ -125,13 +125,16 @@ class UserDialog extends Component {
     } = this.state;
 
     if (mode === 'add') {
-      await actions.addUser(role, {
+      const response = await actions.addUser(role, {
         firstName,
         lastName,
         email,
         phone: phone.replace(/[\s]/g, ''),
         role,
       });
+
+      if (response && response.error) return;
+
       if (role.toLowerCase() === 'candidate') {
         swalWithBootstrapButtons.fire({
           title: 'A new user profile has been created!',

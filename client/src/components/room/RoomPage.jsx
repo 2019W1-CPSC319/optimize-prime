@@ -58,24 +58,30 @@ export default class RoomPage extends React.Component {
   handleSaveAddRoom = async () => {
     const { actions } = this.props;
     const { rooms, error } = this.state;
+    let addRoomError = false;
     if (!error) {
       try {
-        rooms.forEach(async room => {
+        const roomPromises = rooms.map(async room => {
           let data = {
             name: room.name,
             email: this.props.outlookRooms.find(outlookRoom => outlookRoom.name === room.name).address,
             seats: this.state.seats,
           }
-          await actions.addRoom(data);
+          const response = await actions.addRoom(data);
+          if (response && response.error) {
+            addRoomError = true;
+          }
         });
-        swalWithBootstrapButtons.fire(
-          'Success',
-          'Successfully added new user',
-          'success'
-        );
+        await Promise.all(roomPromises);
+        if (!addRoomError) {
+          swalWithBootstrapButtons.fire(
+            'Success',
+            'Successfully added new interview room(s).',
+            'success'
+          );
+        }
         this.setState({ ...initialState, onSuccess: true });
-      }
-      catch (err) {
+      } catch (err) {
         console.error(JSON.stringify(err));
       }
     }
@@ -94,12 +100,14 @@ export default class RoomPage extends React.Component {
     }).then(async (result) => {
       const { value } = result;
       if (value) {
-        actions.deleteRoom(id);
-        swalWithBootstrapButtons.fire(
-          'Deleted',
-          'The room has been deleted.',
-          'success'
-        );
+        const response = actions.deleteRoom(id);
+        if (response && !response.error) {
+          swalWithBootstrapButtons.fire(
+            'Deleted',
+            'The room has been deleted.',
+            'success'
+          );
+        }
       }
     })
   }
@@ -197,7 +205,6 @@ export default class RoomPage extends React.Component {
           {...this.props}
           {...this.state}
         />
-        {this.showSnackbarOnSuccess()}
       </div >
     );
   }

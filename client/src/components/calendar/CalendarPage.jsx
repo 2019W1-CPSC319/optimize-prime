@@ -131,13 +131,15 @@ class CalendarPage extends React.Component {
     const { meetingSuggestions, actions, candidates } = this.props;
     const selectedSuggestion = meetingSuggestions.data[selectedOption];
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
-    actions.createEvent(selectedSuggestion, candidateUser, required, optional);
+    const response = actions.createEvent(selectedSuggestion, candidateUser, required, optional);
 
-    swalWithBootstrapButtons.fire(
-      'Success',
-      'Successfully scheduled',
-      'success'
-    );
+    if (response && !response.error) {
+      swalWithBootstrapButtons.fire(
+        'Success',
+        'Successfully scheduled',
+        'success'
+      );
+    }
 
     // Clear state of dialog
     this.setState({ ...initialState, onSuccess: true });
