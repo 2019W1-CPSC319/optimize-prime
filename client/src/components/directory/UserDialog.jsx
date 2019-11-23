@@ -125,7 +125,7 @@ class UserDialog extends Component {
     } = this.state;
 
     if (mode === 'add') {
-      const response = await actions.addUser(role, {
+      let response = await actions.addUser(role, {
         firstName,
         lastName,
         email,
@@ -147,18 +147,20 @@ class UserDialog extends Component {
         }).then(async (result) => {
           const { value } = result;
           if (value) {
-            await actions.sendEmail({
+            response = await actions.sendEmail({
               firstName,
               lastName,
               email,
               phone: phone.replace(/[\s]/g, ''),
               role,
             });
-            swalWithBootstrapButtons.fire(
-              'Email is sent!',
-              'You\'re all set.',
-              'success'
-            );
+            if (response && !response.error) {
+              swalWithBootstrapButtons.fire(
+                'Email is sent!',
+                'You\'re all set.',
+                'success'
+              );
+            }
           }
         });
       } else {
@@ -212,7 +214,7 @@ class UserDialog extends Component {
       case 'email':
         return !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/g.test(value);
       case 'phone':
-        return !/^\d{3}\s-\s\d{3}\s-\s\d{4}$/g.test(value);
+        return !/^\d{3}-\d{3}-\d{4}$/g.test(value);
       default:
         return false;
     }
@@ -321,7 +323,7 @@ class UserDialog extends Component {
                 return (
                   <InputMask
                     key={key}
-                    mask="999 - 999 - 9999"
+                    mask="999-999-9999"
                     label={title}
                     onBlur={e => this.onBlurTextField(key, e)}
                     onChange={e => this.onChangeTextField(key, e)}

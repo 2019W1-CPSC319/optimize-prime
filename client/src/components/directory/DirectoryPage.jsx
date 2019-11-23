@@ -48,6 +48,7 @@ const EMPLOYEE_TABLE_HEADER = [
 
 const ALLOWED_USER_ACTIONS = [
   'add',
+  'mail',
   'edit',
   'delete',
 ];
@@ -77,9 +78,9 @@ class DirectoryPage extends Component {
 
   onClickUserAction = (mode, userId) => {
     if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
+    const { actions } = this.props;
 
     if (mode === 'delete') {
-      const { actions } = this.props;
       swalWithBootstrapButtons.fire({
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
@@ -92,16 +93,54 @@ class DirectoryPage extends Component {
         const { value } = result;
         if (value) {
           const { value: tabIndex } = this.state;
-          await actions.deleteUser(tabs[tabIndex].key, userId);
-          swalWithBootstrapButtons.fire(
-            'Deleted',
-            'The user has been deleted.',
-            'success'
-          );
+          const response = await actions.deleteUser(tabs[tabIndex].key, userId);
+          if (response && !response.error) {
+            swalWithBootstrapButtons.fire(
+              'Deleted',
+              'The user has been deleted.',
+              'success'
+            );
+          }
+        }
+      });
+    } else if (mode === 'mail') {
+      const { candidates } = this.props;
+      const candidate = candidates.find(c => c.id === userId);
+      if (!candidate) return;
+      const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        role,
+      } = candidate;
+      swalWithBootstrapButtons.fire({
+        text: "Do you want to send an email to collect candidate\'s availability?",
+        type: 'success',
+        showCancelButton: true,
+        confirmButtonText: 'Send Email',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+      }).then(async (result) => {
+        const { value } = result;
+        if (value) {
+          const response = await actions.sendEmail({
+            firstName,
+            lastName,
+            email,
+            phone,
+            role,
+          });
+          if (response && !response.error) {
+            swalWithBootstrapButtons.fire(
+              'Email is sent!',
+              'You\'re all set.',
+              'success'
+            );
+          }
         }
       });
     } else {
-      const { candidates, interviewers } = this.props;
       this.setState({
         mode,
         selectedUserId: userId || '',

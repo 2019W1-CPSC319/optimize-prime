@@ -57,6 +57,9 @@ class DirectoryTable extends Component {
                 <TableCell>{row.email}</TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>
+                  <IconButton onClick={() => onClickUserAction('mail', row.id)}>
+                    <Icon>mail</Icon>
+                  </IconButton>
                   <IconButton onClick={() => onClickUserAction('edit', row.id)}>
                     <Icon>edit</Icon>
                   </IconButton>
