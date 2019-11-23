@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Button,
+  Fab,
   Icon,
   Paper,
   Tab,
@@ -30,6 +31,12 @@ const styles = {
   },
   tableContainer: {
     margin: '0 30px',
+  },
+  addButton: {
+    position: 'fixed',
+    right: '30px',
+    bottom: '30px',
+    backgroundColor: '#003b9a',
   },
 };
 
@@ -225,14 +232,6 @@ class DirectoryPage extends Component {
       <div>
         <div className={classes.header}>
           <h1 className={classes.title}>Directory</h1>
-          <Button
-            variant="outlined"
-            className={classes.button}
-            onClick={() => this.onClickUserAction('add')}
-          >
-            <Icon className={classes.icon}>person_add</Icon>
-            ADD NEW USER
-          </Button>
         </div>
         <Paper className={classes.tableContainer}>
           <Tabs
@@ -249,6 +248,13 @@ class DirectoryPage extends Component {
           </Tabs>
           {this.renderDirectoryTable()}
         </Paper>
+        <Fab
+          color="primary"
+          className={classes.addButton}
+          onClick={() => this.onClickUserAction('add')}
+        >
+          <Icon>add_rounded</Icon>
+        </Fab>
         {
           // This condition is necessary to make sure UserDialog is
           // only rendered when we actually set openUserDialog to true.
