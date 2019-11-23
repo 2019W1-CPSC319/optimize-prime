@@ -128,7 +128,7 @@ class UserDialog extends Component {
         firstName,
         lastName,
         email,
-        phone: phone.replace(/[\s]/g, ''),
+        phone,
         role,
       });
 
@@ -150,7 +150,7 @@ class UserDialog extends Component {
               firstName,
               lastName,
               email,
-              phone: phone.replace(/[\s]/g, ''),
+              phone,
               role,
             });
             if (response && !response.error) {
@@ -179,7 +179,7 @@ class UserDialog extends Component {
         firstName,
         lastName,
         email,
-        phone: phone.replace(/[\s]/g, ''),
+        phone,
         role,
       });
       if (response && !response.error) {
