@@ -12,12 +12,13 @@ import RoomPage from './components/room/RoomPage';
 import DirectoryPage from './components/directory/DirectoryPage';
 import SettingsPage from './components/settings/SettingsPage';
 import NotFoundPage from './components/misc/NotFoundPage';
+import UnauthorizedPage from './components/misc/UnauthorizedPage';
 
 const App = props => (
   <BrowserRouter>
     <Switch>
       <Route exact path="/login" render={() => <LoginPage {...props} />} />
-      <Route exact path="/unauthorized" render={() => <div>Unauthorized</div>} />
+      <Route exact path="/unauthorized" render={() => <UnauthorizedPage {...props} />} />
       <Route exact path="/candidate" render={(routeProps) => <CandidatePage {...props} uuid={new URLSearchParams(routeProps.location.search).get('key')} />} />
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
       <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
