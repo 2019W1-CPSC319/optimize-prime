@@ -30,7 +30,7 @@ class DirectoryTable extends Component {
   }
 
   render() {
-    const { classes, headers, rows, onClickUserAction, type, userProfile } = this.props;
+    const { classes, headers, rows, onClickUserAction } = this.props;
 
     return (
       <Table className={classes.table}>
@@ -55,7 +55,7 @@ class DirectoryTable extends Component {
                   {row.firstName}
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone ? row.phone : `N/A`}</TableCell>
+                <TableCell>{row.phone ? row.phone : ''}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => onClickUserAction('mail', row.id)}>
                     <Icon>mail</Icon>

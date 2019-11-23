@@ -95,7 +95,6 @@ router.get('/candidate/:uuid', (req, res) => {
 });
 
 // add a new user in either the candidates table or interview table based on the selected type
-
 router.post('/newcandidate', notAuthMiddleware, (req, res) => {
   try {
     const user = req.body;
@@ -113,7 +112,7 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
   }
-  
+
   const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -128,6 +127,7 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
 router.put('/edituser', (req, res) => {
   const user = req.body;
   const type = user.role;
+
   let sql = '';
   switch (type) {
     case 'candidate':
@@ -136,8 +136,12 @@ router.put('/edituser', (req, res) => {
     case 'interviewer':
       sql = 'UPDATE Interviewer SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
       break;
+    case 'administrator':
+      sql = 'UPDATE AdminUsers SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
+      break;
     default: return;
   }
+
   let sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, user.id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -150,6 +154,9 @@ router.put('/edituser', (req, res) => {
         break;
       case 'interviewer':
         sql = 'SELECT * FROM Interviewer WHERE id = ?';
+        break;
+      case 'administrator':
+        sql = 'SELECT * FROM AdminUsers WHERE id = ?';
         break;
       default: return;
     }
@@ -362,8 +369,6 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
               },
             };
 
-            console.log(JSON.stringify(data));
-
             const response = await axios({
               method: 'post',
               url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
@@ -496,7 +501,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
 
 router.get('/administrators', notAuthMiddleware, async (req, res) => {
   try {
-    const sql = 'SELECT * FROM adminUsers';
+    const sql = 'SELECT * FROM AdminUsers';
     const sqlcmd = connection.format(sql);
     connection.query(sqlcmd, async (err, result) => {
       if (err) {
@@ -561,7 +566,7 @@ router.get('/interviews', notAuthMiddleware, (req, res) => {
 });
 
 // ************************** Admin endpoints *********************** //
-router.post('/newadmin', notAuthMiddleware, async (req, res) => {
+router.post('/newadministrator', notAuthMiddleware, async (req, res) => {
   try {
     // check if user is not part of the org.
     const user = req.body;
