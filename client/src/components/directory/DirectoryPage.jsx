@@ -56,7 +56,7 @@ const ALLOWED_USER_ACTIONS = [
 const tabs = [
   { key: 'candidate', title: 'Candidates' },
   { key: 'interviewer', title: 'Interviewers' },
-  { key: 'administrator', title: 'Administrators'}
+  { key: 'administrator', title: 'Administrators' }
 ]
 
 class DirectoryPage extends Component {
@@ -93,7 +93,6 @@ class DirectoryPage extends Component {
       }).then(async (result) => {
         const { value } = result;
         if (value) {
-          console.log('deleting')
           const { value: tabIndex } = this.state;
           const response = await actions.deleteUser(tabs[tabIndex].key, userId);
           if (response && !response.error) {
@@ -177,7 +176,7 @@ class DirectoryPage extends Component {
     const { candidates, interviewers, administrators } = this.props;
     const { value } = this.state;
     const key = tabs[value].key;
-    
+
     if (key === 'candidate') {
       return (
         <DirectoryTable
@@ -189,7 +188,6 @@ class DirectoryPage extends Component {
         />
       );
     }
-
     else if (key === 'interviewer') {
       return (
         <DirectoryTable
@@ -203,10 +201,10 @@ class DirectoryPage extends Component {
     }
     else if (key === 'administrator') {
       return (
-        <DirectoryTable 
+        <DirectoryTable
           headers={EMPLOYEE_TABLE_HEADER}
           rows={administrators}
-          onClickUserAction={(action, userId) => this.onClickUserAction(action,userId)}
+          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
           type={key}
           userProfile={this.props.user.profile}
         />
@@ -254,15 +252,15 @@ class DirectoryPage extends Component {
           // Otherwise, edit mode wouldn't work because when Directory
           // Page first renders, it does not have a selected user.
           openUserDialog
-            && (
-              <UserDialog
-                mode={mode}
-                open={openUserDialog}
-                onClickCloseDialog={() => this.onClickCloseDialog()}
-                selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
-                actions={actions}
-              />
-            )
+          && (
+            <UserDialog
+              mode={mode}
+              open={openUserDialog}
+              onClickCloseDialog={() => this.onClickCloseDialog()}
+              selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
+              actions={actions}
+            />
+          )
         }
       </div>
     );
