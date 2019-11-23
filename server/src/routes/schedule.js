@@ -114,7 +114,7 @@ router.post('/newuser', (req, res) => {
   const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      res.status(400).send('The user already exists.');
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
