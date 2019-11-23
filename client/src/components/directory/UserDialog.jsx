@@ -115,9 +115,8 @@ class UserDialog extends Component {
   }
 
   onClickSubmit = async () => {
-    const { actions, mode, onClickCloseDialog } = this.props;
+    const { actions, mode, selectedUser, onClickCloseDialog } = this.props;
     const {
-      id,
       firstName,
       lastName,
       email,
@@ -171,7 +170,7 @@ class UserDialog extends Component {
       }
     } else if (mode === 'edit') {
       const response = await actions.editUser(role, {
-        id,
+        id: selectedUser.id,
         firstName,
         lastName,
         email,

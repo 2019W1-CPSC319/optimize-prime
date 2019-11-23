@@ -152,8 +152,12 @@ router.put('/edituser', (req, res) => {
     }
 
     sqlcmd = connection.format(sql, [user.id]);
-    connection.query(sqlcmd, (err, updatedCandidate) => {
-      res.send(updatedCandidate[0]);
+    connection.query(sqlcmd, (err, updatedUser) => {
+      if (err) {
+        throw err;
+      }
+
+      res.send(updatedUser[0]);
     });
   });
 });
