@@ -166,7 +166,7 @@ class UserDialog extends Component {
         );
       }
     } else if (mode === 'edit') {
-      await actions.editUser(role, {
+      const response = await actions.editUser(role, {
         id,
         firstName,
         lastName,
@@ -174,11 +174,13 @@ class UserDialog extends Component {
         phone: phone.replace(/[\s]/g, ''),
         role,
       });
-      swalWithBootstrapButtons.fire(
-        'Change has been saved!',
-        'You\'re all set.',
-        'success'
-      );
+      if (response && !response.error) {
+        swalWithBootstrapButtons.fire(
+          'Change has been saved!',
+          'You\'re all set.',
+          'success'
+        );
+      }
     }
     // clear dialog state
     this.setState(this.initializeUserInfoFields());
