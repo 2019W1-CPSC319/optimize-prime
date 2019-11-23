@@ -96,9 +96,10 @@ class UserDialog extends Component {
   }
 
   initializeUserInfoFields = () => {
+    const { selectedUser } = this.props;
     const state = {};
     USER_DIALOG.fields.forEach((field) => {
-      state[field.key] = '';
+      state[field.key] = selectedUser[field.key] || '';
     });
     return {
       ...state,

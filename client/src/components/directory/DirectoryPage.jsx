@@ -64,7 +64,7 @@ class DirectoryPage extends Component {
       value: 0,
       mode: '',
       openUserDialog: false,
-      selectedUser: '',
+      selectedUserId: '',
     };
   }
 
@@ -102,10 +102,9 @@ class DirectoryPage extends Component {
       });
     } else {
       const { candidates, interviewers } = this.props;
-      const users = candidates.concat(interviewers);
       this.setState({
         mode,
-        selectedUser: users.find(user => user.id === userId),
+        selectedUserId: userId || '',
         openUserDialog: true,
       });
     }
@@ -120,6 +119,17 @@ class DirectoryPage extends Component {
 
   onChangeTab = (e, index) => {
     this.setState({ value: index });
+  }
+
+  getSelectedUser = () => {
+    const { value, selectedUserId } = this.state;
+    const selectedUserType = tabs[value].key;
+    const selectedUser = this.props[`${selectedUserType}s`].find(user => user.id === selectedUserId) || {};
+    const formattedUser = {
+      ...selectedUser,
+      role: selectedUserType,
+    };
+    return formattedUser;
   }
 
   renderDirectoryTable = () => {
@@ -152,8 +162,7 @@ class DirectoryPage extends Component {
 
   render() {
     const { classes, actions } = this.props;
-    const { value, mode, openUserDialog, selectedUser } = this.state;
-    const role = tabs[value].key;
+    const { value, mode, openUserDialog } = this.state;
 
     return (
       <div>
@@ -183,14 +192,22 @@ class DirectoryPage extends Component {
           </Tabs>
           {this.renderDirectoryTable()}
         </Paper>
-        <UserDialog
-          role={role}
-          mode={mode}
-          open={openUserDialog}
-          onClickCloseDialog={() => this.onClickCloseDialog()}
-          selectedUser={selectedUser}
-          actions={actions}
-        />
+        {
+          // This condition is necessary to make sure UserDialog is
+          // only rendered when we actually set openUserDialog to true.
+          // Otherwise, edit mode wouldn't work because when Directory
+          // Page first renders, it does not have a selected user.
+          openUserDialog
+            && (
+              <UserDialog
+                mode={mode}
+                open={openUserDialog}
+                onClickCloseDialog={() => this.onClickCloseDialog()}
+                selectedUser={this.getSelectedUser()}
+                actions={actions}
+              />
+            )
+        }
       </div>
     );
   }
