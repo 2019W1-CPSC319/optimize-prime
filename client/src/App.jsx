@@ -37,6 +37,7 @@ const mapStateToProps = state => ({
   candidates: state.directory.candidates,
   interviewers: state.directory.outlookUsers,
   administrators: state.directory.administrators,
+  template: state.directory.template,
   rooms: state.rooms.rooms,
   outlookRooms: state.rooms.outlookRooms,
   meetingSuggestions: state.user.meetingSuggestions,
