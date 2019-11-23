@@ -203,7 +203,7 @@ class DirectoryPage extends Component {
                 mode={mode}
                 open={openUserDialog}
                 onClickCloseDialog={() => this.onClickCloseDialog()}
-                selectedUser={this.getSelectedUser()}
+                selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
                 actions={actions}
               />
             )

@@ -196,7 +196,12 @@ class UserDialog extends Component {
   }
 
   onBlurTextField = (fieldKey, event) => {
-    this.setState({ error: { ...this.state.error, [fieldKey]: this.onValidate(fieldKey, event.target.value) } });
+    this.setState({
+      error: {
+        ...this.state.error,
+        [fieldKey]: this.onValidate(fieldKey, event.target.value)
+      },
+    });
   }
 
   onValidate = (fieldKey, value) => {
@@ -253,9 +258,7 @@ class UserDialog extends Component {
         onKeyPress={e => this.onKeyPress(e)}
         onBlur={e => this.onBlurTextField(key, e)}
         helperText={error[key] ? helperText : ''}
-        InputProps={{
-          readOnly: mode === 'edit' && key === 'role',
-        }}
+        disabled={mode === 'edit' && key === 'role'}
       >
         {
           isSelect
@@ -285,23 +288,6 @@ class UserDialog extends Component {
     return !firstName || !lastName || !email || !phone || !role || Object.values(error).filter(value => value).length > 0;
   }
 
-
-  onEnter = () => {
-    const { selectedUser, role } = this.props;
-    if (selectedUser) {
-      this.setState({ ...selectedUser, role })
-    }
-  }
-
-  onExit = () => {
-    const userFields = this.initializeUserInfoFields();
-    const errorState = this.initializeErrorState();
-    this.setState({
-      ...userFields,
-      ...errorState,
-    });
-  }
-
   render() {
     const { classes, open, onClickCloseDialog } = this.props;
     const dialog = this.getDialogInfoForMode();
@@ -316,8 +302,6 @@ class UserDialog extends Component {
       <Dialog
         open={open}
         onClose={onClickCloseDialog}
-        onEnter={this.onEnter}
-        onExit={this.onExit}
       >
         <DialogTitle disableTypography classes={{ root: classes.dialogTitleRoot }}>
           {title}
