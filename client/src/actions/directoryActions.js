@@ -140,7 +140,7 @@ const sendAvailabilitySuccess = (data = {}) => ({
 
 const sendAvailabilityFailure = (message) => ({
   type: 'SEND_AVIALABILITY_FAILURE',
-  payload: message,
+  error: message,
 });
 
 export const sendAvailability = (availability, uuid) => async (dispatch) => {
