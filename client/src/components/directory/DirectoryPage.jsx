@@ -100,7 +100,7 @@ class DirectoryPage extends Component {
       });
     }
 
-    if (!tabs[tabIndex].allowedActions.includes(mode)) return;
+    if (!tabs[tabIndex].allowedActions.find(action => action.key === mode)) return;
     const { actions } = this.props;
 
     if (mode === 'delete') {
