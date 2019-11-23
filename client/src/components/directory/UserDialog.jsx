@@ -72,8 +72,9 @@ const USER_DIALOG = {
       type: 'select',
       helperText: '',
       selectOptions: [
-        { key: 'admin', title: 'Administrator' },
-        { key: 'interviewer', title: 'Interviewer' },
+        // Uncomment if want to be able to add different types of users
+        // { key: 'admin', title: 'Administrator' },
+        // { key: 'interviewer', title: 'Interviewer' },
         { key: 'candidate', title: 'Candidate' },
       ],
     },
