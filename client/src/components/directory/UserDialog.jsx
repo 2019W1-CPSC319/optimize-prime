@@ -72,7 +72,7 @@ const USER_DIALOG = {
       type: 'select',
       helperText: '',
       selectOptions: [
-        { key: 'admin', title: 'Administrator' },
+        { key: 'administrator', title: 'Administrator' },
         { key: 'candidate', title: 'Candidate' },
       ],
     },
