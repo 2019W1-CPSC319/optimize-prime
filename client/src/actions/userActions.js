@@ -49,7 +49,7 @@ const sendEmailSuccess = (response) => (
 const sendEmailFailure = (error) => (
   {
     type: 'EMAIL_SEND_FAILURE',
-    payload: error,
+    error,
   }
 );
 
@@ -73,7 +73,7 @@ const findMeetingTimesSuccess = (meetingSuggestions = []) => (
 const findMeetingTimesFailure = (error) => (
   {
     type: 'FIND_MEETING_TIMES_FAILURE',
-    payload: error,
+    error,
   }
 );
 
@@ -109,14 +109,14 @@ export const findMeetingTimes = (data) => async (dispatch) => {
 
 const createEventSuccess = () => (
   {
-    type: 'CREATE_EVENT_SUCCESS'
+    type: 'CREATE_EVENT_SUCCESS',
   }
 );
 
 const createEventFailure = (error) => (
   {
     type: 'CREATE_EVENT_FAILURE',
-    payload: error,
+    error,
   }
 );
 
@@ -158,14 +158,14 @@ export const createEvent = (selectedSuggestion, candidate) => async (dispatch) =
 const getInterviewsSuccess = (interviews) => (
   {
     type: 'GET_INTERVIEWS_SUCCESS',
-    payload: interviews
+    payload: interviews,
   }
 );
 
 const getInterviewsFailure = (error) => (
   {
     type: 'GET_INTERVIEWS_FAILURE',
-    payload: error,
+    error,
   }
 );
 
@@ -178,5 +178,31 @@ export const getInterviews = () => async (dispatch) => {
   } catch (error) {
     console.log(error);
     return dispatch(getInterviewsFailure(error));
+  }
+};
+
+const getOutlookUsersSuccess = (outlookUsers) => (
+  {
+    type: 'GET_OUTLOOK_USERS_SUCCESS',
+    outlookUsers,
+  }
+);
+
+const getOutlookUsersFailure = (error) => (
+  {
+    type: 'GET_OUTLOOK_USERS_FAILURE',
+    error,
+  }
+);
+
+export const getOutlookUsers = () => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.get('/schedule/outlook/users');
+    const outlookUsers = response.data;
+    return dispatch(getOutlookUsersSuccess(outlookUsers));
+  } catch (error) {
+    console.log(error);
+    return dispatch(getOutlookUsersFailure(error));
   }
 };

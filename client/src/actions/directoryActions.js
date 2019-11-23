@@ -32,6 +32,31 @@ export const addUser = (role, user) => async (dispatch) => {
   }
 };
 
+function editUserSuccess(role, user) {
+  return {
+    type: 'EDIT_USER_SUCCESS',
+    role,
+    user,
+  };
+}
+
+function editUserFailure(error) {
+  return {
+    type: 'EDIT_USER_FAILURE',
+    error,
+  };
+}
+
+export const editUser = (role, user) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.put('/schedule/edituser', user);
+    return dispatch(editUserSuccess(`${role}s`, response.data));
+  } catch (error) {
+    return dispatch(editUserFailure(error));
+  }
+};
+
 function getUsersSuccess(role, users) {
   return {
     type: 'GET_USERS_SUCCESS',
@@ -72,6 +97,20 @@ function getUserFailure(error) {
   };
 }
 
+function getCandidateSuccess(candidate) {
+  return {
+    type: 'GET_CANDIDATE_SUCCESS',
+    candidate,
+  };
+}
+
+function getCandidateFailure(error) {
+  return {
+    type: 'GET_CANDIDATE_FAILURE',
+    error,
+  };
+}
+
 export const getUser = (uuid) => async (dispatch) => {
   try {
     dispatch(updateLoadingState('INIT_REQUEST'));
@@ -82,7 +121,18 @@ export const getUser = (uuid) => async (dispatch) => {
   } catch (error) {
     return dispatch(getUserFailure(error));
   }
-};
+}
+
+export const getCandidate = (uuid) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.get(`/schedule/candidate/${uuid}`);
+    const candidate = response.data[0];
+    return dispatch(getCandidateSuccess(candidate));
+  } catch (error) {
+    return dispatch(getCandidateFailure(error));
+  }
+}
 
 function deleteUserSuccess(role, userId) {
   return {
@@ -111,12 +161,12 @@ export const deleteUser = (role, userId) => async (dispatch) => {
 
 const sendAvailabilitySuccess = (data = {}) => ({
   type: 'SEND_AVAILABILITY_SUCCESS',
-  payload: data
+  payload: data,
 });
 
 const sendAvailabilityFailure = (message) => ({
   type: 'SEND_AVIALABILITY_FAILURE',
-  payload: message,
+  error: message,
 });
 
 export const sendAvailability = (availability, uuid) => async (dispatch) => {
@@ -125,5 +175,55 @@ export const sendAvailability = (availability, uuid) => async (dispatch) => {
     return dispatch(sendAvailabilitySuccess(response.data));
   } catch (error) {
     return dispatch(sendAvailabilityFailure(error.response.data.message));
+  }
+};
+
+function getEmailTemplateSuccess(template) {
+  return {
+    type: 'GET_EMAIL_TEMPLATE_SUCCESS',
+    template,
+  };
+}
+
+function getEmailTemplateFailure(error) {
+  return {
+    type: 'GET_EMAIL_TEMPLATE_FAILURE',
+    error,
+  };
+}
+
+export const getEmailTemplate = () => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.get('/schedule/emailconfig');
+    const template = response.data[0];
+    return dispatch(getEmailTemplateSuccess(template));
+  } catch (error) {
+    return dispatch(getEmailTemplateFailure(error));
+  }
+};
+
+function updateEmailTemplateSuccess(data = {}) {
+  return {
+    type: 'UPDATE_EMAIL_TEMPLATE_SUCCESS',
+    payload: data,
+  };
+}
+
+function updateEmailTemplateFailure(error) {
+  return {
+    type: 'UPDATE_EMAIL_TEMPLATE_FAILURE',
+    error,
+  };
+}
+
+export const updateEmailTemplate = (subject, body, signature) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.put('/schedule/emailconfig', { subject, body, signature });
+    const { data } = response;
+    return dispatch(updateEmailTemplateSuccess(data));
+  } catch (error) {
+    return dispatch(updateEmailTemplateFailure(error));
   }
 };

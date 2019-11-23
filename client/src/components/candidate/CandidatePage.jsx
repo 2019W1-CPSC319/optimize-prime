@@ -25,7 +25,7 @@ const styles = {
   container: {
     display: 'inline-block',
     border: '4px solid grey',
-    margin: 'auto',
+    margin: 'auto 30px auto auto',
     maxWidth: '70%',
     maxHeight: '100%',
     borderRadius: '20px',
@@ -47,15 +47,11 @@ const styles = {
 class AddAvailability extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      name: '',
-      success: false
-    };
   }
-
-  componentDidMount() {
+  
+  async componentDidMount() {
     const { actions, uuid } = this.props;
-    actions.getUser(uuid);
+    await actions.getCandidate(uuid);
   }
 
   handleSubmit = async (times) => {
@@ -67,7 +63,10 @@ class AddAvailability extends Component {
       endTime: time.end.toISOString().slice(0, 19).replace('T', ' ')
     }))
 
-    await actions.sendAvailability(availability, this.props.uuid);
+    const response = await actions.sendAvailability(availability, this.props.uuid);
+
+    if (response && response.error) return;
+
     swalWithBootstrapButtons.fire(
       'Successfully submitted!',
       'We\'ll get back to you with an interview invitation in the next few days.',
@@ -78,7 +77,7 @@ class AddAvailability extends Component {
   }
 
   render() {
-    const { classes, user } = this.props;
+    const { classes, candidate } = this.props;
     return (
       <div className={classes.wrapper}>
         <Typography variant="h5" className={classes.title}>
@@ -87,7 +86,7 @@ class AddAvailability extends Component {
         <div className={classes.container}>
           <img className={classes.bigLogo} src={logo_long} alt="Galvanize Logo" />
           <div className={classes.subText}>
-            <Typography>{`Hi ${user.firstName}, `}</Typography>
+            <Typography>{`Hi ${candidate ? candidate.firstName : ''}, `}</Typography>
             <Typography>
               Please add your availability to come in for an on-site interview at our <b>Vancouver</b> office below.
             </Typography>

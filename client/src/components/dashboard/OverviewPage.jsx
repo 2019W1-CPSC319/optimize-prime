@@ -10,6 +10,9 @@ const styles = {
     fontWeight: 'normal',
     marginLeft: '30px',
   },
+  content: {
+    margin: '0 30px',
+  },
 }
 
 class OverviewPage extends Component {
@@ -25,6 +28,7 @@ class OverviewPage extends Component {
         <div className={clsx(classes.header, classes.flex)}>
           {userProfile && <h1 className={classes.title}>Welcome, {userProfile.givenName}</h1>}
         </div>
+        <div className={classes.content}></div>
       </div>
     );
   };

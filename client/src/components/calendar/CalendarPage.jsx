@@ -124,15 +124,18 @@ class CalendarPage extends React.Component {
     const { meetingSuggestions, actions, candidates } = this.props;
     const selectedSuggestions = meetingSuggestions.data[selectedOption];
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
+
     selectedSuggestions.forEach(async selectedSuggestion => {
       await actions.createEvent(selectedSuggestion, candidateUser);
     });
 
-    swalWithBootstrapButtons.fire(
-      'Success',
-      'Successfully scheduled',
-      'success'
-    );
+    if (response && !response.error) {
+      swalWithBootstrapButtons.fire(
+        'Success',
+        'Successfully scheduled',
+        'success'
+      );
+    }
 
     // Clear state of dialog
     this.setState({ ...initialState, onSuccess: true });
@@ -174,14 +177,15 @@ class CalendarPage extends React.Component {
     actions.getUsers('candidate');
     actions.getUsers('interviewer');
     actions.getInterviews();
+    actions.getOutlookUsers();
   }
 
   render() {
     const { interviews } = this.props;
     return (
       <div>
-        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Calendar</h1>
-        <Paper>
+        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Upcoming Interviews</h1>
+        <Paper style={{ margin: '0 30px' }}>
           <Table>
             <TableHead>
               <TableRow>
