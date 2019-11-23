@@ -49,7 +49,7 @@ const sendEmailSuccess = (response) => (
 const sendEmailFailure = (error) => (
   {
     type: 'EMAIL_SEND_FAILURE',
-    payload: error,
+    error,
   }
 );
 
@@ -73,7 +73,7 @@ const findMeetingTimesSuccess = (meetingSuggestions = []) => (
 const findMeetingTimesFailure = (error) => (
   {
     type: 'FIND_MEETING_TIMES_FAILURE',
-    payload: error,
+    error,
   }
 );
 
@@ -106,7 +106,7 @@ const createEventSuccess = () => (
 const createEventFailure = (error) => (
   {
     type: 'CREATE_EVENT_FAILURE',
-    payload: error,
+    error,
   }
 );
 
@@ -148,7 +148,7 @@ const getInterviewsSuccess = (interviews) => (
 const getInterviewsFailure = (error) => (
   {
     type: 'GET_INTERVIEWS_FAILURE',
-    payload: error,
+    error,
   }
 );
 
@@ -174,7 +174,7 @@ const getOutlookUsersSuccess = (outlookUsers) => (
 const getOutlookUsersFailure = (error) => (
   {
     type: 'GET_OUTLOOK_USERS_FAILURE',
-    payload: error,
+    error,
   }
 );
 

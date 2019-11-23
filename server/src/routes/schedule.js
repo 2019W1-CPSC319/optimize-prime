@@ -114,7 +114,7 @@ router.post('/newuser', (req, res) => {
   const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      res.status(400).send('The user already exists.');
     }
     const addedUser = { ...user, id: result.insertId };
     res.send(addedUser);
@@ -135,12 +135,30 @@ router.put('/edituser', (req, res) => {
       break;
     default: return;
   }
-  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, user.id]);
+  let sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, user.id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
       throw err;
     }
-    res.send(result);
+
+    switch (type) {
+      case 'candidate':
+        sql = 'SELECT * FROM Candidate WHERE id = ?';
+        break;
+      case 'interviewer':
+        sql = 'SELECT * FROM Interviewer WHERE id = ?';
+        break;
+      default: return;
+    }
+
+    sqlcmd = connection.format(sql, [user.id]);
+    connection.query(sqlcmd, (err, updatedUser) => {
+      if (err) {
+        throw err;
+      }
+
+      res.send(updatedUser[0]);
+    });
   });
 });
 
@@ -168,14 +186,12 @@ router.post('/sendEmail', (req, res) => {
     const { uuid } = result[0];
 
     // get email template config
-    const sqlcmd = "SELECT * FROM EmailConfig";
+    const sqlcmd = 'SELECT * FROM EmailConfig';
     connection.query(sqlcmd, async (err, result) => {
       if (err) {
         return res.status(500).send({ message: 'Internal Server error' });
       }
-      const subject = result[0].subject;
-      const body = result[0].body;
-      const signature = result[0].signature;
+      const { subject, body, signature } = result[0];
 
       try {
         // const subject = 'Availability';
@@ -507,12 +523,13 @@ router.get('/outlook/users', notAuthMiddleware, async (req, res) => {
     });
     res.send(
       response.data.value
-        .filter(user => user.givenName !== null)
-        .map(user => ({
+        .filter((user) => user.givenName !== null)
+        .map((user) => ({
           firstName: user.givenName,
           lastName: user.surname,
           email: user.mail,
-        })));
+        })),
+    );
   } catch (err) {
     console.error(err);
   }
@@ -535,7 +552,7 @@ router.get('/interviews', notAuthMiddleware, (req, res) => {
 
 // get email config
 router.get('/emailconfig', (req, res) => {
-  const sql = "SELECT * FROM EmailConfig";
+  const sql = 'SELECT * FROM EmailConfig';
   connection.query(sql, (err, result) => {
     if (err) {
       throw err;
@@ -547,7 +564,7 @@ router.get('/emailconfig', (req, res) => {
 // update email template config
 router.put('/emailconfig', (req, res) => {
   const { subject, body, signature } = req.body;
-  const sql = "UPDATE EmailConfig SET subject = ?, body = ?, signature = ? WHERE id = 1";
+  const sql = 'UPDATE EmailConfig SET subject = ?, body = ?, signature = ? WHERE id = 1';
   const sqlcmd = connection.format(sql, [subject, body, signature]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {

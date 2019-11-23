@@ -17,6 +17,15 @@ const DirectoryReducer = (state = initialState, action) => {
       newState = Object.assign({}, state, { loading: false });
       newState[action.role].push(action.user);
       return newState;
+    case 'EDIT_USER_SUCCESS':
+      newState = Object.assign({}, state, { loading: false });
+      newState[action.role] = newState[action.role].map((user) => {
+        if (user.id === action.user.id) {
+          return action.user;
+        }
+        return user;
+      });
+      return newState;
     case 'GET_USERS_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = action.users;
@@ -25,15 +34,15 @@ const DirectoryReducer = (state = initialState, action) => {
       const { outlookUsers } = action;
       return {
         ...state,
-        outlookUsers
-      }
+        outlookUsers,
+      };
     case 'GET_CANDIDATE_SUCCESS':
       const { candidate } = action;
       return {
         ...state,
         loading: false,
         candidate,
-      }
+      };
     case 'DELETE_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = newState[action.role].filter((user) => user.id !== action.userId);
@@ -48,12 +57,12 @@ const DirectoryReducer = (state = initialState, action) => {
       const { template } = action;
       return {
         ...state,
-        template
+        template,
       };
     case 'UPDATE_EMAIL_TEMPLATE_SUCCESS':
       return {
         ...state,
-        loading: false
+        loading: false,
       };
     default:
       return state;

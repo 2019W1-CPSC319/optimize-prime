@@ -32,6 +32,31 @@ export const addUser = (role, user) => async (dispatch) => {
   }
 };
 
+function editUserSuccess(role, user) {
+  return {
+    type: 'EDIT_USER_SUCCESS',
+    role,
+    user,
+  };
+}
+
+function editUserFailure(error) {
+  return {
+    type: 'EDIT_USER_FAILURE',
+    error,
+  };
+}
+
+export const editUser = (role, user) => async (dispatch) => {
+  try {
+    dispatch(updateLoadingState('INIT_REQUEST'));
+    const response = await axios.put('/schedule/edituser', user);
+    return dispatch(editUserSuccess(`${role}s`, response.data));
+  } catch (error) {
+    return dispatch(editUserFailure(error));
+  }
+};
+
 function getUsersSuccess(role, users) {
   return {
     type: 'GET_USERS_SUCCESS',
@@ -61,7 +86,7 @@ export const getUsers = (role) => async (dispatch) => {
 function getCandidateSuccess(candidate) {
   return {
     type: 'GET_CANDIDATE_SUCCESS',
-    candidate
+    candidate,
   };
 }
 
@@ -110,12 +135,12 @@ export const deleteUser = (role, userId) => async (dispatch) => {
 
 const sendAvailabilitySuccess = (data = {}) => ({
   type: 'SEND_AVAILABILITY_SUCCESS',
-  payload: data
+  payload: data,
 });
 
 const sendAvailabilityFailure = (message) => ({
   type: 'SEND_AVIALABILITY_FAILURE',
-  payload: message,
+  error: message,
 });
 
 export const sendAvailability = (availability, uuid) => async (dispatch) => {
@@ -170,7 +195,7 @@ export const updateEmailTemplate = (subject, body, signature) => async (dispatch
   try {
     dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.put('/schedule/emailconfig', { subject, body, signature });
-    const data = response.data;
+    const { data } = response;
     return dispatch(updateEmailTemplateSuccess(data));
   } catch (error) {
     return dispatch(updateEmailTemplateFailure(error));
