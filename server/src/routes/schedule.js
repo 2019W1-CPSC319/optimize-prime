@@ -191,9 +191,7 @@ router.post('/sendEmail', (req, res) => {
       if (err) {
         return res.status(500).send({ message: 'Internal Server error' });
       }
-      const { subject } = result[0];
-      const { body } = result[0];
-      const { signature } = result[0];
+      const { subject, body, signature } = result[0];
 
       try {
         // const subject = 'Availability';
