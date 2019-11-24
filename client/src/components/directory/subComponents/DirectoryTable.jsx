@@ -55,7 +55,7 @@ class DirectoryTable extends Component {
                   {row.firstName}
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone}</TableCell>
+                <TableCell>{row.phone ? row.phone : ''}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => onClickUserAction('mail', row.id)}>
                     <Icon>mail</Icon>

@@ -6,6 +6,15 @@ import {
   Typography,
   Button
 } from '@material-ui/core';
+import Swal from 'sweetalert2';
+
+const swalWithBootstrapButtons = Swal.mixin({
+  customClass: {
+    confirmButton: 'btn btn-success',
+    cancelButton: 'btn btn-danger'
+  },
+  buttonsStyling: true,
+});
 
 class SettingsPage extends Component {
   constructor(props) {
@@ -28,6 +37,11 @@ class SettingsPage extends Component {
     const { actions } = this.props;
     const { subject, body, signature } = this.state;
     await actions.updateEmailTemplate(subject, body, signature);
+    swalWithBootstrapButtons.fire(
+      'Change has been saved!',
+      'You\'re all set.',
+      'success'
+    );
   }
 
   render() {

@@ -4,7 +4,8 @@ import not_found from '../../images/not_found_with_text.png';
 
 const styles = {
   root: {
-    backgroundColor: '#EBE4F6'
+    backgroundColor: '#EBE4F6',
+    height: window.innerHeight
   },
   img: {
     width: '500px',
