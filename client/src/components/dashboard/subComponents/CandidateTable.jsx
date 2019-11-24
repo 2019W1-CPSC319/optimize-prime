@@ -55,7 +55,7 @@ class CandidateTable extends Component {
                           <Icon style={{ color: 'coral' }}>post_add</Icon>
                         </IconButton>
                         :
-                        <IconButton onClick={() => this.onClickUserAction('mail', row.id)}>
+                        <IconButton onClick={() => this.props.onClickUserAction('mail', row.id)}>
                           <Icon style={{ color: 'coral' }}>mail</Icon>
                         </IconButton>
                     }
