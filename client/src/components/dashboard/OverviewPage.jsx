@@ -48,6 +48,7 @@ const styles = {
   time: {
     display: 'flex',
     flexDirection: 'column',
+    textAlign: 'right',
   },
   center: {
     display: 'block',
