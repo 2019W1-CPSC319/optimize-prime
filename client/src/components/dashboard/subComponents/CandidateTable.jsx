@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Table,
@@ -21,7 +22,7 @@ class CandidateTable extends Component {
   }
 
   render() {
-    const { classes, rows } = this.props;
+    const { classes, rows, mode } = this.props;
     return (
       <Paper>
         <Table>
@@ -48,9 +49,16 @@ class CandidateTable extends Component {
                   <TableCell>{row.email}</TableCell>
                   <TableCell>{row.phone}</TableCell>
                   <TableCell>
-                    <IconButton onClick={() => this.onClickUserAction('mail', row.id)}>
-                      <Icon>mail</Icon>
-                    </IconButton>
+                    {
+                      mode === 'ready' ?
+                        <IconButton component={Link} to={`/calendar?id=${row.id}`}>
+                          <Icon style={{ color: 'coral' }}>post_add</Icon>
+                        </IconButton>
+                        :
+                        <IconButton onClick={() => this.onClickUserAction('mail', row.id)}>
+                          <Icon style={{ color: 'coral' }}>mail</Icon>
+                        </IconButton>
+                    }
                   </TableCell>
                 </TableRow>
               ))
