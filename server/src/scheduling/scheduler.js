@@ -118,8 +118,8 @@ async function findTimes(interviews, candidateEmail, token) {
                 " optimal interview schedules in " +
                 String(algorithmRunTime) +
                 "ms.");
-    DEBUG && console.log("Scheduling took " + String(schedulingTime) + "ms in total");
-    DEBUG && console.log("Getting interviewer availability took " + String(graphTime) + "ms in total");
+    console.log("Scheduling took " + String(schedulingTime) + "ms in total");
+    console.log("Getting interviewer availability took " + String(graphTime) + "ms in total");
 
     return optimalSchedules;
 }
@@ -172,15 +172,15 @@ function assignRooms(rooms, roomAvailability, interviews, blockStart) {
     for (let i = 0; i < interviews.length; i++) {
         let startIndex = moment.duration(interviews[i].start.diff(blockStart)).asMinutes() / TIME_INTERVAL;
 
-        interviews[i].room = "";
+        interviews[i].room = [];
 
         for (let roomIndex = 0; roomIndex < rooms.length; roomIndex++) {
             let j = startIndex;
             let roomEmail = rooms[roomIndex].locationEmailAddress;
-            while (roomAvailability.get(roomEmail)[j] && interviews[i].room == "") {
+            while (roomAvailability.get(roomEmail)[j]) {
                 j++;
-                if (j >= startIndex + (interviews[i].duration / TIME_INTERVAL)) {
-                    interviews[i].room = rooms[roomIndex];
+                if (j == startIndex + (interviews[i].duration / TIME_INTERVAL)) {
+                    interviews[i].room.push(rooms[roomIndex]);
                     break;
                     /**
                      * NB: We don't have to worry about updating room avail because
@@ -191,7 +191,7 @@ function assignRooms(rooms, roomAvailability, interviews, blockStart) {
             }
         }
 
-        if (interviews[i].room == "") {
+        if (interviews[i].room == []) {
             console.log("No rooms found for interview!")
             // DEBUG && console.log("No rooms found for interview!")
             return null;
