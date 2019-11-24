@@ -114,7 +114,7 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
   }
 });
 
-// edit the interviewer or candidate user information
+// edit the administrator or candidate user information
 router.put('/edituser', (req, res) => {
   const user = req.body;
   const type = user.role;
@@ -123,9 +123,6 @@ router.put('/edituser', (req, res) => {
   switch (type) {
     case 'candidate':
       sql = 'UPDATE Candidate SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
-      break;
-    case 'interviewer':
-      sql = 'UPDATE Interviewer SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
       break;
     case 'administrator':
       sql = 'UPDATE AdminUsers SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
@@ -142,9 +139,6 @@ router.put('/edituser', (req, res) => {
     switch (type) {
       case 'candidate':
         sql = 'SELECT * FROM Candidate WHERE id = ?';
-        break;
-      case 'interviewer':
-        sql = 'SELECT * FROM Interviewer WHERE id = ?';
         break;
       case 'administrator':
         sql = 'SELECT * FROM AdminUsers WHERE id = ?';
@@ -262,19 +256,6 @@ router.post('/availability', (req, res) => {
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
   }
-});
-
-// update the status of a interviewer to disabled, in the interviewer table
-router.put('/interviewer/delete/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = "UPDATE Interviewer SET status = 'D' WHERE id = ?";
-  const sqlcmd = connection.format(sql, [id]);
-  connection.query(sqlcmd, (err, result) => {
-    if (err) {
-      res.status(500).send({ message: 'Internal server error.' });
-    }
-    res.send(result);
-  });
 });
 
 // find all the possible meeting times, given the following constraints/information:
