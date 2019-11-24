@@ -373,6 +373,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
               url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
               headers: {
                 Authorization: `Bearer ${req.user.accessToken}`,
+                Prefer: `outlook.timezone="${timeZone}"`,
               },
               data,
             });
