@@ -51,7 +51,7 @@ class SettingsPage extends Component {
         <h1 className="settings-title">Settings</h1>
         <Paper style={{ maxWidth: '700px', margin: '30px', padding: '30px' }}>
           <Typography
-            variant='h5'
+            variant='h6'
           >Email Template</Typography>
           <TextField
             label="Subject"

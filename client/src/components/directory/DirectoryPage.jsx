@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 import DirectoryTable from './subComponents/DirectoryTable';
 import UserDialog from './UserDialog';
 
-const swalWithBootstrapButtons = Swal.mixin({
+export const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: 'btn btn-success',
     cancelButton: 'btn btn-danger'
@@ -33,7 +33,7 @@ const styles = {
   },
 };
 
-const CANDIDATE_TABLE_HEADER = [
+export const CANDIDATE_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
   { key: 'email', title: 'Email' },
@@ -46,7 +46,7 @@ const EMPLOYEE_TABLE_HEADER = [
   { key: 'email', title: 'Email' },
 ];
 
-const ALLOWED_USER_ACTIONS = [
+export const ALLOWED_USER_ACTIONS = [
   'add',
   'mail',
   'edit',
