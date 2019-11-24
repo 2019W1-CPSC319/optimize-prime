@@ -256,8 +256,8 @@ router.post('/availability', (req, res) => {
             return res.status(500).send({ message: 'Internal Server error' });
           }
         });
-          res.send(result);
-        });
+        res.send(result);
+      });
     });
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
@@ -408,12 +408,9 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     const {
       candidate, date, required, optional, room,
     } = req.body;
-
     const subject = `Interview with ${candidate.firstName} ${candidate.lastName}`;
     const content = 'Please confirm if you are available during this time.';
-
-    const timeZone = 'UTC';
-
+    const timeZone = 'Pacific Standard Time';
     // create candidate as an attendee
     const candidateAttendee = [
       {
@@ -423,7 +420,6 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         },
       },
     ];
-
     // required attendees
     const requiredAttendees = required.map((interviewer) => ({
       type: 'required',
@@ -431,7 +427,6 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         address: interviewer.email,
       },
     }));
-
     // optional attendees
     const optionalAttendees = optional.map((interviewer) => ({
       type: 'optional',
@@ -439,23 +434,21 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         address: interviewer.email,
       },
     }));
-
     const roomAttendee = {
       type: 'required',
       emailAddress: {
         address: room.email,
       },
     };
-
     // combine all the attendees aswell as the candidate
     const interviewerAttendees = requiredAttendees.concat(optionalAttendees);
     const attendees = interviewerAttendees.concat(candidateAttendee).concat(roomAttendee);
-
     const response = await axios({
       method: 'post',
       url: 'https://graph.microsoft.com/v1.0/me/events',
       headers: {
         Authorization: `Bearer ${req.user.accessToken}`,
+        Prefer: `outlook.timezone="${timeZone}"`,
       },
       data: {
         subject,
@@ -472,29 +465,56 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         attendees,
       },
     });
-
     // insert the scheduled interview in the candidate table
-
-    const sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
-    const sqlcmd = connection.format(sql, [room.name]);
-
+    let sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
+    let sqlcmd = connection.format(sql, [room.name]);
     connection.query(sqlcmd, (err, result) => {
       if (err) {
         return res.status(500).send({ message: 'Internal server error.' });
       }
       // get roomId
-      const roomId = result[0].id;
-      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
-      const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, roomId]);
-      connection.query(sqlcmd, (err, result) => {
+      const newRoomId = result[0].id;
+      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
+      sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, newRoomId]);
+      connection.query(sqlcmd, (err, scheduledInterview) => {
         if (err) {
           return res.status(500).send({ message: 'Internal server error.' });
         }
+        sql = 'SELECT s.id, startTime, endTime, c.id AS candidateId, firstName, lastName, r.id AS roomId, name, seats FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE s.id = ?';
+        sqlcmd = connection.format(sql, [scheduledInterview.insertId]);
+        connection.query(sqlcmd, (err, newScheduledInterview) => {
+          if (err) {
+            return res.status(500).send({ message: 'Internal server error.' });
+          }
+          const {
+            candidateId,
+            firstName,
+            lastName,
+            roomId,
+            name,
+            seats,
+            ...interviewDetails
+          } = newScheduledInterview[0];
+          const formattedInterview = {
+            ...interviewDetails,
+            candidate: {
+              id: candidateId,
+              firstName,
+              lastName,
+            },
+            room: {
+              id: roomId,
+              name,
+              seats,
+            },
+          };
+          res.send(formattedInterview);
+        });
       });
     });
-    res.send(response.data);
   } catch (error) {
     console.log(error);
+    res.status(error.response.status).send(error.message);
   }
 });
 
