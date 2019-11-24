@@ -40,7 +40,7 @@ const DirectoryReducer = (state = initialState, action) => {
       const { outlookUsers } = action;
       return {
         ...state,
-        outlookUsers,
+        interviewers: outlookUsers,
       };
     case 'GET_CANDIDATE_SUCCESS':
       const { candidate } = action;
