@@ -15,7 +15,7 @@ const styles = {
   table: {
     minWidth: 650,
   },
-  icon: {
+  iconButton: {
     color: '#f0a017',
   },
 };
@@ -77,11 +77,12 @@ class DirectoryTable extends Component {
                       const { key, icon } = action;
                       return (
                         <IconButton
+                          className={classes.icon}
                           key={key}
                           onClick={() => onClickUserAction(key, row.id)}
                           disabled={username === row.email}
                         >
-                          <Icon className={classes.icon}>{icon}</Icon>
+                          <Icon>{icon}</Icon>
                         </IconButton>
                       );
                     })
