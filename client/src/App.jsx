@@ -11,12 +11,14 @@ import CalendarPage from './components/calendar/CalendarPage';
 import RoomPage from './components/room/RoomPage';
 import DirectoryPage from './components/directory/DirectoryPage';
 import SettingsPage from './components/settings/SettingsPage';
-import NotFoundPage from './components/notfound/NotFoundPage';
+import NotFoundPage from './components/misc/NotFoundPage';
+import UnauthorizedPage from './components/misc/UnauthorizedPage';
 
 const App = props => (
   <BrowserRouter>
     <Switch>
       <Route exact path="/login" render={() => <LoginPage {...props} />} />
+      <Route exact path="/unauthorized" render={() => <UnauthorizedPage {...props} />} />
       <Route exact path="/candidate" render={(routeProps) => <CandidatePage {...props} uuid={new URLSearchParams(routeProps.location.search).get('key')} />} />
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
       <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} />} />
@@ -35,9 +37,12 @@ const mapStateToProps = state => ({
   interviews: state.user.interviews,
   candidates: state.directory.candidates,
   interviewers: state.directory.outlookUsers,
+  administrators: state.directory.administrators,
   template: state.directory.template,
   rooms: state.rooms.rooms,
   outlookRooms: state.rooms.outlookRooms,
+  meetingSuggestions: state.user.meetingSuggestions,
+  interviews: state.user.interviews,
 });
 
 const mapDispatchToProps = dispatch => ({

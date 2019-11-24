@@ -33,7 +33,6 @@ module.exports = (app) => {
       return done(new Error('No OID found in user profile.'), null);
     }
     // Save the profile and tokens in user storage
-    console.log(Date.now());
     users[profile.oid] = {
       displayName: profile.displayName,
       name: jwtClaims.name,

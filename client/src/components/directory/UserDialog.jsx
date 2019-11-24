@@ -72,9 +72,7 @@ const USER_DIALOG = {
       type: 'select',
       helperText: '',
       selectOptions: [
-        // Uncomment if want to be able to add different types of users
-        // { key: 'admin', title: 'Administrator' },
-        // { key: 'interviewer', title: 'Interviewer' },
+        { key: 'administrator', title: 'Administrator' },
         { key: 'candidate', title: 'Candidate' },
       ],
     },
@@ -130,11 +128,9 @@ class UserDialog extends Component {
         firstName,
         lastName,
         email,
-        phone: phone.replace(/[\s]/g, ''),
+        phone,
         role,
       });
-
-      if (response && response.error) return;
 
       if (role.toLowerCase() === 'candidate') {
         swalWithBootstrapButtons.fire({
@@ -152,7 +148,7 @@ class UserDialog extends Component {
               firstName,
               lastName,
               email,
-              phone: phone.replace(/[\s]/g, ''),
+              phone,
               role,
             });
             if (response && !response.error) {
@@ -164,7 +160,12 @@ class UserDialog extends Component {
             }
           }
         });
-      } else {
+      } else if(response && response.error) {
+        swalWithBootstrapButtons.fire(
+          response.error.message
+        );
+      }
+      else {
         swalWithBootstrapButtons.fire(
           'A new user profile has been created!',
           'You\'re all set.',
@@ -177,7 +178,7 @@ class UserDialog extends Component {
         firstName,
         lastName,
         email,
-        phone: phone.replace(/[\s]/g, ''),
+        phone,
         role,
       });
       if (response && !response.error) {
@@ -245,7 +246,6 @@ class UserDialog extends Component {
     const { error } = this.state;
     const { key, title, type, helperText, selectOptions } = infoField;
     const isSelect = type === 'select';
-
     return (
       <TextField
         autoFocus={key === 'firstName'}

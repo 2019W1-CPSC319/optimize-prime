@@ -47,10 +47,17 @@ const CANDIDATE_TABLE_HEADER = [
   { key: 'phone', title: 'Phone Number' },
 ];
 
-const EMPLOYEE_TABLE_HEADER = [
+const INTERVIEWER_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
   { key: 'email', title: 'Email' },
+];
+
+const ADMINISTRATOR_TABLE_HEADER = [
+  { key: 'lastName', title: 'Last Name' },
+  { key: 'firstName', title: 'First Name' },
+  { key: 'email', title: 'Email' },
+  { key: 'phone', title: 'Phone Number' },
 ];
 
 const tabs = [
@@ -68,6 +75,14 @@ const tabs = [
     title: 'Interviewers',
     allowedActions: [],
   },
+  {
+    key: 'administrator',
+    title: 'Administrators',
+    allowedActions: [
+      { key: 'edit', icon: 'edit' },
+      { key: 'delete', icon: 'delete' },
+    ],
+  },
 ]
 
 class DirectoryPage extends Component {
@@ -84,7 +99,7 @@ class DirectoryPage extends Component {
   componentDidMount() {
     const { actions } = this.props;
     actions.getUsers('candidate');
-    actions.getUsers('interviewer');
+    actions.getUsers('administrator');
     actions.getOutlookUsers();
   }
 
@@ -195,33 +210,33 @@ class DirectoryPage extends Component {
   }
 
   renderDirectoryTable = () => {
-    const { candidates, interviewers } = this.props;
     const { value } = this.state;
     const key = tabs[value].key;
+    let headers;
 
-    if (key === 'candidate') {
-      return (
-        <DirectoryTable
-          headers={CANDIDATE_TABLE_HEADER}
-          rows={candidates}
-          allowedActions={tabs[value].allowedActions}
-          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
-        />
-      );
+    switch (key) {
+      case 'candidate':
+        headers = CANDIDATE_TABLE_HEADER;
+        break;
+      case 'interviewer':
+        headers = INTERVIEWER_TABLE_HEADER;
+        break;
+      case 'administrator':
+        headers = ADMINISTRATOR_TABLE_HEADER;
+        break;
+      default:
+        return null;
     }
 
-    else if (key === 'interviewer') {
-      return (
-        <DirectoryTable
-          headers={EMPLOYEE_TABLE_HEADER}
-          rows={interviewers}
-          allowedActions={tabs[value].allowedActions}
-          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
-        />
-      );
-    }
-
-    return null;
+    return (
+      <DirectoryTable
+        headers={headers}
+        rows={this.props[`${key}s`]}
+        allowedActions={tabs[value].allowedActions}
+        onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+        type={key}
+      />
+    );
   }
 
   render() {

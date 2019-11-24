@@ -12,11 +12,17 @@ const DirectoryReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
+        error: undefined,
       };
     case 'ADD_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
       newState[action.role].push(action.user);
       return newState;
+    case 'ADD_USER_FAILURE':
+      return {
+        ...state,
+        error: action.error,
+      };
     case 'EDIT_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
       newState[action.role] = newState[action.role].map((user) => {
