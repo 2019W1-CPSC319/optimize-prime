@@ -210,6 +210,7 @@ class DirectoryPage extends Component {
   }
 
   renderDirectoryTable = () => {
+    const { user } = this.props;
     const { value } = this.state;
     const key = tabs[value].key;
     let headers;
@@ -235,6 +236,7 @@ class DirectoryPage extends Component {
         allowedActions={tabs[value].allowedActions}
         onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
         type={key}
+        user={user}
       />
     );
   }

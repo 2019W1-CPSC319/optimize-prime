@@ -30,7 +30,15 @@ class DirectoryTable extends Component {
   }
 
   render() {
-    const { classes, headers, rows, allowedActions, onClickUserAction } = this.props;
+    const {
+      classes,
+      headers,
+      rows,
+      allowedActions,
+      user,
+      onClickUserAction,
+    } = this.props;
+    const { username } = user;
 
     return (
       <Table className={classes.table}>
@@ -68,6 +76,7 @@ class DirectoryTable extends Component {
                         <IconButton
                           key={key}
                           onClick={() => onClickUserAction(key, row.id)}
+                          disabled={username === row.email}
                         >
                           <Icon>{icon}</Icon>
                         </IconButton>
