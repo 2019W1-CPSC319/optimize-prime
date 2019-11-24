@@ -248,8 +248,16 @@ router.post('/availability', (req, res) => {
         if (err) {
           return res.status(500).send({ message: 'Internal Server error' });
         }
-        res.send(result);
-      });
+
+        const sql = "UPDATE Candidate SET submittedAvailability = 'T' WHERE id = ?";
+        const sqlcmd = connection.format(sql, [candidateId]);
+        connection.query(sqlcmd, (err, result) => {
+          if (err) {
+            return res.status(500).send({ message: 'Internal Server error' });
+          }
+        });
+          res.send(result);
+        });
     });
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
