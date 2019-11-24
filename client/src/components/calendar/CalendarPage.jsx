@@ -198,7 +198,7 @@ class CalendarPage extends React.Component {
     const { interviews } = this.props;
     return (
       <div>
-        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Upcoming Interviews</h1>
+        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Scheduled Interviews</h1>
         <Paper style={{ margin: '0 30px' }}>
           <Table>
             <TableHead>
