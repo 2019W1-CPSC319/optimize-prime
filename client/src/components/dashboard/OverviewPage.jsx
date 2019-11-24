@@ -30,7 +30,7 @@ const styles = {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '15px 20px',
+    padding: '5px 10px',
   },
   date: {
     display: 'flex',
