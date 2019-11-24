@@ -55,7 +55,11 @@ class DirectoryTable extends Component {
                   {row.firstName}
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone ? row.phone : ''}</TableCell>
+                {
+                  row.phone
+                    ? <TableCell>{row.phone}</TableCell>
+                    : null
+                }
                 <TableCell>
                   {
                     allowedActions.map(action => {
