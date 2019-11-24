@@ -152,7 +152,7 @@ class OverviewPage extends Component {
               onClickUserAction={this.onClickUserAction}
               rows={ready}
             />
-            <Typography variant='h6' style={{ marginBottom: '10px', marginTop: '10px' }}>Candidates on Hold</Typography>
+            <Typography variant='h6' style={{ marginBottom: '10px', marginTop: '35px' }}>Candidates on Hold</Typography>
             <CandidateTable
               onClickUserAction={this.onClickUserAction}
               rows={unready}
