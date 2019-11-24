@@ -248,8 +248,16 @@ router.post('/availability', (req, res) => {
         if (err) {
           return res.status(500).send({ message: 'Internal Server error' });
         }
-        res.send(result);
-      });
+
+        const sql = "UPDATE Candidate SET submittedAvailability = 'T' WHERE id = ?";
+        const sqlcmd = connection.format(sql, [candidateId]);
+        connection.query(sqlcmd, (err, result) => {
+          if (err) {
+            return res.status(500).send({ message: 'Internal Server error' });
+          }
+        });
+          res.send(result);
+        });
     });
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
@@ -546,7 +554,7 @@ router.get('/outlook/users', notAuthMiddleware, async (req, res) => {
 // get a list of interviews
 router.get('/interviews', notAuthMiddleware, (req, res) => {
   const currDate = new Date();
-  const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
+  const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ? ORDER BY startTime';
   const sqlcmd = connection.format(sql, [currDate]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {

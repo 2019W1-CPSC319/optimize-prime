@@ -167,10 +167,10 @@ class OverviewPage extends Component {
               </IconButton>
             </Box>
             {
-              interviews && interviews.slice(-7).map((option, key) => {
+              interviews && interviews.slice(0, 7).map((option, key) => {
                 const date = new Date(option.startTime);
-                const startTime = moment(option.startTime).format('h:m A');
-                const endTime = moment(option.endTime).format('h:m A')
+                const startTime = moment(option.startTime).format('h:mm A');
+                const endTime = moment(option.endTime).format('h:mm A')
                 return (
                   <div key={key} className={classes.center}>
                     <Paper className={classes.schedule}>
