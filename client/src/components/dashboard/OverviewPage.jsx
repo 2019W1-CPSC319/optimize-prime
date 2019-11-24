@@ -102,9 +102,10 @@ class OverviewPage extends Component {
     const { actions } = this.props;
     await actions.getUsers('candidate');
     await actions.getInterviews();
-    const { candidates } = this.props;
-    const ready = candidates.filter(candidate => candidate.submittedAvailability === 'T');
-    const unready = candidates.filter(candidate => candidate.submittedAvailability === 'F');
+    const { interviews, candidates } = this.props;
+    const scheduledCandidateIds = interviews.map(interview => interview.candidate.id);
+    const ready = candidates.filter(candidate => !scheduledCandidateIds.includes(candidate.id) && candidate.submittedAvailability === 'T');
+    const unready = candidates.filter(candidate => !scheduledCandidateIds.includes(candidate.id) && candidate.submittedAvailability === 'F');
     this.setState({ ready, unready });
   }
 
