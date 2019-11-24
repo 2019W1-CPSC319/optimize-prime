@@ -12,7 +12,7 @@ const DirectoryReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
-        errorMessage: undefined,
+        error: undefined,
       };
     case 'ADD_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
@@ -21,7 +21,7 @@ const DirectoryReducer = (state = initialState, action) => {
     case 'ADD_USER_FAILURE':
       return {
         ...state,
-        errorMessage: action.error,
+        error: action.error,
       };
     case 'EDIT_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
