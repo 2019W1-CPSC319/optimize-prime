@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  Button,
   Fab,
   Icon,
   Paper,
@@ -12,7 +11,7 @@ import Swal from 'sweetalert2';
 import DirectoryTable from './subComponents/DirectoryTable';
 import UserDialog from './UserDialog';
 
-const swalWithBootstrapButtons = Swal.mixin({
+export const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: 'btn btn-success',
     cancelButton: 'btn btn-danger'
@@ -40,7 +39,7 @@ const styles = {
   },
 };
 
-const CANDIDATE_TABLE_HEADER = [
+export const CANDIDATE_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
   { key: 'email', title: 'Email' },
@@ -83,7 +82,7 @@ const tabs = [
       { key: 'delete', icon: 'delete' },
     ],
   },
-]
+];
 
 class DirectoryPage extends Component {
   constructor(props) {
@@ -235,7 +234,6 @@ class DirectoryPage extends Component {
         rows={this.props[`${key}s`]}
         allowedActions={tabs[value].allowedActions}
         onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
-        type={key}
         user={user}
       />
     );

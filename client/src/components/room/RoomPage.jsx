@@ -181,7 +181,7 @@ export default class RoomPage extends React.Component {
                       <IconButton
                         onClick={() => this.handleDeleteRoom(room.id)}
                       >
-                        <Icon>delete</Icon>
+                        <Icon style={{ color: '#f0a017' }}>delete</Icon>
                       </IconButton>
                     </TableCell>
                   </TableRow>

@@ -68,8 +68,8 @@ class RequestDialog extends Component {
           </DialogContentText>
           <Autocomplete
             autoFocus
-            options={candidates}
-            getOptionLabel={candidate => candidate.email}
+            options={candidates.filter(c => c.submittedAvailability == "T")}
+            getOptionLabel={candidate => candidate.firstName ? candidate.firstName + " " + candidate.lastName + " (" + candidate.email + ")" : ""}
             style={{ width: 300 }}
             renderInput={params => (
               <TextField {...params} label="Candidate" variant="outlined" fullWidth />
