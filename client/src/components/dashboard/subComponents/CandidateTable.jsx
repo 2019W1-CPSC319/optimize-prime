@@ -22,7 +22,7 @@ class CandidateTable extends Component {
   }
 
   render() {
-    const { classes, rows, mode } = this.props;
+    const { classes, rows, mode, onClickUserAction } = this.props;
     return (
       <Paper>
         <Table>
@@ -55,7 +55,7 @@ class CandidateTable extends Component {
                           <Icon style={{ color: 'coral' }}>post_add</Icon>
                         </IconButton>
                         :
-                        <IconButton onClick={() => this.onClickUserAction('mail', row.id)}>
+                        <IconButton onClick={() => onClickUserAction('mail', row.id)}>
                           <Icon style={{ color: 'coral' }}>mail</Icon>
                         </IconButton>
                     }
