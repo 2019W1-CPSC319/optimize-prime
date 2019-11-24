@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
-import RefreshIcon from '@material-ui/icons/Refresh';
 import {
   Box,
   Paper,
@@ -151,18 +150,20 @@ class OverviewPage extends Component {
             <CandidateTable
               onClickUserAction={this.onClickUserAction}
               rows={ready}
+              mode='ready'
             />
             <Typography variant='h6' style={{ marginBottom: '10px', marginTop: '35px' }}>Candidates on Hold</Typography>
             <CandidateTable
               onClickUserAction={this.onClickUserAction}
               rows={unready}
+              mode='unready'
             />
           </Box>
           <Box className={classes.sidebar}>
             <Box component='div' display='flex' style={{ justifyContent: 'space-between' }}>
               <Typography variant='h6' style={{ margin: 'auto', marginLeft: '15px' }}>Upcoming Interviews</Typography>
               <IconButton onClick={this.refresh}>
-                <RefreshIcon />
+                <Icon>refresh</Icon>
               </IconButton>
             </Box>
             {
