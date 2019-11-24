@@ -18,14 +18,14 @@ import DirectoryTable from '../directory/subComponents/DirectoryTable';
 const tables = [
   {
     key: 'ready',
-    title: 'Candidates with Availability',
+    title: 'Ready To Be Scheduled',
     allowedActions: [
       { key: 'schedule', icon: 'post_add' },
     ],
   },
   {
     key: 'unready',
-    title: 'Candidates with Missing Availability',
+    title: 'Missing Candidate Availability',
     allowedActions: [
       { key: 'mail', icon: 'mail' },
     ],
