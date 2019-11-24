@@ -83,20 +83,6 @@ export const getUsers = (role) => async (dispatch) => {
   }
 };
 
-function getUserSuccess(user) {
-  return {
-    type: 'GET_USER_SUCCESS',
-    user
-  };
-}
-
-function getUserFailure(error) {
-  return {
-    type: 'GET_USER_FAILURE',
-    error,
-  };
-}
-
 function getCandidateSuccess(candidate) {
   return {
     type: 'GET_CANDIDATE_SUCCESS',
@@ -109,18 +95,6 @@ function getCandidateFailure(error) {
     type: 'GET_CANDIDATE_FAILURE',
     error,
   };
-}
-
-export const getUser = (uuid) => async (dispatch) => {
-  try {
-    dispatch(updateLoadingState('INIT_REQUEST'));
-    const response = await axios.get(`/schedule/candidates/${uuid}`);
-    // TODO: add a safety fallback if user with matching uuid not found
-    const user = response.data[0];
-    return dispatch(getUserSuccess(user));
-  } catch (error) {
-    return dispatch(getUserFailure(error));
-  }
 }
 
 export const getCandidate = (uuid) => async (dispatch) => {

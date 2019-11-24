@@ -35,8 +35,6 @@ const styles = theme => ({});
 const initialState = {
   reqOpen: false,
   optOpen: false,
-  required: [],
-  optional: [],
   candidate: { email: '' },
   rows: [],
   onSuccess: false,
