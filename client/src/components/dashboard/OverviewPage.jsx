@@ -4,6 +4,7 @@ import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Box,
+  CircularProgress,
   Paper,
   Typography,
   Divider,
@@ -59,6 +60,9 @@ const styles = {
     }
   },
   sidebar: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     width: '330px',
     marginRight: '30px',
     padding: '15px 0',
@@ -135,7 +139,7 @@ class OverviewPage extends Component {
   }
 
   render() {
-    const { classes, userProfile, interviews } = this.props;
+    const { classes, userProfile, interviews, user } = this.props;
     const { ready, unready } = this.state;
     return (
       <div>
@@ -168,27 +172,31 @@ class OverviewPage extends Component {
               </IconButton>
             </Box>
             {
-              interviews && interviews.slice(0, 7).map((option, key) => {
-                const date = new Date(option.startTime);
-                const startTime = moment(option.startTime).format('h:mm A');
-                const endTime = moment(option.endTime).format('h:mm A')
-                return (
-                  <div key={key} className={classes.center}>
-                    <Paper className={classes.schedule}>
-                      <div className={classes.date}>
-                        <Typography className={classes.year}>{moment(date).format('YYYY')}</Typography>
-                        <Typography className={classes.month}>{moment(date).format('MMM')}</Typography>
-                        <Typography className={classes.day}>{moment(date).format('DD')}</Typography>
+              !user.interviewsLoading
+                ? (
+                  interviews && interviews.slice(0, 7).map((option, key) => {
+                    const date = new Date(option.startTime);
+                    const startTime = moment(option.startTime).format('h:mm A');
+                    const endTime = moment(option.endTime).format('h:mm A')
+                    return (
+                      <div key={key} className={classes.center}>
+                        <Paper className={classes.schedule}>
+                          <div className={classes.date}>
+                            <Typography className={classes.year}>{moment(date).format('YYYY')}</Typography>
+                            <Typography className={classes.month}>{moment(date).format('MMM')}</Typography>
+                            <Typography className={classes.day}>{moment(date).format('DD')}</Typography>
+                          </div>
+                          <Divider orientation="vertical" />
+                          <div className={classes.time}>
+                            <Typography>{startTime} - {endTime}</Typography>
+                            <Typography>{option.room.name}</Typography>
+                          </div>
+                        </Paper>
                       </div>
-                      <Divider orientation="vertical" />
-                      <div className={classes.time}>
-                        <Typography>{startTime} - {endTime}</Typography>
-                        <Typography>{option.room.name}</Typography>
-                      </div>
-                    </Paper>
-                  </div>
-                );
-              })
+                    );
+                  })
+                )
+                : <CircularProgress />
             }
           </Box>
         </Box>

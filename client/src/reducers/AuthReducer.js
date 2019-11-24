@@ -23,10 +23,15 @@ const AuthReducer = (state = {}, action) => {
         loading: false,
         hasTriedLogin: true,
       };
+    case 'GET_INTERVIEWS_REQUEST':
+      return {
+        ...state,
+        interviewsLoading: true,
+      };
     case 'GET_INTERVIEWS_SUCCESS':
       return {
         ...state,
-        loading: false,
+        interviewsLoading: false,
         interviews: action.payload,
       };
     case 'FIND_MEETING_TIMES_SUCCESS':
