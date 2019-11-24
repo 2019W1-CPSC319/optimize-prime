@@ -155,7 +155,7 @@ class OverviewPage extends Component {
       });
     } else if (mode === 'schedule') {
       const { history } = this.props;
-      console.log('history: ', history);
+      history.push('/calendar', { id: userId });
     }
   }
 

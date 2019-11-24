@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { withRouter } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Swal from 'sweetalert2';
@@ -180,18 +181,19 @@ class CalendarPage extends React.Component {
   }
 
   async componentDidMount() {
-    const { actions, id } = this.props;
+    const { actions, location } = this.props;
     await actions.getUsers('candidate');
     await actions.getUsers('interviewer');
     await actions.getInterviews();
     await actions.getOutlookUsers();
     this.setState({ redirect: true });
-    if (id) {
+    const { state } = location;
+    if (state && state.id) {
       const { candidates } = this.props;
       this.setState({
         reqOpen: true,
         redirect: false,
-        candidate: candidates.find(candidate => candidate.id == id),
+        candidate: candidates.find(candidate => candidate.id === state.id),
       });
     }
   }
@@ -265,4 +267,4 @@ class CalendarPage extends React.Component {
   }
 }
 
-export default withStyles(styles)(CalendarPage);
+export default withRouter(withStyles(styles)(CalendarPage));

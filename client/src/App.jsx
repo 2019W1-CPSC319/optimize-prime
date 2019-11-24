@@ -21,14 +21,7 @@ const App = props => (
       <Route exact path="/unauthorized" render={() => <UnauthorizedPage {...props} />} />
       <Route exact path="/candidate" render={(routeProps) => <CandidatePage {...props} uuid={new URLSearchParams(routeProps.location.search).get('key')} />} />
       <PrivateRoute exact path="/" pageProps={props} render={() => <OverviewPage {...props} />} />
-      <Route exact path="/calendar"
-        render={(routeProps) =>
-          <PrivateRoute exact path="/calendar" pageProps={props} render={() =>
-            <CalendarPage {...props} id={new URLSearchParams(routeProps.location.search).get('id')} />
-          }
-          />
-        }
-      />
+      <PrivateRoute exact path="/calendar" pageProps={props} render={() => <CalendarPage {...props} /> } />
       <PrivateRoute exact path="/room" pageProps={props} render={() => <RoomPage {...props} />} />
       <PrivateRoute exact path="/directory" pageProps={props} render={() => <DirectoryPage {...props} />} />
       <PrivateRoute exact path="/settings" pageProps={props} render={() => <SettingsPage {...props} />} />
