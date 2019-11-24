@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { Redirect } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import Swal from 'sweetalert2';
 import RequestDialog from './RequestDialog';
@@ -38,6 +39,7 @@ const styles = theme => ({});
 const initialState = {
   reqOpen: false,
   optOpen: false,
+  redirect: false,
   required: [],
   optional: [],
   candidate: { email: '' }
@@ -79,8 +81,7 @@ class CalendarPage extends React.Component {
   }
 
   handleOpen = () => {
-    this.setState({ reqOpen: true });
-    this.setState({ optOpen: false });
+    this.setState({ reqOpen: true, optOpen: false });
   }
 
   handleClose = () => {
@@ -88,8 +89,8 @@ class CalendarPage extends React.Component {
       'Cancelled',
       'Your progress has not been saved!',
       'error'
-    )
-    this.setState({ ...initialState });
+    );
+    this.setState({ ...initialState, redirect: true });
   }
 
   updateCandidate = (event, candidate) => {
@@ -118,8 +119,7 @@ class CalendarPage extends React.Component {
         optional: this.state.optional,
         meetingDuration: this.getInterviewDuration(),
       });
-      this.setState({ reqOpen: false });
-      this.setState({ optOpen: true });
+      this.setState({ reqOpen: false, optOpen: true });
     } catch (err) {
       console.error(err);
     }
@@ -141,7 +141,7 @@ class CalendarPage extends React.Component {
     }
 
     // Clear state of dialog
-    this.setState({ ...initialState, onSuccess: true });
+    this.setState({ ...initialState, onSuccess: true, redirect: true });
   }
 
   handleSelectInterviewDuration = (i) => {
@@ -196,8 +196,10 @@ class CalendarPage extends React.Component {
 
   render() {
     const { interviews } = this.props;
+    const { redirect } = this.state;
     return (
       <div>
+        {redirect && <Redirect to='/calendar' />}
         <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Scheduled Interviews</h1>
         <Paper style={{ margin: '0 30px' }}>
           <Table>

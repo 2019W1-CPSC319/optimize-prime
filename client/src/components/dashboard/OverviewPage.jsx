@@ -22,7 +22,7 @@ const styles = {
     marginLeft: '30px',
   },
   content: {
-    margin: 'auto 30px',
+    margin: '20px 30px',
     flex: 2,
   },
   schedule: {

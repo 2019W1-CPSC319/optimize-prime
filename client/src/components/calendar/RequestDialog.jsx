@@ -76,7 +76,7 @@ class RequestDialog extends Component {
             )}
             style={{ width: '100%' }}
             autoComplete={false}
-            value={this.props.candidate }
+            value={this.props.candidate}
             onChange={this.props.updateCandidate}
           />
           <Autocomplete
