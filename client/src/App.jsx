@@ -42,7 +42,6 @@ const mapStateToProps = state => ({
   outlookRooms: state.rooms.outlookRooms,
   meetingSuggestions: state.user.meetingSuggestions,
   interviews: state.user.interviews,
-  directoryErrorMessage: state.directory.errorMessage,
 });
 
 const mapDispatchToProps = dispatch => ({

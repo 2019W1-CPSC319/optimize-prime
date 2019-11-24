@@ -93,7 +93,6 @@ class DirectoryPage extends Component {
       }).then(async (result) => {
         const { value } = result;
         if (value) {
-          console.log('deleting')
           const { value: tabIndex } = this.state;
           const response = await actions.deleteUser(tabs[tabIndex].key, userId);
           if (response && !response.error) {

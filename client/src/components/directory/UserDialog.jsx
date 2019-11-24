@@ -114,7 +114,7 @@ class UserDialog extends Component {
   }
 
   onClickSubmit = async () => {
-    const { actions, mode, selectedUser, onClickCloseDialog, errorMessage } = this.props;
+    const { actions, mode, selectedUser, onClickCloseDialog } = this.props;
     const {
       firstName,
       lastName,
@@ -131,8 +131,6 @@ class UserDialog extends Component {
         phone: phone.replace(/[\s]/g, ''),
         role,
       });
-
-      if (response && response.error) return;
 
       if (role.toLowerCase() === 'candidate') {
         swalWithBootstrapButtons.fire({
@@ -162,11 +160,12 @@ class UserDialog extends Component {
             }
           }
         });
-      } else if (errorMessage) {
+      } else if(response && response.error) {
         swalWithBootstrapButtons.fire(
-          errorMessage
+          response.error.message
         );
-      } else {
+      }
+      else {
         swalWithBootstrapButtons.fire(
           'A new user profile has been created!',
           'You\'re all set.',
@@ -292,7 +291,6 @@ class UserDialog extends Component {
   }
 
   render() {
-    console.log(this.props.errorMessage);
     const { classes, open, onClickCloseDialog } = this.props;
     const dialog = this.getDialogInfoForMode();
     const {

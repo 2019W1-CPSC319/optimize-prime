@@ -29,7 +29,7 @@ export const addUser = (role, user) => async (dispatch) => {
     const newRole = role === 'admin' ? 'administrator' : role;
     return dispatch(addUserSuccess(`${newRole}s`, addedUser));
   } catch (error) {
-    return dispatch(addUserFailure(error.response.data.message));
+    return dispatch(addUserFailure({ message: error.response.data.message }));
   }
 };
 

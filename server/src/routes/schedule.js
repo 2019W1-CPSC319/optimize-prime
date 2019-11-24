@@ -101,11 +101,11 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
     const user = req.body;
     const status = 'A';
     const uuid = uuidv1();
-    const sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid) VALUES (?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO Candidate(firstName, lastName, email, phone, status, uuid, submittedAvailability) VALUES (?, ?, ?, ?, ?, ?, "F")';
     const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
     connection.query(sqlcmd, (err, result) => {
       if (err) {
-        res.status(500).res.send({ message: 'Internal Server error' });
+        res.status(500).send({ message: 'Internal Server error' });
       }
       const addedUser = { ...user, id: result.insertId };
       res.send(addedUser);
@@ -113,15 +113,6 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
   }
-  
-  const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
-  connection.query(sqlcmd, (err, result) => {
-    if (err) {
-      res.status(400).send('The user already exists.');
-    }
-    const addedUser = { ...user, id: result.insertId };
-    res.send(addedUser);
-  });
 });
 
 // edit the interviewer or candidate user information
