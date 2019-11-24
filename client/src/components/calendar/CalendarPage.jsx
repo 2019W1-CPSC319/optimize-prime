@@ -186,7 +186,6 @@ class CalendarPage extends React.Component {
     await actions.getUsers('interviewer');
     await actions.getInterviews();
     await actions.getOutlookUsers();
-    console.log(this.props)
     if (id) {
       const { candidates } = this.props;
       this.setState({
