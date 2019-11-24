@@ -24,7 +24,7 @@ const NAVIGATION_OPTIONS = [
     key: 'calendar', title: 'Calendar', path: '/calendar', icon: 'calendar_today',
   },
   {
-    key: 'room', title: 'Room', path: '/room', icon: 'room',
+    key: 'room', title: 'Rooms', path: '/room', icon: 'room',
   },
   {
     key: 'directory', title: 'Manage Accounts', path: '/directory', icon: 'people',
