@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  Button,
   Fab,
   Icon,
   Paper,
@@ -39,13 +38,6 @@ const styles = {
     backgroundColor: '#003b9a',
   },
 };
-
-export const ALLOWED_USER_ACTIONS = [
-  'add',
-  'mail',
-  'edit',
-  'delete',
-];
 
 export const CANDIDATE_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
@@ -284,15 +276,15 @@ class DirectoryPage extends Component {
           // Otherwise, edit mode wouldn't work because when Directory
           // Page first renders, it does not have a selected user.
           openUserDialog
-          && (
-            <UserDialog
-              mode={mode}
-              open={openUserDialog}
-              onClickCloseDialog={() => this.onClickCloseDialog()}
-              selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
-              actions={actions}
-            />
-          )
+            && (
+              <UserDialog
+                mode={mode}
+                open={openUserDialog}
+                onClickCloseDialog={() => this.onClickCloseDialog()}
+                selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
+                actions={actions}
+              />
+            )
         }
       </div>
     );
