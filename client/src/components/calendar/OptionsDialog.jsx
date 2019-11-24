@@ -19,6 +19,8 @@ import {
   Radio,
   Paper,
   Popover,
+  MenuItem,
+  Select,
 } from '@material-ui/core';
 
 const styles = theme => ({
@@ -87,83 +89,98 @@ class OptionsDialog extends Component {
   }
 
   createOptions = () => {
-    const { classes, meetingSuggestions, handleOpen, selectedOption, handleSelectOption } = this.props;
+    const { classes, meetingSuggestions, handleOpen, selectedOption, selectedRooms, handleSelect, hash } = this.props;
 
     if (Array.isArray(meetingSuggestions.data) && meetingSuggestions.data.length > 0) {
       return (
         <List dense>
-          {meetingSuggestions.data.slice(0, 20).filter(suggestion => suggestion !== null).map((block, value) => {
-            return (
-              <Paper
-                key={value}
-                style={{ marginBottom: '20px' }}>
-                <GreenRadio
-                  checked={selectedOption === value}
-                  onChange={() => handleSelectOption(value)}
-                  value={value}
-                />
-                <Box style={{ width: '100%' }}>
-                  {block.map((option, key) => {
-                    return (
-                      <ListItem key={key}>
-                        <ListItemText
-                          primary={
-                            <Box>
-                              <Box fontWeight='fontWeightBold'>
-                                <Moment
-                                  format='ll'
-                                  tz='America/Los_Angeles'
-                                >
-                                  {option.start}
-                                </Moment>
+          {meetingSuggestions.data
+            .slice(0, 20)
+            .filter(suggestion => suggestion !== null)
+            .map((block, value) => {
+              return (
+                <Paper
+                  key={value}
+                  style={{ marginBottom: '20px' }}>
+                  <GreenRadio
+                    checked={selectedOption === value}
+                    onChange={() => handleSelect('selectedOption', value)}
+                    value={value}
+                  />
+                  <Box style={{ width: '100%' }}>
+                    {block.map((option, key) => {
+                      return (
+                        <ListItem key={key}>
+                          <ListItemText
+                            primary={
+                              <Box>
+                                <Box fontWeight='fontWeightBold'>
+                                  <Moment
+                                    format='ll'
+                                    tz='America/Los_Angeles'
+                                  >
+                                    {option.start}
+                                  </Moment>
+                                </Box>
+                                <Typography>
+                                  Starts at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.start}</Moment>
+                                </Typography>
+                                <Typography>
+                                  Ends at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.end}</Moment>
+                                </Typography>
                               </Box>
-                              <Typography>
-                                Starts at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.start}</Moment>
-                              </Typography>
-                              <Typography>
-                                Ends at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.end}</Moment>
-                              </Typography>
-                            </Box>
-                          }
-                          secondary={option.room.displayName}
-                        />
-                        <Box component='div' display='flex'>
-                          {option.required.map(
-                            interviewer => {
-                              return (
-                                <Avatar
-                                  key={`${interviewer}-${Math.random() * 1000}`}
-                                  // onMouseEnter={this.handlePopoverOpen}
-                                  // onMouseLeave={this.handlePopoverClose}
-                                  className={classes.avatar}
-                                >
-                                  {interviewer.charAt(0).toUpperCase()}
-                                </Avatar>
-                              )
                             }
-                          )}
-                          {option.optional.map(
-                            interviewer => {
-                              return (
-                                <Avatar
-                                  key={`${interviewer}-${Math.random() * 1000}`}
-                                  // onMouseEnter={this.handlePopoverOpen}
-                                  // onMouseLeave={this.handlePopoverClose}
-                                  className={classes.avatar}
-                                >
-                                  {interviewer.charAt(0).toUpperCase()}
-                                </Avatar>
-                              )
-                            }
-                          )}
-                        </Box>
-                      </ListItem>
-                    );
-                  })}
-                </Box>
-              </Paper>
-            );
-          })}
+                          />
+                          <Select
+                            value={selectedRooms[`${value}-${key}`] || 0}
+                            onChange={(event) => handleSelect('selectedRooms', { ...selectedRooms, [`${value}-${key}`]: event.target.value })}
+                          >
+                            {option.room.map((room, key) => (
+                              <MenuItem
+                                key={key}
+                                value={key}
+                              >
+                                {room.displayName}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          <Box component='div' display='flex'>
+                            {option.required.map(
+                              (interviewer, key) => {
+                                return (
+                                  <Avatar
+                                    key={key}
+                                    // onMouseEnter={this.handlePopoverOpen}
+                                    // onMouseLeave={this.handlePopoverClose}
+                                    className={classes.avatar}
+                                  >
+                                    {interviewer.charAt(0).toUpperCase()}
+                                  </Avatar>
+                                )
+                              }
+                            )}
+                            {option.optional.map(
+                              (interviewer, key) => {
+                                return (
+                                  <Avatar
+                                    key={key}
+                                    // onMouseEnter={this.handlePopoverOpen}
+                                    // onMouseLeave={this.handlePopoverClose}
+                                    className={classes.avatar}
+                                  >
+                                    {interviewer.charAt(0).toUpperCase()}
+                                  </Avatar>
+                                )
+                              }
+                            )}
+                          </Box>
+                        </ListItem>
+                      );
+                    })}
+                  </Box>
+                </Paper>
+              );
+            })}
         </List>
       );
     } else {
@@ -212,7 +229,7 @@ class OptionsDialog extends Component {
   }
 
   render() {
-    const { optOpen, meetingSuggestions, handleOpen, handleSave, classes, handleSelectOption } = this.props;
+    const { optOpen, meetingSuggestions, handleOpen, handleSave } = this.props;
     return (
       <Dialog open={optOpen} aria-labelledby='form-options'>
         <DialogTitle id='form-options'>Select Interview Slot</DialogTitle>

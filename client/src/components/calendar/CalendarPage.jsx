@@ -39,6 +39,7 @@ const initialState = {
   rows: [],
   onSuccess: false,
   selectedOption: 0,
+  selectedRooms: {},
 }
 
 class CalendarPage extends React.Component {
@@ -118,17 +119,17 @@ class CalendarPage extends React.Component {
   }
 
   handleSave = async () => {
-    const { selectedOption, candidate: selectedCandidate } = this.state;
+    const { selectedOption, selectedRooms, candidate: selectedCandidate } = this.state;
     const { meetingSuggestions, actions, candidates } = this.props;
     const selectedSuggestions = meetingSuggestions.data[selectedOption];
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
-    var events = [];
-
-    selectedSuggestions.forEach(selectedSuggestion => {
-      events.push(actions.createEvent(selectedSuggestion, candidateUser));
+    const createEvents = selectedSuggestions.map(async (selectedSuggestion, i) => {
+      const room = selectedSuggestion.room[selectedRooms[`${selectedOption}-${i}`]];
+      console.log({ ...selectedSuggestion, room })
+      await actions.createEvent({ ...selectedSuggestion, room }, candidateUser);
     });
 
-    const response = await Promise.all(events);
+    const response = await Promise.all(createEvents);
 
     if (response && !response.error) {
       swalWithBootstrapButtons.fire(
@@ -142,8 +143,10 @@ class CalendarPage extends React.Component {
     this.setState({ ...initialState, onSuccess: true });
   }
 
-  handleSelectOption = (selectedOption) => {
-    this.setState({ selectedOption });
+  handleSelect = (mode, selected) => {
+    console.log(mode)
+    console.log(selected)
+    this.setState({ [mode]: selected });
   }
 
   showSnackbarOnSuccess = () => {
@@ -173,12 +176,12 @@ class CalendarPage extends React.Component {
     )
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { actions } = this.props;
-    actions.getUsers('candidate');
-    actions.getUsers('interviewer');
-    actions.getInterviews();
-    actions.getOutlookUsers();
+    await actions.getUsers('candidate');
+    // actions.getUsers('interviewer');
+    await actions.getInterviews();
+    await actions.getOutlookUsers();
   }
 
   render() {
@@ -238,7 +241,7 @@ class CalendarPage extends React.Component {
         <OptionsDialog
           handleOpen={this.handleOpen}
           handleSave={this.handleSave}
-          handleSelectOption={this.handleSelectOption}
+          handleSelect={this.handleSelect}
           {...this.props}
           {...this.state}
         />
