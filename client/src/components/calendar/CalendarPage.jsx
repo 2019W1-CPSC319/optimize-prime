@@ -185,10 +185,12 @@ class CalendarPage extends React.Component {
     await actions.getUsers('interviewer');
     await actions.getInterviews();
     await actions.getOutlookUsers();
+    this.setState({ redirect: true });
     if (id) {
       const { candidates } = this.props;
       this.setState({
         reqOpen: true,
+        redirect: false,
         candidate: candidates.find(candidate => candidate.id == id),
       });
     }
@@ -199,7 +201,7 @@ class CalendarPage extends React.Component {
     const { redirect } = this.state;
     return (
       <div>
-        {redirect && <Redirect to='/calendar' />}
+        {redirect === true && <Redirect to='/calendar' />}
         <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Scheduled Interviews</h1>
         <Paper style={{ margin: '0 30px' }}>
           <Table>
