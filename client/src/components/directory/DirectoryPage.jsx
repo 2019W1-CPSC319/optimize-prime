@@ -56,6 +56,7 @@ const ALLOWED_USER_ACTIONS = [
 const tabs = [
   { key: 'candidate', title: 'Candidates' },
   { key: 'interviewer', title: 'Interviewers' },
+  { key: 'administrator', title: 'Administrators' }
 ]
 
 class DirectoryPage extends Component {
@@ -72,7 +73,7 @@ class DirectoryPage extends Component {
   componentDidMount() {
     const { actions } = this.props;
     actions.getUsers('candidate');
-    actions.getUsers('interviewer');
+    actions.getUsers('administrator');
     actions.getOutlookUsers();
   }
 
@@ -172,7 +173,7 @@ class DirectoryPage extends Component {
   }
 
   renderDirectoryTable = () => {
-    const { candidates, interviewers } = this.props;
+    const { candidates, interviewers, administrators } = this.props;
     const { value } = this.state;
     const key = tabs[value].key;
 
@@ -182,18 +183,32 @@ class DirectoryPage extends Component {
           headers={CANDIDATE_TABLE_HEADER}
           rows={candidates}
           onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+          type={key}
+          userProfile={this.props.user.profile}
         />
       );
     }
-
     else if (key === 'interviewer') {
       return (
         <DirectoryTable
           headers={EMPLOYEE_TABLE_HEADER}
           rows={interviewers}
           onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+          type={key}
+          userProfile={this.props.user.profile}
         />
       );
+    }
+    else if (key === 'administrator') {
+      return (
+        <DirectoryTable
+          headers={EMPLOYEE_TABLE_HEADER}
+          rows={administrators}
+          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+          type={key}
+          userProfile={this.props.user.profile}
+        />
+      )
     }
 
     return null;
@@ -237,15 +252,15 @@ class DirectoryPage extends Component {
           // Otherwise, edit mode wouldn't work because when Directory
           // Page first renders, it does not have a selected user.
           openUserDialog
-            && (
-              <UserDialog
-                mode={mode}
-                open={openUserDialog}
-                onClickCloseDialog={() => this.onClickCloseDialog()}
-                selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
-                actions={actions}
-              />
-            )
+          && (
+            <UserDialog
+              mode={mode}
+              open={openUserDialog}
+              onClickCloseDialog={() => this.onClickCloseDialog()}
+              selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
+              actions={actions}
+            />
+          )
         }
       </div>
     );
