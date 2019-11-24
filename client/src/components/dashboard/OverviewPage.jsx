@@ -188,6 +188,7 @@ class OverviewPage extends Component {
                           </div>
                           <Divider orientation="vertical" />
                           <div className={classes.time}>
+                            <Typography>{option.candidate.firstName + " " + option.candidate.lastName}</Typography>
                             <Typography>{startTime} - {endTime}</Typography>
                             <Typography>{option.room.name}</Typography>
                           </div>
