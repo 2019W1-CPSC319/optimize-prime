@@ -510,6 +510,14 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
             },
           };
           res.send(formattedInterview);
+
+          sql = "UPDATE Candidate SET submittedAvailability = 'F' WHERE id = ?";
+          sqlcmd = connection.format(sql, [candidate.id]);
+          connection.query(sqlcmd, (err, newScheduledInterview) => {
+            if (err) {
+              return res.status(500).send({ message: 'Internal server error.' });
+            }
+          });
         });
       });
     });
