@@ -136,7 +136,7 @@ router.put('/edituser', (req, res) => {
       break;
     default: return;
   }
-  
+
   let sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, user.id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
@@ -438,7 +438,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     const requiredAttendees = required.map((interviewer) => ({
       type: 'required',
       emailAddress: {
-        address: interviewer.email,
+        address: interviewer,
       },
     }));
 
@@ -446,7 +446,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     const optionalAttendees = optional.map((interviewer) => ({
       type: 'optional',
       emailAddress: {
-        address: interviewer.email,
+        address: interviewer,
       },
     }));
 

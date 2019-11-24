@@ -136,11 +136,11 @@ export const createEvent = (selectedSuggestion, candidate) => async (dispatch) =
     date: {
       startTime: {
         dateTime: start,
-        timeZone: 'Pacific Standard Time',
+        timeZone: 'UTC',
       },
       endTime: {
         dateTime: end,
-        timeZone: 'Pacific Standard Time',
+        timeZone: 'UTC',
       },
     },
     required,
