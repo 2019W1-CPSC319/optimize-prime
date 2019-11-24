@@ -124,7 +124,7 @@ class CalendarPage extends React.Component {
     const selectedSuggestions = meetingSuggestions.data[selectedOption];
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
     const createEvents = selectedSuggestions.map(async (selectedSuggestion, i) => {
-      const room = selectedSuggestion.room[selectedRooms[`${selectedOption}-${i}`]];
+      const room = selectedSuggestion.room[selectedRooms[`${selectedOption}-${i}`] || 0];
       console.log({ ...selectedSuggestion, room })
       await actions.createEvent({ ...selectedSuggestion, room }, candidateUser);
     });
