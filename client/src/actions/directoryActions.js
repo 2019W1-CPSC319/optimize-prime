@@ -26,8 +26,7 @@ export const addUser = (role, user) => async (dispatch) => {
     dispatch(updateLoadingState('INIT_REQUEST'));
     const response = await axios.post(`/schedule/new${role}`, user);
     const addedUser = response.data;
-    const newRole = role === 'admin' ? 'administrator' : role;
-    return dispatch(addUserSuccess(`${newRole}s`, addedUser));
+    return dispatch(addUserSuccess(`${role}s`, addedUser));
   } catch (error) {
     return dispatch(addUserFailure({ message: error.response.data.message }));
   }

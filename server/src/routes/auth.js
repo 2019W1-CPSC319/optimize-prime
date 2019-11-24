@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.get('/signin', (req, res, next) => {
   passport.authenticate('azure-connect', {
-
     response: res,
     prompt: 'login',
     failureRedirect: '/error',
@@ -21,7 +20,6 @@ router.post('/callback', (req, res, next) => {
   passport.authenticate('azure-connect', {
     response: res,
     failureRedirect: '/error',
-
   })(req, res, next);
 }, async (req, res) => {
   const query = 'SELECT email FROM adminusers WHERE email = ?';

@@ -11,7 +11,7 @@ import CalendarPage from './components/calendar/CalendarPage';
 import RoomPage from './components/room/RoomPage';
 import DirectoryPage from './components/directory/DirectoryPage';
 import SettingsPage from './components/settings/SettingsPage';
-import NotFoundPage from './components/notfound/NotFoundPage';
+import NotFoundPage from './components/misc/NotFoundPage';
 
 const App = props => (
   <BrowserRouter>
