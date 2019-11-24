@@ -1,6 +1,5 @@
 import React from 'react';
-import Moment from 'react-moment';
-import 'moment-timezone';
+import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import Swal from 'sweetalert2';
 import RequestDialog from './RequestDialog';
@@ -219,8 +218,8 @@ class CalendarPage extends React.Component {
                       <TableCell align="center">{interview.candidate.firstName + ' ' + interview.candidate.lastName}</TableCell>
                       <TableCell align="center">{interview.room.name}</TableCell>
                       <TableCell align="center">{interview.room.seats}</TableCell>
-                      <TableCell align="center"><Moment subtract={{ hours: 8 }} format='ll h:mm a' tz='America/Los_Angeles'>{interview.startTime}</Moment></TableCell>
-                      <TableCell align="center"><Moment subtract={{ hours: 8 }} format='ll h:mm a' tz='America/Los_Angeles'>{interview.endTime}</Moment></TableCell>
+                      <TableCell align="center">{moment(interview.startTime).format('ll h:mm a')}</TableCell>
+                      <TableCell align="center">{moment(interview.endTime).format('ll h:mm a')}</TableCell>
                     </TableRow>
                   );
                 })}

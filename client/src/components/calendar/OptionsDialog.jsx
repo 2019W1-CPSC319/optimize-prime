@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import Moment from 'react-moment';
-import 'moment-timezone';
+import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import {
@@ -112,9 +111,9 @@ class OptionsDialog extends Component {
                   id={labelId}
                   primary={
                     <Box>
-                      <Box fontWeight='fontWeightBold'><Moment subtract={{ hours: 8 }} format='ll' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Box>
-                      <Typography>Starts at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.start.dateTime}</Moment></Typography>
-                      <Typography>Ends at <Moment subtract={{ hours: 8 }} format='h:mm a' tz='America/Los_Angeles'>{option.end.dateTime}</Moment></Typography>
+                      <Box fontWeight='fontWeightBold'>{moment(option.start.dateTime).format('MMM DD, YYYY')}</Box>
+                      <Typography>Starts at {moment(option.start.dateTime).format('h:mm A')}</Typography>
+                      <Typography>Ends at {moment(option.end.dateTime).format('h:mm A')}</Typography>
                     </Box>
                   }
                   secondary={option.room.displayName} />
