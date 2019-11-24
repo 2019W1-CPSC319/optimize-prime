@@ -62,6 +62,12 @@ async function findTimes(interviews, candidateEmail, token) {
     for (block = 0; block < availability.length; block++) {
         let start = availability[block].start, end = availability[block].end;
 
+        if (new moment().diff(start) > 0) {
+            // If this interview is before now
+            console.log("Skipping availability block as it started in the past");
+            continue;
+        }
+
         // Make sure that the block is longer than the duration of all interviews
         let blockDuration = moment.duration(end.diff(start)).asMinutes();
         if (totalTime > blockDuration) {
@@ -137,6 +143,7 @@ function parseNumArrayToTimes(interviews, solution, blockStart) {
         
         DEBUG && console.log(interviewConfiguration[i].start.format() + "  :  " + interviewConfiguration[i].end.format())
     }
+
 
     DEBUG && console.log("Interview Configuration:");
     DEBUG && console.log(interviewConfiguration);
