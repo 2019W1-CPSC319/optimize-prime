@@ -15,6 +15,9 @@ const styles = {
   table: {
     minWidth: 650,
   },
+  iconButton: {
+    color: '#f0a017',
+  },
 };
 
 class DirectoryTable extends Component {
@@ -30,7 +33,15 @@ class DirectoryTable extends Component {
   }
 
   render() {
-    const { classes, headers, rows, onClickUserAction } = this.props;
+    const {
+      classes,
+      headers,
+      rows,
+      allowedActions,
+      user,
+      onClickUserAction,
+    } = this.props;
+    const { username } = user;
 
     return (
       <Table className={classes.table}>
@@ -55,17 +66,27 @@ class DirectoryTable extends Component {
                   {row.firstName}
                 </TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone ? row.phone : ''}</TableCell>
+                {
+                  row.phone
+                    ? <TableCell>{row.phone}</TableCell>
+                    : null
+                }
                 <TableCell>
-                  <IconButton onClick={() => onClickUserAction('mail', row.id)}>
-                    <Icon>mail</Icon>
-                  </IconButton>
-                  <IconButton onClick={() => onClickUserAction('edit', row.id)}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton onClick={() => onClickUserAction('delete', row.id)}>
-                    <Icon>delete</Icon>
-                  </IconButton>
+                  {
+                    allowedActions.map(action => {
+                      const { key, icon } = action;
+                      return (
+                        <IconButton
+                          className={classes.icon}
+                          key={key}
+                          onClick={() => onClickUserAction(key, row.id)}
+                          disabled={username === row.email}
+                        >
+                          <Icon>{icon}</Icon>
+                        </IconButton>
+                      );
+                    })
+                  }
                 </TableCell>
               </TableRow>
             ))

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import Moment from 'react-moment';
-import 'moment-timezone';
+import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 import {

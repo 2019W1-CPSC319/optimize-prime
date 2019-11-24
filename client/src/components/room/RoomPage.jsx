@@ -6,6 +6,8 @@ import AddRoundedIcon from '@material-ui/icons/AddRounded';
 import { green } from '@material-ui/core/colors';
 import {
   Box,
+  Icon,
+  IconButton,
   Table,
   TableHead,
   TableRow,
@@ -156,9 +158,10 @@ export default class RoomPage extends React.Component {
   }
 
   render() {
+    const { rooms } = this.props;
     return (
       <div>
-        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Room</h1>
+        <h1 style={{ marginLeft: '30px', fontWeight: 'normal' }}>Rooms</h1>
         <Paper style={{ margin: '0 30px' }}>
           <Table>
             <TableHead>
@@ -169,23 +172,21 @@ export default class RoomPage extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.props.rooms.map(
-                room => {
-                  return (
-                    <TableRow key={room.id}>
-                      <TableCell>{room.name}</TableCell>
-                      <TableCell align="center">{room.seats}</TableCell>
-                      <TableCell>
-                        <Button
-                          value={room.id}
-                          color="default"
-                          variant="outlined"
-                          onClick={() => this.handleDeleteRoom(room.id)}
-                        >Delete</Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+              {
+                rooms.map(room => (
+                  <TableRow key={room.id}>
+                    <TableCell>{room.name}</TableCell>
+                    <TableCell align="center">{room.seats}</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={() => this.handleDeleteRoom(room.id)}
+                      >
+                        <Icon style={{ color: '#f0a017' }}>delete</Icon>
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              }
             </TableBody>
           </Table>
         </Paper>

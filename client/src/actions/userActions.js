@@ -171,7 +171,7 @@ const getInterviewsFailure = (error) => (
 
 export const getInterviews = () => async (dispatch) => {
   try {
-    dispatch(updateLoadingState('INIT_REQUEST'));
+    dispatch(updateLoadingState('GET_INTERVIEWS_REQUEST'));
     const response = await axios.get('/schedule/interviews');
     const interviews = response.data;
     return dispatch(getInterviewsSuccess(interviews));

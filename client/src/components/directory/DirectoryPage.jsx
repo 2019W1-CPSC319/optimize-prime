@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  Button,
+  Fab,
   Icon,
   Paper,
   Tab,
@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 import DirectoryTable from './subComponents/DirectoryTable';
 import UserDialog from './UserDialog';
 
-const swalWithBootstrapButtons = Swal.mixin({
+export const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: 'btn btn-success',
     cancelButton: 'btn btn-danger'
@@ -31,33 +31,58 @@ const styles = {
   tableContainer: {
     margin: '0 30px',
   },
+  addButton: {
+    position: 'fixed',
+    right: '30px',
+    bottom: '30px',
+    backgroundColor: '#003b9a',
+  },
 };
 
-const CANDIDATE_TABLE_HEADER = [
+export const CANDIDATE_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
   { key: 'email', title: 'Email' },
   { key: 'phone', title: 'Phone Number' },
 ];
 
-const EMPLOYEE_TABLE_HEADER = [
+const INTERVIEWER_TABLE_HEADER = [
   { key: 'lastName', title: 'Last Name' },
   { key: 'firstName', title: 'First Name' },
   { key: 'email', title: 'Email' },
 ];
 
-const ALLOWED_USER_ACTIONS = [
-  'add',
-  'mail',
-  'edit',
-  'delete',
+const ADMINISTRATOR_TABLE_HEADER = [
+  { key: 'lastName', title: 'Last Name' },
+  { key: 'firstName', title: 'First Name' },
+  { key: 'email', title: 'Email' },
+  { key: 'phone', title: 'Phone Number' },
 ];
 
 const tabs = [
-  { key: 'candidate', title: 'Candidates' },
-  { key: 'interviewer', title: 'Interviewers' },
-  { key: 'administrator', title: 'Administrators' }
-]
+  {
+    key: 'candidate',
+    title: 'Candidates',
+    allowedActions: [
+      { key: 'mail', icon: 'mail' },
+      { key: 'edit', icon: 'edit' },
+      { key: 'delete', icon: 'delete' },
+    ],
+  },
+  {
+    key: 'interviewer',
+    title: 'Interviewers',
+    allowedActions: [],
+  },
+  {
+    key: 'administrator',
+    title: 'Administrators',
+    allowedActions: [
+      { key: 'edit', icon: 'edit' },
+      { key: 'delete', icon: 'delete' },
+    ],
+  },
+];
 
 class DirectoryPage extends Component {
   constructor(props) {
@@ -78,7 +103,18 @@ class DirectoryPage extends Component {
   }
 
   onClickUserAction = (mode, userId) => {
-    if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
+    const { value: tabIndex } = this.state;
+
+    // Add is by default available regardless of tab
+    if (mode === 'add') {
+      this.setState({
+        mode,
+        selectedUserId: '',
+        openUserDialog: true,
+      });
+    }
+
+    if (!tabs[tabIndex].allowedActions.find(action => action.key === mode)) return;
     const { actions } = this.props;
 
     if (mode === 'delete') {
@@ -93,7 +129,6 @@ class DirectoryPage extends Component {
       }).then(async (result) => {
         const { value } = result;
         if (value) {
-          const { value: tabIndex } = this.state;
           const response = await actions.deleteUser(tabs[tabIndex].key, userId);
           if (response && !response.error) {
             swalWithBootstrapButtons.fire(
@@ -142,9 +177,10 @@ class DirectoryPage extends Component {
         }
       });
     } else {
+      // Edit user
       this.setState({
         mode,
-        selectedUserId: userId || '',
+        selectedUserId: userId,
         openUserDialog: true,
       });
     }
@@ -173,45 +209,34 @@ class DirectoryPage extends Component {
   }
 
   renderDirectoryTable = () => {
-    const { candidates, interviewers, administrators } = this.props;
+    const { user } = this.props;
     const { value } = this.state;
     const key = tabs[value].key;
+    let headers;
 
-    if (key === 'candidate') {
-      return (
-        <DirectoryTable
-          headers={CANDIDATE_TABLE_HEADER}
-          rows={candidates}
-          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
-          type={key}
-          userProfile={this.props.user.profile}
-        />
-      );
-    }
-    else if (key === 'interviewer') {
-      return (
-        <DirectoryTable
-          headers={EMPLOYEE_TABLE_HEADER}
-          rows={interviewers}
-          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
-          type={key}
-          userProfile={this.props.user.profile}
-        />
-      );
-    }
-    else if (key === 'administrator') {
-      return (
-        <DirectoryTable
-          headers={EMPLOYEE_TABLE_HEADER}
-          rows={administrators}
-          onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
-          type={key}
-          userProfile={this.props.user.profile}
-        />
-      )
+    switch (key) {
+      case 'candidate':
+        headers = CANDIDATE_TABLE_HEADER;
+        break;
+      case 'interviewer':
+        headers = INTERVIEWER_TABLE_HEADER;
+        break;
+      case 'administrator':
+        headers = ADMINISTRATOR_TABLE_HEADER;
+        break;
+      default:
+        return null;
     }
 
-    return null;
+    return (
+      <DirectoryTable
+        headers={headers}
+        rows={this.props[`${key}s`]}
+        allowedActions={tabs[value].allowedActions}
+        onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+        user={user}
+      />
+    );
   }
 
   render() {
@@ -222,14 +247,6 @@ class DirectoryPage extends Component {
       <div>
         <div className={classes.header}>
           <h1 className={classes.title}>Directory</h1>
-          <Button
-            variant="outlined"
-            className={classes.button}
-            onClick={() => this.onClickUserAction('add')}
-          >
-            <Icon className={classes.icon}>person_add</Icon>
-            ADD NEW USER
-          </Button>
         </div>
         <Paper className={classes.tableContainer}>
           <Tabs
@@ -246,21 +263,28 @@ class DirectoryPage extends Component {
           </Tabs>
           {this.renderDirectoryTable()}
         </Paper>
+        <Fab
+          color="primary"
+          className={classes.addButton}
+          onClick={() => this.onClickUserAction('add')}
+        >
+          <Icon>add_rounded</Icon>
+        </Fab>
         {
           // This condition is necessary to make sure UserDialog is
           // only rendered when we actually set openUserDialog to true.
           // Otherwise, edit mode wouldn't work because when Directory
           // Page first renders, it does not have a selected user.
           openUserDialog
-          && (
-            <UserDialog
-              mode={mode}
-              open={openUserDialog}
-              onClickCloseDialog={() => this.onClickCloseDialog()}
-              selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
-              actions={actions}
-            />
-          )
+            && (
+              <UserDialog
+                mode={mode}
+                open={openUserDialog}
+                onClickCloseDialog={() => this.onClickCloseDialog()}
+                selectedUser={mode === 'edit' ? this.getSelectedUser() : {}}
+                actions={actions}
+              />
+            )
         }
       </div>
     );

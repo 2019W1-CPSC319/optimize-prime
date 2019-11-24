@@ -115,7 +115,7 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
   }
 });
 
-// edit the interviewer or candidate user information
+// edit the administrator or candidate user information
 router.put('/edituser', (req, res) => {
   const user = req.body;
   const type = user.role;
@@ -124,9 +124,6 @@ router.put('/edituser', (req, res) => {
   switch (type) {
     case 'candidate':
       sql = 'UPDATE Candidate SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
-      break;
-    case 'interviewer':
-      sql = 'UPDATE Interviewer SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
       break;
     case 'administrator':
       sql = 'UPDATE AdminUsers SET firstName = ?, lastName = ?, email = ?, phone = ? WHERE id = ?';
@@ -142,9 +139,6 @@ router.put('/edituser', (req, res) => {
     switch (type) {
       case 'candidate':
         sql = 'SELECT * FROM Candidate WHERE id = ?';
-        break;
-      case 'interviewer':
-        sql = 'SELECT * FROM Interviewer WHERE id = ?';
         break;
       case 'administrator':
         sql = 'SELECT * FROM AdminUsers WHERE id = ?';
@@ -248,31 +242,20 @@ router.post('/availability', (req, res) => {
         if (err) {
           return res.status(500).send({ message: 'Internal Server error' });
         }
+
+        const sql = "UPDATE Candidate SET submittedAvailability = 'T' WHERE id = ?";
+        const sqlcmd = connection.format(sql, [candidateId]);
+        connection.query(sqlcmd, (err, result) => {
+          if (err) {
+            return res.status(500).send({ message: 'Internal Server error' });
+          }
+        });
         res.send(result);
       });
     });
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
   }
-});
-
-// update the status of a interviewer to disabled, in the interviewer table
-router.put('/interviewer/delete/:id', (req, res) => {
-  const { id } = req.params;
-  const sql = "UPDATE Interviewer SET status = 'D' WHERE id = ?";
-  const sqlcmd = connection.format(sql, [id]);
-  connection.query(sqlcmd, (err, result) => {
-    if (err) {
-      res.status(500).send({ message: 'Internal server error.' });
-    }
-    res.send(result);
-  });
-});
-
-router.post('/allmeetings', notAuthMiddleware, async (req, res) => {
-  const { candidate, interviews } = req.body;
-  let result = await scheduler.findTimes(interviews, candidate, req.user.accessToken);
-  res.send(result);
 });
 
 // find all the possible meeting times, given the following constraints/information:
@@ -371,6 +354,7 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
               url: 'https://graph.microsoft.com/v1.0/me/findmeetingtimes',
               headers: {
                 Authorization: `Bearer ${req.user.accessToken}`,
+                Prefer: `outlook.timezone="${timeZone}"`,
               },
               data,
             });
@@ -406,12 +390,9 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     const {
       candidate, date, required, optional, room,
     } = req.body;
-
     const subject = `Interview with ${candidate.firstName} ${candidate.lastName}`;
     const content = 'Please confirm if you are available during this time.';
-
-    const timeZone = 'UTC';
-
+    const timeZone = 'Pacific Standard Time';
     // create candidate as an attendee
     const candidateAttendee = [
       {
@@ -421,7 +402,6 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         },
       },
     ];
-
     // required attendees
     const requiredAttendees = required.map((interviewer) => ({
       type: 'required',
@@ -429,7 +409,6 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         address: interviewer,
       },
     }));
-
     // optional attendees
     const optionalAttendees = optional.map((interviewer) => ({
       type: 'optional',
@@ -437,23 +416,21 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         address: interviewer,
       },
     }));
-
     const roomAttendee = {
       type: 'required',
       emailAddress: {
         address: room.email,
       },
     };
-
     // combine all the attendees aswell as the candidate
     const interviewerAttendees = requiredAttendees.concat(optionalAttendees);
     const attendees = interviewerAttendees.concat(candidateAttendee).concat(roomAttendee);
-
     const response = await axios({
       method: 'post',
       url: 'https://graph.microsoft.com/v1.0/me/events',
       headers: {
         Authorization: `Bearer ${req.user.accessToken}`,
+        Prefer: `outlook.timezone="${timeZone}"`,
       },
       data: {
         subject,
@@ -470,30 +447,65 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         attendees,
       },
     });
-
     // insert the scheduled interview in the candidate table
-
-    const sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
-    const sqlcmd = connection.format(sql, [room.name]);
-
+    let sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
+    let sqlcmd = connection.format(sql, [room.name]);
     connection.query(sqlcmd, (err, result) => {
       if (err) {
         return res.status(500).send({ message: 'Internal server error.' });
       }
 
       // get roomId
-      const roomId = result[0].id;
-      const sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, STR_TO_DATE(?, ?), STR_TO_DATE(?, ?), ?)'
-      const sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, '%Y-%m-%dT%H:%i:%s.%fZ', date.endTime.dateTime, '%Y-%m-%dT%H:%i:%s.%fZ', roomId]);
-      connection.query(sqlcmd, (err, result) => {
+      const newRoomId = result[0].id;
+      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
+      sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, newRoomId]);
+      connection.query(sqlcmd, (err, scheduledInterview) => {
         if (err) {
           return res.status(500).send({ message: 'Internal server error.' });
         }
+        sql = 'SELECT s.id, startTime, endTime, c.id AS candidateId, firstName, lastName, r.id AS roomId, name, seats FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE s.id = ?';
+        sqlcmd = connection.format(sql, [scheduledInterview.insertId]);
+        connection.query(sqlcmd, (err, newScheduledInterview) => {
+          if (err) {
+            return res.status(500).send({ message: 'Internal server error.' });
+          }
+          const {
+            candidateId,
+            firstName,
+            lastName,
+            roomId,
+            name,
+            seats,
+            ...interviewDetails
+          } = newScheduledInterview[0];
+          const formattedInterview = {
+            ...interviewDetails,
+            candidate: {
+              id: candidateId,
+              firstName,
+              lastName,
+            },
+            room: {
+              id: roomId,
+              name,
+              seats,
+            },
+          };
+          res.send(formattedInterview);
+
+          sql = "UPDATE Candidate SET submittedAvailability = 'F' WHERE id = ?";
+          sqlcmd = connection.format(sql, [candidate.id]);
+          connection.query(sqlcmd, (err, newScheduledInterview) => {
+            if (err) {
+              return res.status(500).send({ message: 'Internal server error.' });
+            }
+          });
+        });
       });
     });
-    res.send(response.data);
   } catch (error) {
     console.log(error);
+    res.status(error.response.status).send(error.message);
   }
 });
 
@@ -553,13 +565,38 @@ router.get('/outlook/users', notAuthMiddleware, async (req, res) => {
 // get a list of interviews
 router.get('/interviews', notAuthMiddleware, (req, res) => {
   const currDate = new Date();
-  const sql = 'SELECT * FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ?';
+  const sql = 'SELECT s.id, startTime, endTime, c.id AS candidateId, firstName, lastName, r.id AS roomId, name, seats FROM Candidate c INNER JOIN ScheduledInterview s ON c.id = s.candidateId INNER JOIN Rooms r ON s.roomId = r.id WHERE startTime >= ? ORDER BY startTime';
   const sqlcmd = connection.format(sql, [currDate]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      res.status(500).send({ message: 'Internal server error.' });
+      return res.status(500).send({ message: 'Internal Server error' });
     }
-    res.send(result);
+    const formattedInterviews = result.map((interview) => {
+      const {
+        candidateId,
+        firstName,
+        lastName,
+        roomId,
+        name,
+        seats,
+        ...interviewDetails
+      } = interview;
+
+      return {
+        ...interviewDetails,
+        candidate: {
+          id: candidateId,
+          firstName,
+          lastName,
+        },
+        room: {
+          id: roomId,
+          name,
+          seats,
+        },
+      };
+    });
+    res.send(formattedInterviews);
   });
 });
 
