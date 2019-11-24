@@ -182,7 +182,7 @@ class OverviewPage extends Component {
                       <Divider orientation="vertical" />
                       <div className={classes.time}>
                         <Typography>{startTime} - {endTime}</Typography>
-                        <Typography>{option.name}</Typography>
+                        <Typography>{option.room.name}</Typography>
                       </div>
                     </Paper>
                   </div>
