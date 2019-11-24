@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import moment from 'moment';
+import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import {
   Box,
@@ -12,9 +12,25 @@ import {
   Icon
 } from '@material-ui/core';
 
-import * as user from '../../selectors/AuthSelector';
-import { ALLOWED_USER_ACTIONS, swalWithBootstrapButtons } from '../directory/DirectoryPage';
-import CandidateTable from './subComponents/CandidateTable';
+import { CANDIDATE_TABLE_HEADER, swalWithBootstrapButtons } from '../directory/DirectoryPage';
+import DirectoryTable from '../directory/subComponents/DirectoryTable';
+
+const tables = [
+  {
+    key: 'ready',
+    title: 'Candidates with Availability',
+    allowedActions: [
+      { key: 'schedule', icon: 'post_add' },
+    ],
+  },
+  {
+    key: 'unready',
+    title: 'Candidates with Missing Availability',
+    allowedActions: [
+      { key: 'mail', icon: 'mail' },
+    ],
+  }
+]
 
 const styles = {
   title: {
@@ -24,6 +40,9 @@ const styles = {
   content: {
     margin: '20px 30px',
     flex: 2,
+  },
+  table: {
+    marginBottom: '15px',
   },
   schedule: {
     display: 'flex',
@@ -95,7 +114,6 @@ class OverviewPage extends Component {
   }
 
   onClickUserAction = (mode, userId) => {
-    if (!ALLOWED_USER_ACTIONS.includes(mode)) return;
     const { actions } = this.props;
 
     if (mode === 'mail') {
@@ -135,34 +153,45 @@ class OverviewPage extends Component {
           }
         }
       });
+    } else if (mode === 'schedule') {
+      const { history } = this.props;
+      console.log('history: ', history);
     }
   }
 
   render() {
-    const { classes, userProfile, interviews, user } = this.props;
-    const { ready, unready } = this.state;
+    const { classes, interviews, user } = this.props;
+    const { profile } = user;
+
     return (
       <div>
         {
-          userProfile &&
-          <h1 className={classes.title}>
-            Welcome, {userProfile.givenName}
-          </h1>
+          profile
+            && (
+              <h1 className={classes.title}>
+                Welcome, {profile.givenName}
+              </h1>
+            )
         }
         <Box component='div' display='flex'>
           <Box className={classes.content}>
-            <Typography variant='h6' style={{ marginBottom: '10px' }}>Candidates with Availability</Typography>
-            <CandidateTable
-              onClickUserAction={this.onClickUserAction}
-              rows={ready}
-              mode='ready'
-            />
-            <Typography variant='h6' style={{ marginBottom: '10px', marginTop: '35px' }}>Candidates with Missing Availability</Typography>
-            <CandidateTable
-              onClickUserAction={this.onClickUserAction}
-              rows={unready}
-              mode='unready'
-            />
+            {
+              tables.map(table => {
+                const { title, key } = table;
+                return (
+                  <div key={key} className={classes.table}>
+                    <Typography variant="h6">{title}</Typography>
+                    <DirectoryTable
+                      headers={CANDIDATE_TABLE_HEADER}
+                      rows={this.state[key]}
+                      allowedActions={tables.find(table => table.key === key).allowedActions}
+                      onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
+                      user={user}
+                    />
+                  </div>
+                )
+              })
+            }
           </Box>
           <Box className={classes.sidebar}>
             <Box component='div' display='flex' style={{ justifyContent: 'space-between' }}>
@@ -206,10 +235,4 @@ class OverviewPage extends Component {
   };
 };
 
-const mapStateToProps = (state) => ({
-  userProfile: user.getUserProfile(state),
-  loading: user.isLoading(state),
-  hasTriedLogin: user.hasTriedLogin(state),
-});
-
-export default withStyles(styles)(connect(mapStateToProps)(OverviewPage));
+export default withRouter(withStyles(styles)(OverviewPage));
