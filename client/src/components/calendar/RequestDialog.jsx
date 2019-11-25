@@ -82,7 +82,7 @@ class RequestDialog extends Component {
             autoFocus
             options={candidates.filter(c => c.submittedAvailability == "T")}
             getOptionLabel={candidate => candidate.firstName ? candidate.firstName + " " + candidate.lastName + " (" + candidate.email + ")" : ""}
-            style={{ width: 300 }}
+            style={{ width: 500 }}
             renderInput={params => (
               <TextField {...params} label="Candidate" variant="outlined" fullWidth />
             )}
@@ -109,7 +109,7 @@ class RequestDialog extends Component {
                       getOptionLabel={interviewer => interviewer.email}
                       filterSelectedOptions
                       renderInput={params => (
-                        <TextField {...params} label="Required interviewer(s)" variant="outlined" fullWidth />
+                        <TextField {...params} label="Required interviewer(s)" variant="outlined" style={{ width: 400 }} />
                       )}
                       autoComplete={false}
                       value={row.required}
@@ -123,7 +123,7 @@ class RequestDialog extends Component {
                       getOptionLabel={interviewer => interviewer.email}
                       filterSelectedOptions
                       renderInput={params => (
-                        <TextField {...params} label="Optional interviewer(s)" variant="outlined" fullWidth />
+                        <TextField {...params} label="Optional interviewer(s)" variant="outlined" style={{ width: 400 }} />
                       )}
                       autoComplete={false}
                       value={row.optional}
