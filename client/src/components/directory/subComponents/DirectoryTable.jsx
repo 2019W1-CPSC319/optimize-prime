@@ -77,7 +77,7 @@ class DirectoryTable extends Component {
                       const { key, icon } = action;
                       return (
                         <IconButton
-                          className={classes.icon}
+                          className={classes.iconButton}
                           key={key}
                           onClick={() => onClickUserAction(key, row.id)}
                           disabled={username === row.email}
