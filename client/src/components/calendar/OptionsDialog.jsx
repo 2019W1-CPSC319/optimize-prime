@@ -117,20 +117,9 @@ class OptionsDialog extends Component {
                           <ListItemText
                             primary={
                               <Box>
-                                <Box fontWeight='fontWeightBold'>
-                                  <Moment
-                                    format='ll'
-                                    tz='America/Los_Angeles'
-                                  >
-                                    {option.start}
-                                  </Moment>
-                                </Box>
-                                <Typography>
-                                  Starts at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.start}</Moment>
-                                </Typography>
-                                <Typography>
-                                  Ends at <Moment format='h:mm a' tz='America/Los_Angeles'>{option.end}</Moment>
-                                </Typography>
+                                <Box fontWeight='fontWeightBold'>{moment(option.start).format('MMM DD, YYYY')}</Box>
+                                <Typography>Starts at {moment(option.start).format('h:mm A')}</Typography>
+                                <Typography>Ends at {moment(option.end).format('h:mm A')}</Typography>
                               </Box>
                             }
                           />
