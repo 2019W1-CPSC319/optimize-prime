@@ -87,10 +87,14 @@ class OptionsDialog extends Component {
     this.setState({ background: background });
   }
 
+  enableSelect = (data) => {
+    return Array.isArray(data) && data.length > 0;
+  }
+
   createOptions = () => {
     const { classes, meetingSuggestions, handleOpen, selectedOption, selectedRooms, handleSelect, hash } = this.props;
 
-    if (Array.isArray(meetingSuggestions.data) && meetingSuggestions.data.length > 0) {
+    if (this.enableSelect(meetingSuggestions.data)) {
       return (
         <List dense>
           {meetingSuggestions.data
@@ -241,7 +245,7 @@ class OptionsDialog extends Component {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleOpen} color='primary'>Back</Button>
-          <Button onClick={handleSave} color='primary'>Save</Button>
+          <Button onClick={handleSave} color='primary' disabled={!meetingSuggestions || !this.enableSelect(meetingSuggestions.data)}>Save</Button>
         </DialogActions>
       </Dialog>
     );
