@@ -23,10 +23,6 @@ import {
   Slide,
 } from '@material-ui/core';
 
-function formatDateTime(dateTime) {
-  return moment.utc(dateTime).local().format('M/D/YY h:mm A');
-}
-
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
     confirmButton: 'btn btn-success',
@@ -41,44 +37,18 @@ const initialState = {
   reqOpen: false,
   optOpen: false,
   redirect: false,
-  required: [],
-  optional: [],
-  candidate: { email: '' }
+  candidate: { email: '' },
+  rows: [],
+  onSuccess: false,
+  selectedOption: 0,
+  selectedRooms: {},
 }
 
 class CalendarPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      ...initialState,
-      events: [],
-      onSuccess: false,
-      onSlide: false,
-      selected: 0,
-      selectedOption: 0,
-      background: ['#280e3a', '#fff', '#fff', '#fff'],
-      color: ['#fff', '#000', '#000', '#000'],
-      durations: [
-        { minutes: 30 },
-        { minutes: 60 },
-        { minutes: 90 },
-        { minutes: 120 }
-      ]
-    };
-  }
-
-  getInterviewDuration = () => {
-    switch (this.state.durations[this.state.selected].minutes) {
-      case 30:
-        return 'PT30M';
-      case 60:
-        return 'PT1H';
-      case 90:
-        return 'PT1H30M';
-      case 120:
-        return 'PT2H';
-    }
+    this.state = initialState;
   }
 
   handleOpen = () => {
@@ -98,40 +68,68 @@ class CalendarPage extends React.Component {
     this.setState({ candidate });
   }
 
-  updateCandidateAutosuggested = (event) => {
+  handleAddRow = () => {
+    const { rows } = this.state;
+    this.setState({
+      rows: [...rows, this.createRow()]
+    });
+  }
+
+  handleRemoveRow = (index) => {
+    const { rows } = this.state;
+    rows.splice(index, 1);
+    this.setState({ rows });
+  }
+
+  createRow = (required = [], optional = [], duration = 30) => {
+    return { required, optional, duration };
+  }
+
+  handleAutocompleteChange = (event, value, index, field) => {
     event.persist();
-    this.setState({ candidate: event.target.textContent });
+    const { rows } = this.state;
+    rows[index][field] = value;
+    this.setState({ rows });
   }
 
-  updateRequiredInterviewers = (event, value) => {
-    this.setState({ required: value });
-  }
-
-  updateOptionalInterviewers = (event, value) => {
-    this.setState({ optional: value });
+  handleSelectorChange = (event, index, field) => {
+    event.persist();
+    const { rows } = this.state;
+    rows[index][field] = event.target.value;
+    this.setState({ rows });
   }
 
   handleNext = async () => {
     const { actions } = this.props;
+    const { candidate, rows } = this.state;
     try {
-      await actions.findMeetingTimes({
-        candidate: this.state.candidate.email,
-        required: this.state.required,
-        optional: this.state.optional,
-        meetingDuration: this.getInterviewDuration(),
-      });
-      this.setState({ reqOpen: false, optOpen: true });
+      const data = {
+        candidate: candidate.email,
+        interviews: rows.map(row => ({
+          required: row.required.map(interviewer => interviewer.email),
+          optional: row.optional.map(interviewer => interviewer.email),
+          duration: row.duration
+        })),
+      };
+      await actions.findAllMeetingTimes(data);
+      this.setState({ reqOpen: false });
+      this.setState({ optOpen: true });
     } catch (err) {
       console.error(err);
     }
   }
 
-  handleSave = () => {
-    const { selectedOption, candidate: selectedCandidate, required, optional } = this.state;
+  handleSave = async () => {
+    const { selectedOption, selectedRooms, candidate: selectedCandidate } = this.state;
     const { meetingSuggestions, actions, candidates } = this.props;
-    const selectedSuggestion = meetingSuggestions.data[selectedOption];
+    const selectedSuggestions = meetingSuggestions.data[selectedOption];
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
-    const response = actions.createEvent(selectedSuggestion, candidateUser, required, optional);
+    const createEvents = selectedSuggestions.map(async (selectedSuggestion, i) => {
+      const room = selectedSuggestion.room[selectedRooms[`${selectedOption}-${i}`] || 0];
+      await actions.createEvent({ ...selectedSuggestion, room }, candidateUser);
+    });
+
+    const response = await Promise.all(createEvents);
 
     if (response && !response.error) {
       swalWithBootstrapButtons.fire(
@@ -142,15 +140,11 @@ class CalendarPage extends React.Component {
     }
 
     // Clear state of dialog
-    this.setState({ ...initialState, onSuccess: true, redirect: true });
+    // this.setState({ ...initialState, onSuccess: true, redirect: true });
   }
 
-  handleSelectInterviewDuration = (i) => {
-    this.setState({ selected: i });
-  }
-
-  handleSelectOption = (i) => {
-    this.setState({ selectedOption: i });
+  handleSelect = (mode, selected) => {
+    this.setState({ [mode]: selected });
   }
 
   showSnackbarOnSuccess = () => {
@@ -186,7 +180,7 @@ class CalendarPage extends React.Component {
     await actions.getUsers('interviewer');
     await actions.getInterviews();
     await actions.getOutlookUsers();
-    this.setState({ redirect: true });
+    this.setState({ ...initialState, redirect: true });
     const { state } = location;
     if (state && state.id) {
       const { candidates } = this.props;
@@ -244,20 +238,20 @@ class CalendarPage extends React.Component {
           handleNext={this.handleNext}
           handleClose={this.handleClose}
           updateCandidate={this.updateCandidate}
-          updateCandidateAutosuggested={this.updateCandidateAutosuggested}
           updateRequiredInterviewers={this.updateRequiredInterviewers}
           updateOptionalInterviewers={this.updateOptionalInterviewers}
           handleSelectInterviewDuration={this.handleSelectInterviewDuration}
-          candidate={this.state.candidate}
-          required={this.state.required}
-          optional={this.state.optional}
+          handleAddRow={this.handleAddRow}
+          handleRemoveRow={this.handleRemoveRow}
+          handleSelectorChange={this.handleSelectorChange}
+          handleAutocompleteChange={this.handleAutocompleteChange}
           {...this.props}
           {...this.state}
         />
         <OptionsDialog
           handleOpen={this.handleOpen}
           handleSave={this.handleSave}
-          handleSelectOption={this.handleSelectOption}
+          handleSelect={this.handleSelect}
           {...this.props}
           {...this.state}
         />

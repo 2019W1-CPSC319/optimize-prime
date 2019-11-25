@@ -3,6 +3,8 @@ const uuidv1 = require('uuid/v1');
 const axios = require('axios');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
+const scheduler = require('../scheduling/scheduler');
+const moment = require('moment');
 
 // get all rooms
 router.get('/rooms', (req, res) => {
@@ -135,7 +137,6 @@ router.put('/edituser', (req, res) => {
     if (err) {
       throw err;
     }
-
     switch (type) {
       case 'candidate':
         sql = 'SELECT * FROM Candidate WHERE id = ?';
@@ -235,16 +236,16 @@ router.post('/availability', (req, res) => {
       }
       candidateId = result[0].id;
 
-      const sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES ?';
-      const values = [availability.map((time) => [candidateId, time.startTime, time.endTime])];
-      const sqlcmd = connection.format(sql, values);
+      let sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES ?';
+      let values = [availability.map((time) => [candidateId, time.startTime, time.endTime])];
+      let sqlcmd = connection.format(sql, values);
       connection.query(sqlcmd, (err, result) => {
         if (err) {
           return res.status(500).send({ message: 'Internal Server error' });
         }
 
-        const sql = "UPDATE Candidate SET submittedAvailability = 'T' WHERE id = ?";
-        const sqlcmd = connection.format(sql, [candidateId]);
+        sql = "UPDATE Candidate SET submittedAvailability = 'T' WHERE id = ?";
+        sqlcmd = connection.format(sql, [candidateId]);
         connection.query(sqlcmd, (err, result) => {
           if (err) {
             return res.status(500).send({ message: 'Internal Server error' });
@@ -256,6 +257,12 @@ router.post('/availability', (req, res) => {
   } catch (error) {
     res.status(error.statusCode).send({ message: error.message });
   }
+});
+
+router.post('/allmeetings', notAuthMiddleware, async (req, res) => {
+  const { candidate, interviews } = req.body;
+  let result = await scheduler.findTimes(interviews, candidate, req.user.accessToken);
+  res.send(result);
 });
 
 // find all the possible meeting times, given the following constraints/information:
@@ -295,14 +302,14 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         const requiredAttendees = required.map((interviewer) => ({
           type: 'required',
           emailAddress: {
-            address: interviewer.email,
+            address: interviewer,
           },
         }));
 
         const optionalAttendees = optional.map((interviewer) => ({
           type: 'optional',
           emailAddress: {
-            address: interviewer.email,
+            address: interviewer,
           },
         }));
 
@@ -406,14 +413,14 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     const requiredAttendees = required.map((interviewer) => ({
       type: 'required',
       emailAddress: {
-        address: interviewer.email,
+        address: interviewer,
       },
     }));
     // optional attendees
     const optionalAttendees = optional.map((interviewer) => ({
       type: 'optional',
       emailAddress: {
-        address: interviewer.email,
+        address: interviewer,
       },
     }));
     const roomAttendee = {
@@ -447,6 +454,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
         attendees,
       },
     });
+
     // insert the scheduled interview in the candidate table
     let sql = "SELECT * FROM Rooms WHERE name = ? AND status = 'A'";
     let sqlcmd = connection.format(sql, [room.name]);
@@ -454,10 +462,11 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       if (err) {
         return res.status(500).send({ message: 'Internal server error.' });
       }
+
       // get roomId
       const newRoomId = result[0].id;
-      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
-      sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, newRoomId]);
+      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, STR_TO_DATE(?, ?), STR_TO_DATE(?, ?), ?)';
+      sqlcmd = connection.format(sql, [candidate.id, moment(date.startTime.dateTime).format(), '%Y-%m-%dT%H:%i:%s-08:00', moment(date.endTime.dateTime).format(), '%Y-%m-%dT%H:%i:%s-08:00', newRoomId]);
       connection.query(sqlcmd, (err, scheduledInterview) => {
         if (err) {
           return res.status(500).send({ message: 'Internal server error.' });
@@ -499,11 +508,18 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
               return res.status(500).send({ message: 'Internal server error.' });
             }
           });
+
+          sql = "DELETE FROM Candidateavailability WHERE candidateId = ?";
+          sqlcmd = connection.format(sql, [candidate.id]);
+          connection.query(sqlcmd, (err, result) => {
+            if (err) {
+              return res.status(500).send({ message: 'Internal Server error' });
+            }
+          });
         });
       });
     });
   } catch (error) {
-    console.log(error);
     res.status(error.response.status).send(error.message);
   }
 });

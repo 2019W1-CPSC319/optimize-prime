@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { connect } from 'react-redux';
 import AvailabilityTable from "./AvailabilityTable.jsx"
 
 import logo_long from '../../images/galvanize_long.png';

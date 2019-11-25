@@ -7,6 +7,7 @@ const initialState = {
 
 const DirectoryReducer = (state = initialState, action) => {
   let newState = {};
+  const { role, user } = action;
   switch (action.type) {
     case 'INIT_REQUEST':
       return {
@@ -16,7 +17,10 @@ const DirectoryReducer = (state = initialState, action) => {
       };
     case 'ADD_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
-      newState[action.role].push(action.user);
+      newState[role].push(action.user);
+      return newState;
+    case 'GET_USER_SUCCESS':
+      newState = Object.assign({}, state, { loading: false, user });
       return newState;
     case 'ADD_USER_FAILURE':
       return {
@@ -34,7 +38,7 @@ const DirectoryReducer = (state = initialState, action) => {
       return newState;
     case 'GET_USERS_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
-      newState[action.role] = action.users;
+      newState[role] = action.users;
       return newState;
     case 'GET_OUTLOOK_USERS_SUCCESS':
       const { outlookUsers } = action;
@@ -51,7 +55,7 @@ const DirectoryReducer = (state = initialState, action) => {
       };
     case 'DELETE_USER_SUCCESS':
       newState = Object.assign({}, state, { loading: false });
-      newState[action.role] = newState[action.role].filter((user) => user.id !== action.userId);
+      newState[role] = newState[role].filter((user) => user.id !== action.userId);
       return newState;
     case 'SEND_AVAILABILITY_SUCCESS':
       return {

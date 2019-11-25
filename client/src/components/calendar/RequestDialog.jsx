@@ -2,27 +2,25 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { Autocomplete } from '@material-ui/lab';
 import PersonIcon from '@material-ui/icons/Person';
+import AddIcon from '@material-ui/icons/Add';
 import {
-  Avatar,
+  Box,
   Button,
-  ButtonGroup,
-  FormControl,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Grid,
+  Fab,
   MenuItem,
-  Input,
-  InputAdornment,
-  InputLabel,
   Select,
   TextField,
-  List,
-  ListItem,
-  Paper
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Typography
 } from '@material-ui/core';
 
 const styles = theme => ({
@@ -49,6 +47,20 @@ const styles = theme => ({
   },
   buttonGroup: {
     marginTop: '16px'
+  },
+  fabAdd: {
+    borderRadius: "4px",
+    backgroundColor: "#4CAF50",
+  },
+  submitBtn: {
+    borderRadius: "4px",
+    margin: "30px 30px",
+  },
+  timeSelector: {
+    minWidth: "120px"
+  },
+  datePicker: {
+    minWidth: "120px"
   }
 });
 
@@ -58,9 +70,9 @@ class RequestDialog extends Component {
   }
 
   render() {
-    const { classes, candidates } = this.props;
+    const { classes, candidates, interviewers, rows, reqOpen, candidate } = this.props;
     return (
-      <Dialog open={this.props.reqOpen} aria-labelledby="form-dialog-title">
+      <Dialog open={reqOpen} aria-labelledby="form-dialog-title" fullWidth maxWidth="lg">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -70,67 +82,113 @@ class RequestDialog extends Component {
             autoFocus
             options={candidates.filter(c => c.submittedAvailability == "T")}
             getOptionLabel={candidate => candidate.firstName ? candidate.firstName + " " + candidate.lastName + " (" + candidate.email + ")" : ""}
-            style={{ width: 300 }}
+            style={{ width: 500 }}
             renderInput={params => (
               <TextField {...params} label="Candidate" variant="outlined" fullWidth />
             )}
-            style={{ width: '100%' }}
             autoComplete={false}
-            value={this.props.candidate}
+            value={candidate}
             onChange={this.props.updateCandidate}
           />
-          <Autocomplete
-            multiple
-            options={this.props.interviewers}
-            getOptionLabel={option => option.email}
-            filterSelectedOptions
-            renderInput={params => (
-              <TextField
-                {...params}
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Required</TableCell>
+                <TableCell>Optional</TableCell>
+                <TableCell>Duration</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Autocomplete
+                      multiple
+                      options={interviewers}
+                      getOptionLabel={interviewer => interviewer.email}
+                      filterSelectedOptions
+                      renderInput={params => (
+                        <TextField {...params} label="Required interviewer(s)" variant="outlined" style={{ width: 400 }} />
+                      )}
+                      autoComplete={false}
+                      value={row.required}
+                      onChange={(event, value) => this.props.handleAutocompleteChange(event, value, index, 'required')}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Autocomplete
+                      multiple
+                      options={interviewers}
+                      getOptionLabel={interviewer => interviewer.email}
+                      filterSelectedOptions
+                      renderInput={params => (
+                        <TextField {...params} label="Optional interviewer(s)" variant="outlined" style={{ width: 400 }} />
+                      )}
+                      autoComplete={false}
+                      value={row.optional}
+                      onChange={(event, value) => this.props.handleAutocompleteChange(event, value, index, 'optional')}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={row.duration}
+                      onChange={(event) => this.props.handleSelectorChange(event, index, 'duration')}
+                    >
+                      <MenuItem value={30}>0.5 hour</MenuItem>
+                      <MenuItem value={60}>1 hour</MenuItem>
+                      <MenuItem value={90}>1.5 hours</MenuItem>
+                      <MenuItem value={120}>2 hours</MenuItem>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => { this.props.handleRemoveRow(index) }}
+                    >
+                      Remove
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {rows.length > 0 && <TableRow>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell>
+                  <Fab
+                    aria-label="add"
+                    size="small"
+                    onClick={this.props.handleAddRow}
+                    className={classes.fabAdd}>
+                    <AddIcon />
+                  </Fab>
+                </TableCell>
+              </TableRow>}
+            </TableBody>
+          </Table>
+          {rows.length === 0 &&
+            <Box>
+              <Typography
+                align='center'
+                style={{ margin: '100px auto' }}
+              >
+                No interviewer
+              </Typography>
+              <Button
                 variant="outlined"
-                label="Required interviewer(s)"
-                margin="normal"
-                fullWidth
-              />
-            )}
-            value={this.props.required}
-            onChange={this.props.updateRequiredInterviewers}
-          />
-          <Autocomplete
-            multiple
-            options={this.props.interviewers}
-            getOptionLabel={option => option.email}
-            filterSelectedOptions
-            renderInput={params => (
-              <TextField
-                {...params}
-                variant="outlined"
-                label="Optional interviewer(s)"
-                margin="normal"
-                fullWidth
-              />
-            )}
-            value={this.props.optional}
-            onChange={this.props.updateOptionalInterviewers}
-          />
-          <ButtonGroup fullWidth size="small" aria-label="small outlined button group" className={classes.buttonGroup}>
-            {this.props.durations.map(
-              (duration, i) => {
-                return (
-                  <Button key={i} className={classes.duration}
-                    style={{
-                      background: `${this.props.selected == i ? '#280e3a' : '#fff'}`,
-                      color: `${this.props.selected == i ? '#fff' : '#280e3a'}`
-                    }}
-                    onClick={() => this.props.handleSelectInterviewDuration(i)}>{duration.minutes} min</Button>
-                )
-              }
-            )}
-          </ButtonGroup>
+                color="primary"
+                onClick={this.props.handleAddRow}
+                style={{ margin: 'auto', display: 'block' }}
+              >
+                Add
+              </Button>
+            </Box>}
         </DialogContent>
         <DialogActions>
           <Button onClick={this.props.handleClose} color="primary">Cancel</Button>
-          <Button onClick={this.props.handleNext} color="primary">Next</Button>
+          <Button onClick={this.props.handleNext} color="primary" disabled={!rows.length}>Next</Button>
         </DialogActions>
       </Dialog >
     );

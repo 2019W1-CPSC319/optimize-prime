@@ -106,7 +106,7 @@ export const getCandidate = (uuid) => async (dispatch) => {
   } catch (error) {
     return dispatch(getCandidateFailure(error));
   }
-};
+}
 
 function deleteUserSuccess(role, userId) {
   return {
