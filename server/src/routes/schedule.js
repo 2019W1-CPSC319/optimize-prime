@@ -258,6 +258,12 @@ router.post('/availability', (req, res) => {
   }
 });
 
+router.post('/allmeetings', notAuthMiddleware, async (req, res) => {
+  const { candidate, interviews } = req.body;
+  let result = await scheduler.findTimes(interviews, candidate, req.user.accessToken);
+  res.send(result);
+});
+
 // find all the possible meeting times, given the following constraints/information:
 // attendess, timeConstraints, meetingDuration, locationConstraints
 router.post('/meeting', notAuthMiddleware, async (req, res) => {
@@ -295,14 +301,14 @@ router.post('/meeting', notAuthMiddleware, async (req, res) => {
         const requiredAttendees = required.map((interviewer) => ({
           type: 'required',
           emailAddress: {
-            address: interviewer.email,
+            address: interviewer,
           },
         }));
 
         const optionalAttendees = optional.map((interviewer) => ({
           type: 'optional',
           emailAddress: {
-            address: interviewer.email,
+            address: interviewer,
           },
         }));
 
@@ -457,8 +463,8 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
 
       // get roomId
       const newRoomId = result[0].id;
-      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, ?, ?, ?)';
-      sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, date.endTime.dateTime, newRoomId]);
+      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, STR_TO_DATE(?, ?), STR_TO_DATE(?, ?), ?)';
+      sqlcmd = connection.format(sql, [candidate.id, date.startTime.dateTime, '%Y-%m-%dT%H:%i:%s.%fZ', date.endTime.dateTime, '%Y-%m-%dT%H:%i:%s.%fZ', newRoomId]);
       connection.query(sqlcmd, (err, scheduledInterview) => {
         if (err) {
           return res.status(500).send({ message: 'Internal server error.' });
