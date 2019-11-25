@@ -144,8 +144,6 @@ class CalendarPage extends React.Component {
   }
 
   handleSelect = (mode, selected) => {
-    console.log(mode)
-    console.log(selected)
     this.setState({ [mode]: selected });
   }
 
