@@ -48,7 +48,7 @@ class AddAvailability extends Component {
   constructor(props) {
     super(props);
   }
-  
+
   async componentDidMount() {
     const { actions, uuid } = this.props;
     await actions.getCandidate(uuid);
@@ -101,8 +101,4 @@ class AddAvailability extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  user: state.directory.user
-}
-
-export default connect(mapStateToProps)(withStyles(styles)(AddAvailability));
+export default withStyles(styles)(AddAvailability);
