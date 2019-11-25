@@ -103,10 +103,10 @@ class OverviewPage extends Component {
     await actions.getUsers('candidate');
     await actions.getInterviews();
     const { interviews, candidates } = this.props;
+    const ready = candidates.filter(candidate => candidate.submittedAvailability === 'T');
+    const unready = candidates.filter(candidate => candidate.submittedAvailability === 'F');
     const scheduledCandidateIds = interviews.map(interview => interview.candidate.id);
-    const ready = candidates.filter(candidate => !scheduledCandidateIds.includes(candidate.id) && candidate.submittedAvailability === 'T');
-    const unready = candidates.filter(candidate => !scheduledCandidateIds.includes(candidate.id) && candidate.submittedAvailability === 'F');
-    this.setState({ ready, unready });
+    this.setState({ ready, unready, scheduledCandidateIds });
   }
 
   refresh = async () => {
@@ -162,17 +162,18 @@ class OverviewPage extends Component {
 
   render() {
     const { classes, interviews, user } = this.props;
+    const { scheduledCandidateIds } = this.state;
     const { profile } = user;
 
     return (
       <div>
         {
           profile
-            && (
-              <h1 className={classes.title}>
-                Welcome, {profile.givenName}
-              </h1>
-            )
+          && (
+            <h1 className={classes.title}>
+              Welcome, {profile.givenName}
+            </h1>
+          )
         }
         <Box component='div' display='flex'>
           <Box className={classes.content}>
@@ -188,6 +189,7 @@ class OverviewPage extends Component {
                       allowedActions={tables.find(table => table.key === key).allowedActions}
                       onClickUserAction={(action, userId) => this.onClickUserAction(action, userId)}
                       user={user}
+                      scheduledCandidateIds={scheduledCandidateIds}
                     />
                   </div>
                 )

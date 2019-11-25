@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Typography,
 } from '@material-ui/core';
 
 const styles = {
@@ -42,6 +43,7 @@ class DirectoryTable extends Component {
       allowedActions,
       user,
       onClickUserAction,
+      scheduledCandidateIds,
     } = this.props;
     const { username } = user;
 
@@ -55,6 +57,7 @@ class DirectoryTable extends Component {
               ))
             }
             <TableCell />
+            {scheduledCandidateIds && <TableCell />}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -90,6 +93,13 @@ class DirectoryTable extends Component {
                             </IconButton>
                           );
                         })
+                      }
+                    </TableCell>
+                    <TableCell>
+                      {
+                        scheduledCandidateIds && scheduledCandidateIds.includes(row.id)
+                          ? <Typography>{`${scheduledCandidateIds.filter(id => id === row.id).length} scheduled interview${scheduledCandidateIds.filter(id => id === row.id).length > 1 ? 's' : ''} in progress`}</Typography>
+                          : null
                       }
                     </TableCell>
                   </TableRow>
