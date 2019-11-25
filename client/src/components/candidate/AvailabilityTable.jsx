@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles"
 // Material UI
 import {
   Table, TableBody, TableHead, TableCell, TableRow,
-  Select, MenuItem, Button, FormControl, FormHelperText, Typography
+  Select, MenuItem, Button, FormControl, FormHelperText, Typography,
 } from "@material-ui/core"
 import {
   MuiPickersUtilsProvider,

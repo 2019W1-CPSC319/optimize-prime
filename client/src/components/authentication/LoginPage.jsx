@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
 import company from '../../images/galvanize_long.png';
 import microsoft from '../../images/microsoft.png';
-import {
-  Typography,
-} from '@material-ui/core';
+import clsx from 'clsx';
 
 const styles = {
   button: {
@@ -17,8 +14,8 @@ const styles = {
     margin: '10px auto',
   },
   company: {
+    margin: 'auto',
     display: 'block',
-    margin: '200px auto 50px',
     width: '300px',
   },
   divider: {
@@ -26,11 +23,6 @@ const styles = {
     width: '1px',
     backgroundColor: '#ffffff',
     margin: 'auto 10px',
-  },
-  guest: {
-    backgroundColor: '#000',
-    padding: '15px 0',
-    width: '320px',
   },
   logo: {
     width: '25px',
@@ -42,17 +34,17 @@ const styles = {
   text: {
     margin: 'auto 50px',
   },
-  noIconText: {
+  center: {
+    height: '300px',
+    width: '700px',
+    display: 'block',
     margin: 'auto',
-  },
-  help: {
-    textAlign: 'center',
-    fontSize: '12px'
-  },
-  highlight: {
-    color: '#483d8b',
-    marginLeft: '10px',
-  },
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    position: 'absolute',
+  }
 };
 
 class LoginPage extends Component {
@@ -63,21 +55,14 @@ class LoginPage extends Component {
 
   render() {
     const { classes } = this.props;
-
-    const signinLocation = window.location.host + "/auth/signin";
-
     return (
       <div>
-        <div >
-          <img className={classes.company} src={company} alt={'Galvanize Logo'} />
-          <button className={`${classes.button} ${classes.microsoft}`} onClick={() => window.location.assign("/auth/signin")}>
+        <div className={classes.center}>
+          <img className={clsx(classes.company)} src={company} alt={'Galvanize Logo'} />
+          <button className={clsx(classes.button, classes.microsoft)} onClick={() => window.location.assign("/auth/signin")}>
             <img src={microsoft} className={classes.logo} alt={'Microsoft Logo'} />
             <div className={classes.divider}></div>
             <p className={classes.text}>Sign in with Microsoft Account</p>
-          </button>
-          <Typography align="center">or</Typography>
-          <button className={clsx(classes.button, classes.guest)}>
-            <p className={classes.noIconText}>Sign in with Guest Account</p>
           </button>
         </div>
       </div>

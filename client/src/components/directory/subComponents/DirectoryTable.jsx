@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  Button,
   Icon,
   IconButton,
   Table,
@@ -9,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Typography,
 } from '@material-ui/core';
 
 const styles = {
@@ -17,6 +17,9 @@ const styles = {
   },
   iconButton: {
     color: '#f0a017',
+  },
+  emptyRow: {
+    textAlign: 'center',
   },
 };
 
@@ -40,6 +43,7 @@ class DirectoryTable extends Component {
       allowedActions,
       user,
       onClickUserAction,
+      scheduledCandidateIds,
     } = this.props;
     const { username } = user;
 
@@ -53,43 +57,64 @@ class DirectoryTable extends Component {
               ))
             }
             <TableCell />
+            {scheduledCandidateIds && <TableCell />}
           </TableRow>
         </TableHead>
         <TableBody>
           {
-            rows.map((row, key) => (
-              <TableRow key={key}>
-                <TableCell component="th" scope="row">
-                  {row.lastName}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {row.firstName}
-                </TableCell>
-                <TableCell>{row.email}</TableCell>
-                {
-                  row.phone
-                    ? <TableCell>{row.phone}</TableCell>
-                    : null
-                }
-                <TableCell>
-                  {
-                    allowedActions.map(action => {
-                      const { key, icon } = action;
-                      return (
-                        <IconButton
-                          className={classes.icon}
-                          key={key}
-                          onClick={() => onClickUserAction(key, row.id)}
-                          disabled={username === row.email}
-                        >
-                          <Icon>{icon}</Icon>
-                        </IconButton>
-                      );
-                    })
-                  }
-                </TableCell>
-              </TableRow>
-            ))
+            rows.length > 0
+              ? (
+                rows.map((row, key) => (
+                  <TableRow key={key}>
+                    <TableCell component="th" scope="row">
+                      {row.lastName}
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      {row.firstName}
+                    </TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    {
+                      row.phone
+                        ? <TableCell>{row.phone}</TableCell>
+                        : null
+                    }
+                    <TableCell>
+                      {
+                        allowedActions.map(action => {
+                          const { key, icon } = action;
+                          return (
+                            <IconButton
+                              className={classes.iconButton}
+                              key={key}
+                              onClick={() => onClickUserAction(key, row.id)}
+                              disabled={username === row.email}
+                            >
+                              <Icon>{icon}</Icon>
+                            </IconButton>
+                          );
+                        })
+                      }
+                    </TableCell>
+                    <TableCell>
+                      {
+                        scheduledCandidateIds && scheduledCandidateIds.includes(row.id)
+                          ? <Typography>{`${scheduledCandidateIds.filter(id => id === row.id).length} scheduled interview${scheduledCandidateIds.filter(id => id === row.id).length > 1 ? 's' : ''} in progress`}</Typography>
+                          : null
+                      }
+                    </TableCell>
+                  </TableRow>
+                ))
+              )
+              : (
+                <TableRow>
+                  <TableCell
+                    className={classes.emptyRow}
+                    colSpan={headers.length + 1}
+                  >
+                    No entries available
+                  </TableCell>
+                </TableRow>
+              )
           }
         </TableBody>
       </Table>
