@@ -1,5 +1,5 @@
 //Imports
-const moment = require('moment')
+const moment = require('moment');
 const axios = require('axios');
 const db = require('../init/setupMySql');
 

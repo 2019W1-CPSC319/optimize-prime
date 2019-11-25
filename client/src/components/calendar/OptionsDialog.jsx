@@ -92,7 +92,7 @@ class OptionsDialog extends Component {
   }
 
   createOptions = () => {
-    const { classes, meetingSuggestions, handleOpen, selectedOption, selectedRooms, handleSelect, hash } = this.props;
+    const { classes, meetingSuggestions, handleOpen, selectedOption, selectedRooms, handleSelect } = this.props;
 
     if (this.enableSelect(meetingSuggestions.data)) {
       return (
