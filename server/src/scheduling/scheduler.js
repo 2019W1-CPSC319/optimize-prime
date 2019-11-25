@@ -56,9 +56,17 @@ async function findTimes(interviews, candidateEmail, token) {
 
     let optimalSchedules = [];
     let best = Number.MAX_VALUE;
+    let schedulingTime = 0;
+    let graphTime = 0;
 
     for (block = 0; block < availability.length; block++) {
         let start = availability[block].start, end = availability[block].end;
+
+        if (new moment().diff(start) > 0) {
+            // If this interview is before now
+            console.log("Skipping availability block as it started in the past");
+            continue;
+        }
 
         // Make sure that the block is longer than the duration of all interviews
         let blockDuration = moment.duration(end.diff(start)).asMinutes();
@@ -68,14 +76,19 @@ async function findTimes(interviews, candidateEmail, token) {
         }
 
         // Get Availabilities of all interviewers for this block
+        let beforeGraph = new Date().getTime();
         let avails = await getInterviewerAvailability(allRequired, start, end, token);
+        graphTime += new Date().getTime() - beforeGraph;
+
         DEBUG && console.log("Availabilities: ")
         DEBUG && console.log(avails);
 
         // Let this one go async as we don't need until later
         let roomAvail = getInterviewerAvailability(rooms.map(x => x.locationEmailAddress), start, end, token);
 
+        let beforeScheduling = new Date().getTime();
         let schedules = arrangeInterviews(interviews, avails, best, totalTime / TIME_INTERVAL);
+        schedulingTime += new Date().getTime() - beforeScheduling;
 
         //godlike one-liner to remove duplicates
         schedules.sequence = Array.from(new Set(schedules.sequence.map(JSON.stringify))).map(JSON.parse);
@@ -83,7 +96,10 @@ async function findTimes(interviews, candidateEmail, token) {
         // Make into proper interview sequence objects
         schedules.sequence = schedules.sequence.map((x => parseNumArrayToTimes(interviews, x, start)))
         // Add rooms
+        beforeGraph = new Date().getTime();
         roomAvail = await roomAvail;
+        graphTime += new Date().getTime() - beforeGraph;
+
         schedules.sequence = schedules.sequence.map((x => assignRooms(rooms, roomAvail, x, start)))
 
 
@@ -108,6 +124,8 @@ async function findTimes(interviews, candidateEmail, token) {
         " optimal interview schedules in " +
         String(algorithmRunTime) +
         "ms.");
+    console.log("Scheduling took " + String(schedulingTime) + "ms in total");
+    console.log("Getting interviewer availability took " + String(graphTime) + "ms in total");
 
     return optimalSchedules;
 }
@@ -125,6 +143,7 @@ function parseNumArrayToTimes(interviews, solution, blockStart) {
 
         DEBUG && console.log(interviewConfiguration[i].start.format() + "  :  " + interviewConfiguration[i].end.format())
     }
+
 
     DEBUG && console.log("Interview Configuration:");
     DEBUG && console.log(interviewConfiguration);

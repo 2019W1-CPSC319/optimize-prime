@@ -126,7 +126,6 @@ class CalendarPage extends React.Component {
     const candidateUser = candidates.find(candidate => candidate.email === selectedCandidate.email);
     const createEvents = selectedSuggestions.map(async (selectedSuggestion, i) => {
       const room = selectedSuggestion.room[selectedRooms[`${selectedOption}-${i}`] || 0];
-      console.log({ ...selectedSuggestion, room })
       await actions.createEvent({ ...selectedSuggestion, room }, candidateUser);
     });
 
@@ -141,7 +140,7 @@ class CalendarPage extends React.Component {
     }
 
     // Clear state of dialog
-    this.setState({ ...initialState, onSuccess: true, redirect: true });
+    // this.setState({ ...initialState, onSuccess: true, redirect: true });
   }
 
   handleSelect = (mode, selected) => {
@@ -183,7 +182,7 @@ class CalendarPage extends React.Component {
     await actions.getUsers('interviewer');
     await actions.getInterviews();
     await actions.getOutlookUsers();
-    this.setState({ redirect: true });
+    this.setState({ ...initialState, redirect: true });
     const { state } = location;
     if (state && state.id) {
       const { candidates } = this.props;
