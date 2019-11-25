@@ -9,6 +9,7 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Tooltip,
 } from '@material-ui/core';
 
 const styles = {
@@ -98,7 +99,27 @@ class DirectoryTable extends Component {
                     <TableCell>
                       {
                         scheduledCandidateIds && scheduledCandidateIds.includes(row.id)
-                          ? <Typography>{`${scheduledCandidateIds.filter(id => id === row.id).length} scheduled interview${scheduledCandidateIds.filter(id => id === row.id).length > 1 ? 's' : ''} in progress`}</Typography>
+                          ?
+                          <Tooltip
+                            title={
+                              <Typography style={{ fontSize: 'small' }}>
+                                {
+                                  `${scheduledCandidateIds.filter(id => id === row.id).length} scheduled interview${scheduledCandidateIds.filter(id => id === row.id).length > 1 ? 's' : ''} in progress`
+                                }
+                              </Typography>
+                            }
+                          >
+                            <IconButton
+                              key={key}
+                              className={classes.iconButton}
+                              style={{ color: 'red' }}
+                              disableRipple
+                            // onClick={() => onClickUserAction(key, row.id)}
+                            // disabled={username === row.email}
+                            >
+                              <Icon>announcement</Icon>
+                            </IconButton>
+                          </Tooltip>
                           : null
                       }
                     </TableCell>
