@@ -4,11 +4,10 @@ import {
   Typography,
   Paper,
 } from '@material-ui/core';
-import { connect } from 'react-redux';
-import AvailabilityTable from "./AvailabilityTable.jsx"
-
+import AvailabilityTable from "./AvailabilityTable.jsx";
 import logo_long from '../../images/galvanize_long.png';
 import background from '../../images/background.jpg';
+import moment from 'moment';
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -60,6 +59,8 @@ const styles = {
     position: 'absolute',
     height: 'fit-content',
     padding: '30px',
+    maxHeight: '800px',
+    overflow: 'scroll',
   }
 };
 
@@ -71,6 +72,10 @@ class AddAvailability extends Component {
   async componentDidMount() {
     const { actions, uuid } = this.props;
     await actions.getCandidate(uuid);
+  }
+
+  toHTML = (availability) => {
+    return availability.map(entry => `<p><b>${moment(entry.startTime).format('L')}</b> ${moment(entry.startTime).format('LT')} - ${moment(entry.endTime).format('LT')}</p>`);
   }
 
   handleSubmit = async (times) => {
@@ -86,12 +91,25 @@ class AddAvailability extends Component {
 
     if (response && response.error) return;
 
-    swalWithBootstrapButtons.fire(
-      'Successfully submitted!',
-      'We\'ll get back to you with an interview invitation in the next few days.',
-      'success',
-    ).then(result => {
-      window.location.reload();
+    swalWithBootstrapButtons.fire({
+      title: 'Submission Detail',
+      html: this.toHTML(availability).join('').concat('<h4>Click Submit if everything looks correct!</h4>'),
+      type: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Submit',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    }).then(async (result) => {
+      const { value } = result;
+      if (value) {
+        swalWithBootstrapButtons.fire(
+          'Successfully submitted!',
+          'We\'ll get back to you with an interview invitation in the next few days.',
+          'success',
+        ).then(result => {
+          window.location.reload();
+        });
+      }
     });
   }
 
