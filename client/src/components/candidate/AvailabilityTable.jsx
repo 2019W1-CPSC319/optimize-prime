@@ -188,7 +188,7 @@ class AvailabilityTable extends Component {
    * It is currently assumed that all users will be on a system set to pacific
    * time. If a user was to select their availability from a different time
    * zone it would give their availability in that time zone, not in pacific
-   * time which the office was in. 
+   * time which the office was in.
    * Eg if you submitted 9am-5pm from eastern time it would be converted to
    * 6am-2pm in pacific time and then used by the system.
    */
@@ -209,12 +209,12 @@ class AvailabilityTable extends Component {
       const start = new Date(row.date.getFullYear(),
         row.date.getMonth(),
         row.date.getDate(),
-        row.from - 8,
+        row.from - 7,
         (row.from % 1) * 60)
       const end = new Date(row.date.getFullYear(),
         row.date.getMonth(),
         row.date.getDate(),
-        row.to - 8,
+        row.to - 7,
         (row.to % 1) * 60)
       times.push({ start: start, end: end });
     }
