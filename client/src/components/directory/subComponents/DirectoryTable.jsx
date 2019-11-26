@@ -21,9 +21,6 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  iconButton: {
-    color: '#f0a017',
-  },
   scheduledMessage: {
     fontSize: 'small',
   },
@@ -101,6 +98,7 @@ class DirectoryTable extends Component {
 
                               return (
                                 <Tooltip
+                                  key={key}
                                   title={
                                     <Typography className={classes.scheduledMessage}>
                                       This candidate has been scheduled for interview(s). You can request for their availability again if you wish to schedule another interview for this candidate.
@@ -114,7 +112,7 @@ class DirectoryTable extends Component {
 
                             return (
                               <IconButton
-                                className={classes.iconButton}
+                                color="secondary"
                                 key={key}
                                 onClick={() => onClickUserAction(key, row.id)}
                                 disabled={username === row.email}
