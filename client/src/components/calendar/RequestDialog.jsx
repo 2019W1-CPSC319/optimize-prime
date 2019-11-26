@@ -110,7 +110,7 @@ class RequestDialog extends Component {
                       getOptionLabel={interviewer => interviewer.email}
                       filterSelectedOptions
                       renderInput={params => (
-                        <TextField {...params} label="Required interviewer(s)" variant="outlined" style={{ width: 400 }} />
+                        <TextField {...params} label="Required interviewer(s)" variant="outlined" style={{ width: 450 }} />
                       )}
                       autoComplete={false}
                       value={row.required}
@@ -124,7 +124,7 @@ class RequestDialog extends Component {
                       getOptionLabel={interviewer => interviewer.email}
                       filterSelectedOptions
                       renderInput={params => (
-                        <TextField {...params} label="Optional interviewer(s)" variant="outlined" style={{ width: 400 }} />
+                        <TextField {...params} label="Optional interviewer(s)" variant="outlined" style={{ width: 450 }} />
                       )}
                       autoComplete={false}
                       value={row.optional}
