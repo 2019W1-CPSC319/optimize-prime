@@ -28,16 +28,31 @@ const AuthReducer = (state = {}, action) => {
         ...state,
         interviewsLoading: true,
       };
+    case 'GET_INTERVIEWS_FAILURE':
+      return {
+        ...state,
+        interviewsLoading: false,
+      };
     case 'GET_INTERVIEWS_SUCCESS':
       return {
         ...state,
         interviewsLoading: false,
         interviews: action.payload,
       };
+    case 'FIND_MEETING_TIMES_REQUEST':
+      return {
+        ...state,
+        findMeetingTimesLoading: true,
+      };
+    case 'FIND_MEETING_TIMES_FAILURE':
+      return {
+        ...state,
+        findMeetingTimesLoading: false,
+      };
     case 'FIND_MEETING_TIMES_SUCCESS':
       return {
         ...state,
-        loading: false,
+        findMeetingTimesLoading: false,
         meetingSuggestions: action.payload,
       };
     case 'EMAIL_SEND_SUCCESS':
