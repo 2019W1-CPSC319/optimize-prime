@@ -28,7 +28,7 @@ const AuthReducer = (state = {}, action) => {
         ...state,
         interviewsLoading: true,
       };
-    case 'GET_INTERVIEWS_ERROR':
+    case 'GET_INTERVIEWS_FAILURE':
       return {
         ...state,
         interviewsLoading: false,
