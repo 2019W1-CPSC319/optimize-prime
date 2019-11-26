@@ -28,6 +28,7 @@ const tables = [
     title: 'Missing Candidate Availability',
     allowedActions: [
       { key: 'mail', icon: 'mail' },
+      { key: 'scheduled', icon: 'announcement' },
     ],
   }
 ]

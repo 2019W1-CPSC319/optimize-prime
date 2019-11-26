@@ -16,8 +16,19 @@ const styles = {
   table: {
     minWidth: 650,
   },
+  actionsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   iconButton: {
     color: '#f0a017',
+  },
+  scheduledMessage: {
+    fontSize: 'small',
+  },
+  scheduledIcon: {
+    color: 'red',
   },
   emptyRow: {
     textAlign: 'center',
@@ -58,7 +69,6 @@ class DirectoryTable extends Component {
               ))
             }
             <TableCell />
-            {scheduledCandidateIds && <TableCell />}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -80,48 +90,41 @@ class DirectoryTable extends Component {
                         : null
                     }
                     <TableCell>
-                      {
-                        allowedActions.map(action => {
-                          const { key, icon } = action;
-                          return (
-                            <IconButton
-                              className={classes.iconButton}
-                              key={key}
-                              onClick={() => onClickUserAction(key, row.id)}
-                              disabled={username === row.email}
-                            >
-                              <Icon>{icon}</Icon>
-                            </IconButton>
-                          );
-                        })
-                      }
-                    </TableCell>
-                    <TableCell>
-                      {
-                        scheduledCandidateIds && scheduledCandidateIds.includes(row.id)
-                          ?
-                          <Tooltip
-                            title={
-                              <Typography style={{ fontSize: 'small' }}>
-                                {
-                                  `${scheduledCandidateIds.filter(id => id === row.id).length} scheduled interview${scheduledCandidateIds.filter(id => id === row.id).length > 1 ? 's' : ''} in progress`
-                                }
-                              </Typography>
+                      <div className={classes.actionsContainer}>
+                        {
+                          allowedActions.map(action => {
+                            const { key, icon } = action;
+
+                            if (key === 'scheduled') {
+
+                              if (!scheduledCandidateIds || !scheduledCandidateIds.includes(row.id)) return null;
+
+                              return (
+                                <Tooltip
+                                  title={
+                                    <Typography className={classes.scheduledMessage}>
+                                      This candidate has been scheduled for interview(s). You can request for their availability again if you wish to schedule another interview for this candidate.
+                                    </Typography>
+                                  }
+                                >
+                                  <Icon className={classes.scheduledIcon}>{icon}</Icon>
+                                </Tooltip>
+                              );
                             }
-                          >
-                            <IconButton
-                              key={key}
-                              className={classes.iconButton}
-                              style={{ color: 'red' }}
-                              disableRipple
-                            // onClick={() => onClickUserAction(key, row.id)}
-                            // disabled={username === row.email}
-                            >
-                              <Icon>announcement</Icon>
-                            </IconButton>
-                          </Tooltip>
-                          : null
-                      }
+
+                            return (
+                              <IconButton
+                                className={classes.iconButton}
+                                key={key}
+                                onClick={() => onClickUserAction(key, row.id)}
+                                disabled={username === row.email}
+                              >
+                                <Icon>{icon}</Icon>
+                              </IconButton>
+                            );
+                          })
+                        }
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
