@@ -49,7 +49,7 @@ class SettingsPage extends Component {
     return (
       <div>
         <h1 className="settings-title">Settings</h1>
-        <Paper style={{ maxWidth: '700px', margin: '30px', padding: '30px' }}>
+        <Paper style={{ margin: '30px', padding: '30px' }}>
           <Typography
             variant='h6'
           >Email Template</Typography>
