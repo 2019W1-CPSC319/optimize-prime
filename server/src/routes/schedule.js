@@ -7,7 +7,7 @@ const scheduler = require('../scheduling/scheduler');
 const moment = require('moment');
 
 // get all rooms
-router.get('/rooms', (req, res) => {
+router.get('/rooms', notAuthMiddleware, (req, res) => {
   const sql = 'SELECT * FROM Rooms WHERE status="A"';
   connection.query(sql, (err, result) => {
     if (err) {
@@ -18,7 +18,7 @@ router.get('/rooms', (req, res) => {
 });
 
 // add a new room, to the rooms table.
-router.post('/room', async (req, res) => {
+router.post('/room', notAuthMiddleware, async (req, res) => {
   const room = req.body;
   let sql = 'INSERT INTO Rooms(name, seats, status, email) VALUES (?, ?, ?, ?)';
   let sqlcmd = connection.format(sql, [room.name, room.seats, 'A', room.email]);
@@ -39,7 +39,7 @@ router.post('/room', async (req, res) => {
 });
 
 // update the status of a room to disabled, in the rooms table
-router.put('/room/:id', (req, res) => {
+router.put('/room/:id', notAuthMiddleware, (req, res) => {
   const { id } = req.params;
   const sql = "UPDATE Rooms SET Status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
@@ -52,7 +52,7 @@ router.put('/room/:id', (req, res) => {
 });
 
 // get all candidates
-router.get('/candidates', async (req, res) => {
+router.get('/candidates', notAuthMiddleware, async (req, res) => {
   const sql = "SELECT * FROM Candidate WHERE status <> 'D'";
   await connection.query(sql, (err, result) => {
     if (err) {
@@ -117,7 +117,7 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
 });
 
 // edit the administrator or candidate user information
-router.put('/edituser', (req, res) => {
+router.put('/edituser', notAuthMiddleware, (req, res) => {
   const user = req.body;
   const type = user.role;
 
@@ -159,7 +159,7 @@ router.put('/edituser', (req, res) => {
 });
 
 // update the status of a candidate to disabled, in the candidate table
-router.put('/candidate/delete/:id', (req, res) => {
+router.put('/candidate/delete/:id', notAuthMiddleware, (req, res) => {
   const { id } = req.params;
   const sql = "UPDATE Candidate SET status = 'D' WHERE id = ?";
   const sqlcmd = connection.format(sql, [id]);
@@ -171,7 +171,7 @@ router.put('/candidate/delete/:id', (req, res) => {
   });
 });
 
-router.post('/sendEmail', (req, res) => {
+router.post('/sendEmail', notAuthMiddleware, (req, res) => {
   const { firstName, email } = req.body;
   const sqlcmd = connection.format("SELECT uuid from Candidate WHERE Email = ? AND status = 'A'", [email]);
   connection.query(sqlcmd, async (err, result) => {
@@ -224,7 +224,7 @@ router.post('/sendEmail', (req, res) => {
   });
 });
 
-router.post('/availability', (req, res) => {
+router.post('/availability', notAuthMiddleware, (req, res) => {
   try {
     const { availability, uuid } = req.body;
     const sqlSelect = 'SELECT * FROM Candidate WHERE uuid = ?';
@@ -261,7 +261,7 @@ router.post('/availability', (req, res) => {
 
 router.post('/allmeetings', notAuthMiddleware, async (req, res) => {
   const { candidate, interviews } = req.body;
-  let result = await scheduler.findTimes(interviews, candidate, req.user.accessToken);
+  const result = await scheduler.findTimes(interviews, candidate, req.user.accessToken);
   res.send(result);
 });
 
@@ -667,7 +667,7 @@ router.put('/administrator/delete/:id', notAuthMiddleware, async (req, res) => {
 
 
 // get email config
-router.get('/emailconfig', (req, res) => {
+router.get('/emailconfig', notAuthMiddleware, (req, res) => {
   const sql = 'SELECT * FROM EmailConfig';
   connection.query(sql, (err, result) => {
     if (err) {
@@ -678,7 +678,7 @@ router.get('/emailconfig', (req, res) => {
 });
 
 // update email template config
-router.put('/emailconfig', (req, res) => {
+router.put('/emailconfig', notAuthMiddleware, (req, res) => {
   const { subject, body, signature } = req.body;
   const sql = 'UPDATE EmailConfig SET subject = ?, body = ?, signature = ? WHERE id = 1';
   const sqlcmd = connection.format(sql, [subject, body, signature]);
