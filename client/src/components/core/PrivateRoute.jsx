@@ -4,19 +4,16 @@ import { withRouter } from 'react-router';
 import { withStyles } from '@material-ui/core/styles';
 import { CircularProgress, Box } from '@material-ui/core';
 import {
-  Badge,
   Drawer,
   Icon,
   IconButton,
+  Tooltip,
 } from '@material-ui/core';
 
 import logo from '../../images/galvanize.png';
 
 // Component constants
 const NAVIGATION_OPTIONS = [
-  {
-    key: 'notifications', title: 'Notifications', path: '/', icon: 'notifications',
-  },
   {
     key: 'overview', title: 'Overview', path: '/', icon: 'home',
   },
@@ -37,7 +34,7 @@ const NAVIGATION_OPTIONS = [
 // Styles
 const SIDEBAR_WIDTH = 88;
 
-const styles = {
+const styles = theme => ({
   sideBar: {
     position: 'fixed',
     padding: '20px',
@@ -67,7 +64,20 @@ const styles = {
       backgroundColor: "#ffffff",
     },
   },
-};
+  iconButtonStatic: {
+    color: '#ffffff',
+    margin: '15px 0',
+    padding: 0
+  },
+  tooltip: {
+    arrow: {
+      color: theme.palette.common.black,
+    },
+    tooltip: {
+      backgroundColor: theme.palette.common.black,
+    },
+  }
+});
 
 class PrivateRoute extends React.Component {
   constructor(props) {
@@ -116,19 +126,34 @@ class PrivateRoute extends React.Component {
         <img src={logo} className={classes.logo} alt="logo" />
         {
           NAVIGATION_OPTIONS.map(option => {
-            const { key, icon } = option;
-            const isSelected = option.path === path && key !== 'notifications';
+            const { key, icon, title } = option;
+            const isSelected = option.path === path && key !== 'profile';
 
             return (
-              <IconButton
-                key={key}
-                onClick={(e) => this.onClickNavigate(e, option)}
-                className={isSelected ? classes.selectedIconButton : classes.iconButton}
-              >
-                <Badge className={classes.margin} variant="dot" badgeContent={key === 'notifications' ? 1 : 0} color="secondary">
+              key === 'profile'
+                ?
+                <Tooltip
+                  key={key}
+                  title={title}
+                  placement="right"
+                  className={classes.tooltip}
+                  arrow="true"
+                >
+                  <IconButton
+                    className={classes.iconButtonStatic}
+                    disableRipple
+                  >
+                    <Icon fontSize={'large'}>{icon}</Icon>
+                  </IconButton>
+                </Tooltip>
+                :
+                <IconButton
+                  key={key}
+                  onClick={(e) => this.onClickNavigate(e, option)}
+                  className={isSelected ? classes.selectedIconButton : classes.iconButton}
+                >
                   <Icon>{icon}</Icon>
-                </Badge>
-              </IconButton>
+                </IconButton>
             );
           })
         }

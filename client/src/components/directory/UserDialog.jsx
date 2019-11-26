@@ -163,7 +163,7 @@ class UserDialog extends Component {
       } else if(response && response.error) {
         swalWithBootstrapButtons.fire(
           response.error.message,
-          null,
+          '',
           'error'
         );
       }

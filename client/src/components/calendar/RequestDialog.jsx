@@ -6,6 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -70,7 +71,7 @@ class RequestDialog extends Component {
   }
 
   render() {
-    const { classes, candidates, interviewers, rows, reqOpen, candidate } = this.props;
+    const { classes, candidates, interviewers, rows, reqOpen, candidate, user } = this.props;
     return (
       <Dialog open={reqOpen} aria-labelledby="form-dialog-title" fullWidth maxWidth="lg">
         <DialogTitle id="form-dialog-title">Schedule Interview</DialogTitle>
@@ -109,7 +110,7 @@ class RequestDialog extends Component {
                       getOptionLabel={interviewer => interviewer.email}
                       filterSelectedOptions
                       renderInput={params => (
-                        <TextField {...params} label="Required interviewer(s)" variant="outlined" style={{ width: 400 }} />
+                        <TextField {...params} label="Required interviewer(s)" variant="outlined" style={{ width: 450 }} />
                       )}
                       autoComplete={false}
                       value={row.required}
@@ -123,7 +124,7 @@ class RequestDialog extends Component {
                       getOptionLabel={interviewer => interviewer.email}
                       filterSelectedOptions
                       renderInput={params => (
-                        <TextField {...params} label="Optional interviewer(s)" variant="outlined" style={{ width: 400 }} />
+                        <TextField {...params} label="Optional interviewer(s)" variant="outlined" style={{ width: 450 }} />
                       )}
                       autoComplete={false}
                       value={row.optional}
@@ -188,7 +189,19 @@ class RequestDialog extends Component {
         </DialogContent>
         <DialogActions>
           <Button onClick={this.props.handleClose} color="primary">Cancel</Button>
-          <Button onClick={this.props.handleNext} color="primary" disabled={!rows.length}>Next</Button>
+          {
+            user.findMeetingTimesLoading
+              ? <CircularProgress />
+              : (
+                <Button
+                  onClick={this.props.handleNext}
+                  color="primary"
+                  disabled={!rows.length}
+                >
+                  Next
+                </Button>
+              )
+          }
         </DialogActions>
       </Dialog >
     );

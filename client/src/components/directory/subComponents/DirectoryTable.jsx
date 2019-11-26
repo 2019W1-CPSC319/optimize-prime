@@ -8,14 +8,24 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Typography,
+  Tooltip,
 } from '@material-ui/core';
 
 const styles = {
   table: {
     minWidth: 650,
   },
-  iconButton: {
-    color: '#f0a017',
+  actionsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  scheduledMessage: {
+    fontSize: 'small',
+  },
+  scheduledIcon: {
+    color: 'red',
   },
   emptyRow: {
     textAlign: 'center',
@@ -42,6 +52,7 @@ class DirectoryTable extends Component {
       allowedActions,
       user,
       onClickUserAction,
+      scheduledCandidateIds,
     } = this.props;
     const { username } = user;
 
@@ -76,21 +87,42 @@ class DirectoryTable extends Component {
                         : null
                     }
                     <TableCell>
-                      {
-                        allowedActions.map(action => {
-                          const { key, icon } = action;
-                          return (
-                            <IconButton
-                              className={classes.iconButton}
-                              key={key}
-                              onClick={() => onClickUserAction(key, row.id)}
-                              disabled={username === row.email}
-                            >
-                              <Icon>{icon}</Icon>
-                            </IconButton>
-                          );
-                        })
-                      }
+                      <div className={classes.actionsContainer}>
+                        {
+                          allowedActions.map(action => {
+                            const { key, icon } = action;
+
+                            if (key === 'scheduled') {
+
+                              if (!scheduledCandidateIds || !scheduledCandidateIds.includes(row.id)) return null;
+
+                              return (
+                                <Tooltip
+                                  key={key}
+                                  title={
+                                    <Typography className={classes.scheduledMessage}>
+                                      This candidate has been scheduled for interview(s). You can request for their availability again if you wish to schedule another interview for this candidate.
+                                    </Typography>
+                                  }
+                                >
+                                  <Icon className={classes.scheduledIcon}>{icon}</Icon>
+                                </Tooltip>
+                              );
+                            }
+
+                            return (
+                              <IconButton
+                                color="secondary"
+                                key={key}
+                                onClick={() => onClickUserAction(key, row.id)}
+                                disabled={username === row.email}
+                              >
+                                <Icon>{icon}</Icon>
+                              </IconButton>
+                            );
+                          })
+                        }
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

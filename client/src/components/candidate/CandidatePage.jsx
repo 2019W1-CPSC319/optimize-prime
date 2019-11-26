@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
-import { connect } from 'react-redux';
-import AvailabilityTable from "./AvailabilityTable.jsx"
-
+import {
+  Typography,
+  Paper,
+} from '@material-ui/core';
+import AvailabilityTable from "./AvailabilityTable.jsx";
 import logo_long from '../../images/galvanize_long.png';
+import background from '../../images/background.jpg';
+import moment from 'moment';
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -16,7 +19,10 @@ const swalWithBootstrapButtons = Swal.mixin({
 
 const styles = {
   wrapper: {
+    height: window.innerHeight,
     textAlign: 'center',
+    background: `url(${background}) no-repeat center center fixed`,
+    backgroundSize: 'cover',
   },
   title: {
     marginLeft: '30px',
@@ -42,6 +48,20 @@ const styles = {
     borderRadius: '8px',
     marginTop: '16px',
   },
+  paper: {
+    width: '700px',
+    display: 'block',
+    margin: 'auto',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    position: 'absolute',
+    height: 'fit-content',
+    padding: '30px',
+    maxHeight: '800px',
+    overflow: 'scroll',
+  }
 };
 
 class AddAvailability extends Component {
@@ -52,6 +72,10 @@ class AddAvailability extends Component {
   async componentDidMount() {
     const { actions, uuid } = this.props;
     await actions.getCandidate(uuid);
+  }
+
+  toHTML = (availability) => {
+    return availability.map(entry => `<p><b>${moment(entry.startTime).format('L')}</b> ${moment(entry.startTime).format('LT')} - ${moment(entry.endTime).format('LT')}</p>`);
   }
 
   handleSubmit = async (times) => {
@@ -67,12 +91,25 @@ class AddAvailability extends Component {
 
     if (response && response.error) return;
 
-    swalWithBootstrapButtons.fire(
-      'Successfully submitted!',
-      'We\'ll get back to you with an interview invitation in the next few days.',
-      'success',
-    ).then(result => {
-      window.location.reload();
+    swalWithBootstrapButtons.fire({
+      title: 'Submission Detail',
+      html: this.toHTML(availability).join('').concat('<h4>Click Submit if everything looks correct!</h4>'),
+      type: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Submit',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    }).then(async (result) => {
+      const { value } = result;
+      if (value) {
+        swalWithBootstrapButtons.fire(
+          'Successfully submitted!',
+          'We\'ll get back to you with an interview invitation in the next few days.',
+          'success',
+        ).then(result => {
+          window.location.reload();
+        });
+      }
     });
   }
 
@@ -80,10 +117,7 @@ class AddAvailability extends Component {
     const { classes, candidate } = this.props;
     return (
       <div className={classes.wrapper}>
-        <Typography variant="h5" className={classes.title}>
-          Add Interview Availability
-        </Typography>
-        <div className={classes.container}>
+        <Paper className={classes.paper} square>
           <img className={classes.bigLogo} src={logo_long} alt="Galvanize Logo" />
           <div className={classes.subText}>
             <Typography>{`Hi ${candidate ? candidate.firstName : ''}, `}</Typography>
@@ -95,7 +129,7 @@ class AddAvailability extends Component {
             </Typography>
           </div>
           <AvailabilityTable submitHandler={this.handleSubmit} />
-        </div>
+        </Paper>
       </div>
     );
   }
