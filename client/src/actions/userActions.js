@@ -79,13 +79,14 @@ const findMeetingTimesFailure = (error) => (
 
 export const findAllMeetingTimes = (data) => async (dispatch) => {
   try {
+    dispatch(updateLoadingState('FIND_MEETING_TIMES_REQUEST'));
     const { candidate, interviews } = data;
     const response = await axios.post('/schedule/allmeetings', { candidate, interviews });
     return dispatch(findMeetingTimesSuccess(response));
   } catch (error) {
     return dispatch(findMeetingTimesFailure(error));
   }
-}
+};
 
 export const findMeetingTimes = (data) => async (dispatch) => {
   try {
@@ -121,7 +122,13 @@ const createEventFailure = (error) => (
 );
 
 export const createEvent = (selectedSuggestion, candidate) => async (dispatch) => {
-  const { required, optional, start, end, room } = selectedSuggestion;
+  const {
+    required,
+    optional,
+    start,
+    end,
+    room,
+  } = selectedSuggestion;
   const body = {
     candidate: {
       id: candidate.id,
