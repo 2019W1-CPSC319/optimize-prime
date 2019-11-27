@@ -1,10 +1,10 @@
 const router = require('express').Router();
 const uuidv1 = require('uuid/v1');
 const axios = require('axios');
+const moment = require('moment');
 const connection = require('../init/setupMySql');
 const notAuthMiddleware = require('../utils/notAuthMiddleware');
 const scheduler = require('../scheduling/scheduler');
-const moment = require('moment');
 
 // get all rooms
 router.get('/rooms', notAuthMiddleware, (req, res) => {
@@ -24,13 +24,13 @@ router.post('/room', notAuthMiddleware, async (req, res) => {
   let sqlcmd = connection.format(sql, [room.name, room.seats, 'A', room.email]);
   connection.query(sqlcmd, (err, addedRoom) => {
     if (err) {
-      throw err;
+      return res.status(500).send({ message: 'Internal server Error.' });
     }
     sql = 'SELECT * FROM Rooms WHERE id=?';
     sqlcmd = connection.format(sql, [addedRoom.insertId]);
     connection.query(sqlcmd, (err, savedRoom) => {
       if (err) {
-        throw err;
+        return res.status(500).send({ message: 'Internal server Error.' });
       }
       // savedRoom is the room that has just been added which consists of id, name, seats, and status attributes
       res.send(savedRoom[0]);
@@ -45,7 +45,7 @@ router.put('/room/:id', notAuthMiddleware, (req, res) => {
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      return res.status(500).send({ message: 'Internal server Error.' });
     }
     res.send(result);
   });
@@ -56,7 +56,7 @@ router.get('/candidates', notAuthMiddleware, async (req, res) => {
   const sql = "SELECT * FROM Candidate WHERE status <> 'D'";
   await connection.query(sql, (err, result) => {
     if (err) {
-      throw err;
+      return res.status(500).send({ message: 'Internal server Error.' });
     }
     res.send(result);
   });
@@ -106,13 +106,13 @@ router.post('/newcandidate', notAuthMiddleware, (req, res) => {
     const sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, status, uuid]);
     connection.query(sqlcmd, (err, result) => {
       if (err) {
-        res.status(500).send({ message: 'Internal Server error' });
+        return res.status(500).send({ message: 'Internal Server error' });
       }
       const addedUser = { ...user, id: result.insertId };
       res.send(addedUser);
     });
   } catch (error) {
-    res.status(error.statusCode).send({ message: error.message });
+    return res.status(error.statusCode).send({ message: error.message });
   }
 });
 
@@ -150,7 +150,7 @@ router.put('/edituser', notAuthMiddleware, (req, res) => {
     sqlcmd = connection.format(sql, [user.id]);
     connection.query(sqlcmd, (err, updatedUser) => {
       if (err) {
-        throw err;
+        return res.status(500).send({ message: 'Internal server Error.' });
       }
 
       res.send(updatedUser[0]);
@@ -165,7 +165,7 @@ router.put('/candidate/delete/:id', notAuthMiddleware, (req, res) => {
   const sqlcmd = connection.format(sql, [id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      return res.status(500).send({ message: 'Internal server Error.' });
     }
     res.send(result);
   });
@@ -176,7 +176,7 @@ router.post('/sendEmail', notAuthMiddleware, (req, res) => {
   const sqlcmd = connection.format("SELECT uuid from Candidate WHERE Email = ? AND status = 'A'", [email]);
   connection.query(sqlcmd, async (err, result) => {
     if (err) {
-      throw err;
+      return res.status(500).send({ message: 'Internal server Error.' });
     }
 
     const { uuid } = result[0];
@@ -237,7 +237,7 @@ router.post('/availability', notAuthMiddleware, (req, res) => {
       candidateId = result[0].id;
 
       let sql = 'INSERT INTO candidateavailability(candidateId, startTime, endTime) VALUES ?';
-      let values = [availability.map((time) => [candidateId, time.startTime, time.endTime])];
+      const values = [availability.map((time) => [candidateId, time.startTime, time.endTime])];
       let sqlcmd = connection.format(sql, values);
       connection.query(sqlcmd, (err, result) => {
         if (err) {
@@ -509,7 +509,7 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
             }
           });
 
-          sql = "DELETE FROM Candidateavailability WHERE candidateId = ?";
+          sql = 'DELETE FROM Candidateavailability WHERE candidateId = ?';
           sqlcmd = connection.format(sql, [candidate.id]);
           connection.query(sqlcmd, (err, result) => {
             if (err) {
