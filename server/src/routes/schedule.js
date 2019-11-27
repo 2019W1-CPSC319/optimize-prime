@@ -224,7 +224,7 @@ router.post('/sendEmail', notAuthMiddleware, (req, res) => {
   });
 });
 
-router.post('/availability', notAuthMiddleware, (req, res) => {
+router.post('/availability', (req, res) => {
   try {
     const { availability, uuid } = req.body;
     const sqlSelect = 'SELECT * FROM Candidate WHERE uuid = ?';
