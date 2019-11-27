@@ -54,7 +54,7 @@ class DirectoryTable extends Component {
       onClickUserAction,
       scheduledCandidateIds,
     } = this.props;
-    const { username } = user;
+    const { mail } = user.profile;
 
     return (
       <Table className={classes.table}>
@@ -115,7 +115,7 @@ class DirectoryTable extends Component {
                                 color="secondary"
                                 key={key}
                                 onClick={() => onClickUserAction(key, row.id)}
-                                disabled={username === row.email}
+                                disabled={mail === row.email}
                               >
                                 <Icon>{icon}</Icon>
                               </IconButton>
