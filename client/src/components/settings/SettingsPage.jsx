@@ -24,7 +24,11 @@ class SettingsPage extends Component {
 
   async componentDidMount() {
     const { actions } = this.props;
-    await actions.getEmailTemplate();
+    try {
+      await actions.getEmailTemplate();
+    } catch (error) {
+      console.log(error);
+    }
     const { template: { subject, body, signature } } = this.props;
     this.setState({ subject, body, signature });
   }

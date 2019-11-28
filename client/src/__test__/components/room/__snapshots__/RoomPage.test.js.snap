@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Room Page - Render match snapshot 1`] = `
+<div>
+  <h1
+    style={
+      Object {
+        "fontWeight": "normal",
+        "marginLeft": "30px",
+      }
+    }
+  >
+    Rooms
+  </h1>
+  <WithStyles(ForwardRef(Paper))
+    style={
+      Object {
+        "margin": "0 30px",
+      }
+    }
+  >
+    <WithStyles(ForwardRef(Table))>
+      <WithStyles(ForwardRef(TableHead))>
+        <WithStyles(ForwardRef(TableRow))>
+          <WithStyles(ForwardRef(TableCell))
+            scope="col"
+          >
+            Room Name
+          </WithStyles(ForwardRef(TableCell))>
+          <WithStyles(ForwardRef(TableCell))
+            align="center"
+            scope="col"
+          >
+            Maximum Capacity
+          </WithStyles(ForwardRef(TableCell))>
+          <WithStyles(ForwardRef(TableCell)) />
+        </WithStyles(ForwardRef(TableRow))>
+      </WithStyles(ForwardRef(TableHead))>
+      <WithStyles(ForwardRef(TableBody)) />
+    </WithStyles(ForwardRef(Table))>
+  </WithStyles(ForwardRef(Paper))>
+  <WithStyles(ForwardRef(Fab))
+    aria-label="add"
+    color="primary"
+    onClick={[Function]}
+    style={
+      Object {
+        "backgroundColor": "#003b9a",
+        "bottom": "30px",
+        "position": "fixed",
+        "right": "30px",
+      }
+    }
+  >
+    <AddRoundedIcon />
+  </WithStyles(ForwardRef(Fab))>
+  <WithStyles(RoomDialog)
+    actions={
+      Object {
+        "getOutlookRooms": [MockFunction] {
+          "calls": Array [
+            Array [],
+            Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
+        "getRooms": [MockFunction] {
+          "calls": Array [
+            Array [],
+            Array [],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        },
+      }
+    }
+    classes={Object {}}
+    error={false}
+    handleChangeRoomName={[Function]}
+    handleChangeRoomSeats={[Function]}
+    handleCloseAddRoom={[Function]}
+    handleSaveAddRoom={[Function]}
+    name=""
+    onSuccess={false}
+    roomOpen={false}
+    rooms={Array []}
+    seats={0}
+  />
+</div>
+`;
