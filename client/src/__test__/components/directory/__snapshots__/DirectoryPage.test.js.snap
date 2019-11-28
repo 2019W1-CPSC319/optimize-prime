@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Directory Page - Render match snapshot 1`] = `
+<DirectoryPage
+  actions={Object {}}
+  classes={
+    Object {
+      "addButton": "DirectoryPage-addButton-4",
+      "header": "DirectoryPage-header-2",
+      "tableContainer": "DirectoryPage-tableContainer-3",
+      "title": "DirectoryPage-title-1",
+    }
+  }
+/>
+`;
