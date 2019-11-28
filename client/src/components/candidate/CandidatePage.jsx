@@ -8,6 +8,7 @@ import AvailabilityTable from "./AvailabilityTable.jsx";
 import logo_long from '../../images/galvanize_long.png';
 import background from '../../images/background.jpg';
 import moment from 'moment';
+import Swal from 'sweetalert2';
 
 const swalWithBootstrapButtons = Swal.mixin({
   customClass: {
@@ -64,7 +65,7 @@ const styles = {
   }
 };
 
-class AddAvailability extends Component {
+class CandidatePage extends Component {
   constructor(props) {
     super(props);
   }
@@ -135,4 +136,4 @@ class AddAvailability extends Component {
   }
 }
 
-export default withStyles(styles)(AddAvailability);
+export default withStyles(styles)(CandidatePage);

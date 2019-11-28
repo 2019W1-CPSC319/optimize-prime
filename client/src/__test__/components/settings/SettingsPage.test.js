@@ -1,19 +1,25 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import DirectoryPage from '../../../components/directory/DirectoryPage';
+import SettingsPage from '../../../components/settings/SettingsPage';
 
-describe('Directory Page - Render', () => {
+describe('Settings Page - Render', () => {
   let wrapper;
   const classes = {};
   const actions = {
-    getRooms: jest.fn(),
+    getEmailTemplate: jest.fn(),
+  };
+  const template = {
+    subject: 'Interview with Galvanize',
+    body: 'Please provide your availability.',
+    signature: 'Galvanize HR Staff',
   };
 
   beforeEach(() => {
-    wrapper = shallow(<DirectoryPage
+    wrapper = shallow(<SettingsPage
       classes={classes}
       actions={actions}
+      template={template}
     />);
   });
 

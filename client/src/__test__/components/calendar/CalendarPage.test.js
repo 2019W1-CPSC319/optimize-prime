@@ -1,17 +1,15 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import DirectoryPage from '../../../components/directory/DirectoryPage';
+import CalendarPage from '../../../components/calendar/CalendarPage';
 
-describe('Directory Page - Render', () => {
+describe('Calendar Page - Render', () => {
   let wrapper;
   const classes = {};
-  const actions = {
-    getRooms: jest.fn(),
-  };
+  const actions = {};
 
   beforeEach(() => {
-    wrapper = shallow(<DirectoryPage
+    wrapper = shallow(<CalendarPage
       classes={classes}
       actions={actions}
     />);

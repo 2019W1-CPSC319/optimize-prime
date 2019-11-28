@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login Page - Render match snapshot 1`] = `
+<withRouter(LoginPage)
+  actions={Object {}}
+  classes={
+    Object {
+      "button": "withRouter(LoginPage)-button-1",
+      "center": "withRouter(LoginPage)-center-7",
+      "company": "withRouter(LoginPage)-company-2",
+      "divider": "withRouter(LoginPage)-divider-3",
+      "logo": "withRouter(LoginPage)-logo-4",
+      "microsoft": "withRouter(LoginPage)-microsoft-5",
+      "text": "withRouter(LoginPage)-text-6",
+    }
+  }
+/>
+`;

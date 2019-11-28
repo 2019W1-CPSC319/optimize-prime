@@ -1,17 +1,15 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import DirectoryPage from '../../../components/directory/DirectoryPage';
+import LoginPage from '../../../components/authentication/LoginPage';
 
-describe('Directory Page - Render', () => {
+describe('Login Page - Render', () => {
   let wrapper;
   const classes = {};
-  const actions = {
-    getRooms: jest.fn(),
-  };
+  const actions = {};
 
   beforeEach(() => {
-    wrapper = shallow(<DirectoryPage
+    wrapper = shallow(<LoginPage
       classes={classes}
       actions={actions}
     />);

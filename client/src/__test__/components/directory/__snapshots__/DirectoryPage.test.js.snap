@@ -2,7 +2,11 @@
 
 exports[`Directory Page - Render match snapshot 1`] = `
 <DirectoryPage
-  actions={Object {}}
+  actions={
+    Object {
+      "getRooms": [MockFunction],
+    }
+  }
   classes={
     Object {
       "addButton": "DirectoryPage-addButton-4",

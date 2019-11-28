@@ -1,19 +1,21 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import DirectoryPage from '../../../components/directory/DirectoryPage';
+import RoomPage from '../../../components/room/RoomPage';
 
-describe('Directory Page - Render', () => {
+describe('Room Page - Render', () => {
   let wrapper;
   const classes = {};
   const actions = {
     getRooms: jest.fn(),
+    getOutlookRooms: jest.fn(),
   };
 
   beforeEach(() => {
-    wrapper = shallow(<DirectoryPage
+    wrapper = shallow(<RoomPage
       classes={classes}
       actions={actions}
+      rooms={[]}
     />);
   });
 

@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Candidate Page - Render match snapshot 1`] = `
+<CandidatePage
+  actions={Object {}}
+  classes={
+    Object {
+      "bigLogo": "CandidatePage-bigLogo-5",
+      "container": "CandidatePage-container-3",
+      "paper": "CandidatePage-paper-6",
+      "subText": "CandidatePage-subText-4",
+      "title": "CandidatePage-title-2",
+      "wrapper": "CandidatePage-wrapper-1",
+    }
+  }
+/>
+`;

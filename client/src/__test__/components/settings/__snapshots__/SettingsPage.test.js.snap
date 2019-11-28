@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Settings Page - Render match snapshot 1`] = `
+<div>
+  <h1
+    className="settings-title"
+  >
+    Settings
+  </h1>
+  <WithStyles(ForwardRef(Paper))
+    style={
+      Object {
+        "margin": "30px",
+        "padding": "30px",
+      }
+    }
+  >
+    <WithStyles(ForwardRef(Typography))
+      variant="h6"
+    >
+      Email Template
+    </WithStyles(ForwardRef(Typography))>
+    <WithStyles(ForwardRef(TextField))
+      inputProps={
+        Object {
+          "style": Object {
+            "display": "block",
+            "width": "500px",
+          },
+        }
+      }
+      label="Subject"
+      margin="normal"
+      onChange={[Function]}
+      style={
+        Object {
+          "display": "block",
+          "width": "500px",
+        }
+      }
+      value="Interview with Galvanize"
+      variant="outlined"
+    />
+    <WithStyles(ForwardRef(TextField))
+      inputProps={
+        Object {
+          "style": Object {
+            "display": "block",
+            "width": "500px",
+          },
+        }
+      }
+      label="Body"
+      margin="normal"
+      multiline={true}
+      onChange={[Function]}
+      style={
+        Object {
+          "display": "block",
+          "width": "500px",
+        }
+      }
+      value="Please provide your availability."
+      variant="outlined"
+    />
+    <WithStyles(ForwardRef(TextField))
+      inputProps={
+        Object {
+          "style": Object {
+            "display": "block",
+            "width": "500px",
+          },
+        }
+      }
+      label="Signature"
+      margin="normal"
+      multiline={true}
+      onChange={[Function]}
+      style={
+        Object {
+          "display": "block",
+          "width": "500px",
+        }
+      }
+      value="Galvanize HR Staff"
+      variant="outlined"
+    />
+    <WithStyles(ForwardRef(Button))
+      onClick={[Function]}
+      style={
+        Object {
+          "marginTop": "10px",
+          "padding": "10px 30px",
+        }
+      }
+      variant="outlined"
+    >
+      Save
+    </WithStyles(ForwardRef(Button))>
+  </WithStyles(ForwardRef(Paper))>
+</div>
+`;

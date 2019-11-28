@@ -153,8 +153,12 @@ export default class RoomPage extends React.Component {
   async componentDidMount() {
     const { actions } = this.props;
 
-    await actions.getRooms();
-    await actions.getOutlookRooms();
+    try {
+      await actions.getRooms();
+      await actions.getOutlookRooms();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   render() {
