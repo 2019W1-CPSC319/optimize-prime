@@ -2,7 +2,26 @@
 
 This project contains an implementation for the interview scheduling system for internal use.
 
-![](demo.gif)
+![Login](screenshots/login.png)
+![Schedule](screenshots/schedule0.png)
+![Schedule](screenshots/schedule1.png)
+![Schedule](screenshots/schedule2.png)
+![Schedule](screenshots/schedule3.png)
+![Schedule](screenshots/schedule4.png)
+![Confirmation](screenshots/confirmation.png)
+
+## Getting Started
+
+1. Clone this repository to local environment
+
+```
+$ git clone https://github.com/2019W1-CPSC319/optimize-prime.git
+$ cd optimize-prime
+```
+
+2. Install dependencies
+3. [Build](#npm-run-build) the app
+4. [Run](#npm-run-startclient) the app
 
 ## Available Scripts
 
