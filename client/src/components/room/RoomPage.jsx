@@ -60,7 +60,7 @@ export default class RoomPage extends React.Component {
   handleSaveAddRoom = async () => {
     const { actions } = this.props;
     const { rooms, error } = this.state;
-    let addRoomError = false;
+    let addRoomError = true;
     if (!error) {
       try {
         const roomPromises = rooms.map(async room => {
@@ -70,8 +70,8 @@ export default class RoomPage extends React.Component {
             seats: this.state.seats,
           }
           const response = await actions.addRoom(data);
-          if (response && response.error) {
-            addRoomError = true;
+          if (response && !response.error) {
+            addRoomError = false;
           }
         });
         await Promise.all(roomPromises);
@@ -79,7 +79,13 @@ export default class RoomPage extends React.Component {
           swalWithBootstrapButtons.fire(
             'Success',
             'Successfully added new interview room(s).',
-            'success'
+            'success',
+          );
+        } else {
+          swalWithBootstrapButtons.fire(
+            'Error',
+            'Failed to add new interview room(s).',
+            'error',
           );
         }
         this.setState({ ...initialState, onSuccess: true });
