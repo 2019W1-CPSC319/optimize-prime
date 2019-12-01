@@ -56,7 +56,7 @@ class UnauthorizedPage extends Component {
             svg.setAttribute('style', 'display: block; margin: auto; position: absolute; top: 0; right: 0; left: 0; bottom: 0; width: 250px;');
           }}
         />
-        <Typography className={classes.title} variant='h3'>401</Typography>
+        <Typography className={classes.title} variant='h3'>403</Typography>
         <Typography className={classes.subtitle} variant='h5'>Unauthorized</Typography>
       </div>
     )

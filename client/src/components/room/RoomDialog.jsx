@@ -49,7 +49,7 @@ class RoomDialog extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, rooms, seats } = this.props;
     return (
       <Dialog open={this.props.roomOpen} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Add a new room</DialogTitle>
@@ -70,6 +70,7 @@ class RoomDialog extends Component {
                 fullWidth
               />
             )}
+            value={rooms}
             onChange={this.props.handleChangeRoomName}
           />
           <TextField
@@ -92,7 +93,14 @@ class RoomDialog extends Component {
         </DialogContent>
         <DialogActions>
           <Button onClick={this.props.handleCloseAddRoom} color="primary">Cancel</Button>
-          <Button type="submit" onClick={this.props.handleSaveAddRoom} color="primary">Save</Button>
+          <Button
+            disabled={!rooms || rooms.length === 0 || !seats}
+            type="submit"
+            onClick={this.props.handleSaveAddRoom}
+            color="primary"
+          >
+            Save
+          </Button>
         </DialogActions>
       </Dialog >
     );

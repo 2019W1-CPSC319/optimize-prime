@@ -11,7 +11,7 @@ router.get('/rooms', notAuthMiddleware, (req, res) => {
   const sql = 'SELECT * FROM Rooms WHERE status="A"';
   connection.query(sql, (err, result) => {
     if (err) {
-      throw err;
+      return result.status(500).send({ message: 'Internal server Error.' });
     }
     res.send(result);
   });
@@ -135,7 +135,7 @@ router.put('/edituser', notAuthMiddleware, (req, res) => {
   let sqlcmd = connection.format(sql, [user.firstName, user.lastName, user.email, user.phone, user.id]);
   connection.query(sqlcmd, (err, result) => {
     if (err) {
-      throw err;
+      return result.status(500).send({ message: 'Internal server Error.' });
     }
     switch (type) {
       case 'candidate':
