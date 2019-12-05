@@ -36,7 +36,6 @@ const styles = {
   },
   center: {
     height: '300px',
-    width: '700px',
     display: 'block',
     margin: 'auto',
     top: 0,
