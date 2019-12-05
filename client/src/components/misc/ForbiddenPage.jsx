@@ -1,42 +1,36 @@
 import React, { Component } from 'react';
 import { Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { default as SVG } from 'react-svg';
 import svg from '../../images/undraw_moonlight_5ksn.svg';
 
 const styles = {
   root: {
-    height: window.innerHeight
-  },
-  title: {
-    position: 'absolute',
-    textAlign: 'center',
-    textAransform: 'uppercase',
-    top: '300px',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    margin: 'auto'
-  },
-  subtitle: {
-    position: 'absolute',
-    textAlign: 'center',
-    textAransform: 'uppercase',
-    top: '350px',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    margin: 'auto'
-  },
-  svg: {
-    display: 'block',
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
     margin: 'auto',
     position: 'absolute',
     top: 0,
-    right: 0,
     left: 0,
-    bottom: 0,
-    width: '500px',
+  },
+  errorText: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '20px',
+  },
+  title: {
+    textAransform: 'uppercase',
+  },
+  subtitle: {
+    textAransform: 'uppercase',
+  },
+  svg: {
+    width: '250px',
   }
 };
 
@@ -50,16 +44,16 @@ class ForbiddenPage extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <SVG
+        <div className={classes.errorText}>
+          <Typography className={classes.title} variant="h3">403</Typography>
+          <Typography className={classes.subtitle} variant="h5">Forbidden</Typography>
+        </div>
+        <img
           src={svg}
-          beforeInjection={svg => {
-            svg.setAttribute('style', 'display: block; margin: auto; position: absolute; top: 0; right: 0; left: 0; bottom: 0; width: 250px;');
-          }}
+          className={classes.svg}
         />
-        <Typography className={classes.title} variant='h3'>403</Typography>
-        <Typography className={classes.subtitle} variant='h5'>Forbidden</Typography>
       </div>
-    )
+    );
   }
 }
 
