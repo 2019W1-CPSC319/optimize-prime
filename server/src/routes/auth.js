@@ -30,7 +30,7 @@ router.post('/callback', (req, res, next) => {
     }
     await req.session.destroy(async (err) => {
       await req.logout();
-      return res.redirect('/unauthorized');
+      return res.redirect('/forbidden');
     });
   });
 });

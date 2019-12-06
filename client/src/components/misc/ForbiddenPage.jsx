@@ -34,7 +34,7 @@ const styles = {
   }
 };
 
-class NotFoundPage extends Component {
+class ForbiddenPage extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -45,8 +45,8 @@ class NotFoundPage extends Component {
     return (
       <div className={classes.root}>
         <div className={classes.errorText}>
-          <Typography className={classes.title} variant="h3">404</Typography>
-          <Typography className={classes.subtitle} variant="h5">Not Found</Typography>
+          <Typography className={classes.title} variant="h3">403</Typography>
+          <Typography className={classes.subtitle} variant="h5">Forbidden</Typography>
         </div>
         <img
           src={svg}
@@ -57,4 +57,4 @@ class NotFoundPage extends Component {
   }
 }
 
-export default withStyles(styles)(NotFoundPage);
+export default withStyles(styles)(ForbiddenPage);
