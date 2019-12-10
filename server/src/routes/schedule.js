@@ -464,9 +464,10 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
       }
 
       // get roomId
-      const newRoomId = result[0].id;
-      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, roomId) VALUES (?, STR_TO_DATE(?, ?), STR_TO_DATE(?, ?), ?)';
-      sqlcmd = connection.format(sql, [candidate.id, moment(date.startTime.dateTime).format(), '%Y-%m-%dT%H:%i:%s-08:00', moment(date.endTime.dateTime).format(), '%Y-%m-%dT%H:%i:%s-08:00', newRoomId]);
+      const newRoomID = result[0].id;
+      const outlookID = response.data.id;
+      sql = 'INSERT INTO ScheduledInterview(CandidateID, StartTime, EndTime, RoomID, OutlookID) VALUES (?, STR_TO_DATE(?, ?), STR_TO_DATE(?, ?), ?, ?)';
+      sqlcmd = connection.format(sql, [candidate.id, moment(date.startTime.dateTime).format(), '%Y-%m-%dT%H:%i:%s-08:00', moment(date.endTime.dateTime).format(), '%Y-%m-%dT%H:%i:%s-08:00', newRoomID, outlookID]);
       connection.query(sqlcmd, (err, scheduledInterview) => {
         if (err) {
           return res.status(500).send({ message: 'Internal server error.' });
@@ -521,6 +522,55 @@ router.post('/event', notAuthMiddleware, async (req, res) => {
     });
   } catch (error) {
     res.status(error.response.status).send(error.message);
+  }
+});
+
+router.delete('/events/:id', notAuthMiddleware, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const getID = 'SELECT outlookID FROM ScheduledInterview WHERE id=?';
+    const getIDcmd = connection.format(getID, id);
+    connection.query(getIDcmd, async (err, result) => {
+      if (err) {
+        return res.status(500).send({ message: 'Internal Server error' });
+      }
+      const timeZone = 'Pacific Standard Time';
+      try {
+        const response = await axios.delete(
+          `https://graph.microsoft.com/v1.0/me/events/${result[0].outlookID}`,
+          {
+            headers: {
+              Authorization: `Bearer ${req.user.accessToken}`,
+              Prefer: `outlook.timezone="${timeZone}"`,
+            },
+          }
+        );
+        const hasUpcomingEvents = 'SELECT * FROM ScheduledInterview s1, (SELECT candidateID FROM ScheduledInterview WHERE id=?) s2 WHERE s1.candidateID=s2.candidateID';
+        const hasUpcomingEventscmd = connection.format(hasUpcomingEvents, id);
+        connection.query(hasUpcomingEventscmd, async (err, result) => {
+          if (err) {
+            return res.status(500).send({ message: 'Internal Server error' });
+          }
+          if (result.length === 0) {
+            const updateStatus = "UPDATE Candidate SET submittedAvailability='F' WHERE id IN (SELECT candidateID FROM ScheduledInterview WHERE id=?)";
+            const updateStatuscmd = connection.format(updateStatus, id);
+            await connection.query(updateStatuscmd);
+          }
+          const deleteEvent = 'DELETE FROM ScheduledInterview WHERE id=?';
+          const deleteEventcmd = connection.format(deleteEvent, id);
+          connection.query(deleteEventcmd, async (err, result) => {
+            if (err) {
+              return res.status(500).send({ message: 'Internal Server error' });
+            }
+            res.status(response.status).send({ message: response.statusText });
+          });
+        });
+      } catch (error) {
+        res.status(error.statusCode).send({ message: error.message });
+      }
+    });
+  } catch (error) {
+    res.status(error.statusCode).send({ message: error.message });
   }
 });
 

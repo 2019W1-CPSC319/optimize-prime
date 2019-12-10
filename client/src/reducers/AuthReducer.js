@@ -66,6 +66,11 @@ const AuthReducer = (state = {}, action) => {
         ...state,
         loading: false,
       };
+    case 'CANCEL_EVENT_SUCCESS':
+      return {
+        ...state,
+        loading: false,
+      };
     default:
       return state;
   }
