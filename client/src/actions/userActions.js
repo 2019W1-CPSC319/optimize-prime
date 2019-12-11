@@ -162,6 +162,31 @@ export const createEvent = (selectedSuggestion, candidate) => async (dispatch) =
   }
 };
 
+const cancelEventSuccess = () => (
+  {
+    type: 'CANCEL_EVENT_SUCCESS',
+  }
+);
+
+const cancelEventFailure = (error) => (
+  {
+    type: 'CANCEL_EVENT_FAILURE',
+    error,
+  }
+);
+
+export const cancelEvent = (id) => async (dispatch) => {
+  try {
+    dispatch(initRequest());
+    const response = await axios.delete(`/schedule/events/${id}`);
+    debugger;
+    return dispatch(cancelEventSuccess());
+  } catch (error) {
+    console.error(error);
+    return dispatch(cancelEventFailure(error));
+  }
+}
+
 const getInterviewsSuccess = (interviews) => (
   {
     type: 'GET_INTERVIEWS_SUCCESS',

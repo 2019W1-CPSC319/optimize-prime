@@ -11,6 +11,9 @@ import AddRoundedIcon from '@material-ui/icons/AddRounded';
 import { green } from '@material-ui/core/colors';
 import {
   Box,
+  Button,
+  IconButton,
+  Icon,
   Table,
   TableHead,
   TableRow,
@@ -31,7 +34,14 @@ const swalWithBootstrapButtons = Swal.mixin({
   buttonsStyling: true
 })
 
-const styles = theme => ({});
+const styles = theme => ({
+  button: {
+    color: 'red',
+    '&:hover': {
+      backgroundColor: 'rgba(255,0,0,0.08)',
+    }
+  },
+});
 
 const initialState = {
   reqOpen: false,
@@ -147,6 +157,18 @@ class CalendarPage extends React.Component {
     this.setState({ [mode]: selected });
   }
 
+  handleCancel = async (id) => {
+    const { actions } = this.props;
+    const response = await actions.cancelEvent(id);
+    if (response && !response.error) {
+      swalWithBootstrapButtons.fire(
+        'Success',
+        'Successfully deleted',
+        'success'
+      );
+    }
+  }
+
   showSnackbarOnSuccess = () => {
     return (
       <Snackbar
@@ -193,7 +215,8 @@ class CalendarPage extends React.Component {
   }
 
   render() {
-    const { interviews } = this.props;
+    const { classes, ...props } = this.props;
+    const { interviews } = props;
     const { redirect } = this.state;
     return (
       <div>
@@ -208,6 +231,7 @@ class CalendarPage extends React.Component {
                 <TableCell scope="col" align="center">Capacity</TableCell>
                 <TableCell scope="col" align="center">Start</TableCell>
                 <TableCell scope="col" align="center">End</TableCell>
+                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
@@ -220,6 +244,14 @@ class CalendarPage extends React.Component {
                       <TableCell align="center">{interview.room.seats}</TableCell>
                       <TableCell align="center">{moment(interview.startTime).format('ll h:mm a')}</TableCell>
                       <TableCell align="center">{moment(interview.endTime).format('ll h:mm a')}</TableCell>
+                      <TableCell align="center">
+                        <IconButton
+                          className={classes.button}
+                          onClick={() => this.handleCancel(interview.id)}
+                        >
+                          <Icon>delete</Icon>
+                        </IconButton>
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -245,14 +277,14 @@ class CalendarPage extends React.Component {
           handleRemoveRow={this.handleRemoveRow}
           handleSelectorChange={this.handleSelectorChange}
           handleAutocompleteChange={this.handleAutocompleteChange}
-          {...this.props}
+          {...props}
           {...this.state}
         />
         <OptionsDialog
           handleOpen={this.handleOpen}
           handleSave={this.handleSave}
           handleSelect={this.handleSelect}
-          {...this.props}
+          {...props}
           {...this.state}
         />
         {this.showSnackbarOnSuccess()}
